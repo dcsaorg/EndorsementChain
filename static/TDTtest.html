@@ -1,0 +1,22 @@
+<html>
+<script src="jsrsasign-latest-all-min.js"></script>
+        
+<script>
+    const carrierKey = KEYUTIL.generateKeypair('RSA', 2048);
+    const carrierPublicKeyJWK = KEYUTIL.getJWKFromKey(carrierKey.pubKeyObj);
+    const shipperKey = KEYUTIL.generateKeypair('RSA', 2048);
+    const shipperPublicKeyJWK = KEYUTIL.getJWKFromKey(shipperKey.pubKeyObj);
+    const carrierTDT = {holder: shipperPublicKeyJWK, possessor: shipperPublicKeyJWK, documentHash:"afe69d1b7ddb203ce7fc8b4ed4b972f126e0749a4cde160127a92eb1c74a2fa6", isToOrder:true};
+    const carrierJWT = KJUR.jws.JWS.sign(null, {alg: "RS256"}, JSON.stringify(carrierTDT), carrierKey.prvKeyObj);
+    const isValid = KJUR.jws.JWS.verifyJWT(carrierJWT, carrierKey.pubKeyObj, {alg: ['RS256']});
+    console.log("valid JWT?: ", isValid);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://localhost:9090/api/v1/add");
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = () => {
+        console.log(xhr.responseText);
+    };
+    xhr.send(JSON.stringify({"tdtHash": "dsfds", "transportDocumentTransfer": carrierJWT}));
+</script>
+</html>

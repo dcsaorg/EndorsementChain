@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: TDT-registry
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tdt_registry
+    username: tdt_db_owner
+    password: Voo0voVo
+  jpa:
+    show-sql: true
+    properties:
+        hibernatedialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 9090
+
