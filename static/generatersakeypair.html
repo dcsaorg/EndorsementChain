@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="jsrsasign-latest-all-min.js"></script>
+    </head>
+    <body>
+        <div class="container" id="supportingText">
+            <div class="row">
+                <div class="col-sm-7">
+                    <h5>Private key</h5>
+                    <textarea class="form-control" id="privateKeyTextArea" rows="4"></textarea>
+                    <h5>Public key</h5>
+                    <textarea class="form-control" id="publicKeyTextArea" rows="4"></textarea>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        window.onload = function(){
+            const rsaKey = KEYUTIL.generateKeypair('RSA', 2048);
+            document.getElementById("privateKeyTextArea").value = KEYUTIL.getPEM(rsaKey.prvKeyObj, "PKCS1PRV");
+            document.getElementById("publicKeyTextArea").value = KEYUTIL.getPEM(rsaKey.pubKeyObj);
+            var rsaPrivateKeyFromPem = new RSAKey();
+            rsaPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("privateKeyTextArea").value);
+            const rsaPublicKeyFromPem = KEYUTIL.getKey(document.getElementById("publicKeyTextArea").value);
+            const testJWT = KJUR.jws.JWS.sign(null, {alg: "RS256"}, JSON.stringify({test: "payload"}), rsaPrivateKeyFromPem);
+            const isValid = KJUR.jws.JWS.verifyJWT(testJWT, rsaPublicKeyFromPem, {alg: ['RS256']});
+            console.log("valid JWT?: ", isValid);
+        }
+    </script>
+</html>
