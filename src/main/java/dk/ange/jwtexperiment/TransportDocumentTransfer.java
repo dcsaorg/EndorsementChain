@@ -5,18 +5,19 @@ import javax.persistence.*;
 @Entity
 @Table(name = "transportdocumenttransfer")
 public class TransportDocumentTransfer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
 
+    @Id
     @Column
     private String tdtHash;
 
     @Column(columnDefinition="text")
     private String transportDocumentTransfer;
 
-    public long getId() {
-        return id;
+    @Column
+    private String transferStatus; //"current", "transferred", "surrendered"
+
+    public String getId() {
+        return tdtHash;
     }
 
     public TransportDocumentTransfer() {

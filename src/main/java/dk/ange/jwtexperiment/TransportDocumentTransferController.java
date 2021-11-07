@@ -22,7 +22,7 @@ public class TransportDocumentTransferController {
 
     @GetMapping("/transportDocumentTransfer/{transportDocumentTransferId}")
     @ResponseBody
-    public ResponseEntity<TransportDocumentTransfer> getTransportDocumentTransfer(@PathVariable Long transportDocumentTransferId){
+    public ResponseEntity<TransportDocumentTransfer> getTransportDocumentTransfer(@PathVariable String transportDocumentTransferId){
         Optional<TransportDocumentTransfer> transportDocumentTransfer = transportDocumentTransferRepo.findById(transportDocumentTransferId);
         return new ResponseEntity<TransportDocumentTransfer>(transportDocumentTransfer.get(), HttpStatus.OK);
     }
@@ -47,7 +47,7 @@ public class TransportDocumentTransferController {
 
     @DeleteMapping("/delete/{id}")
     @ResponseBody
-    public ResponseEntity<Void> deleteTransportDocumentTransfer(@PathVariable Long id){
+    public ResponseEntity<Void> deleteTransportDocumentTransfer(@PathVariable String id){
         Optional<TransportDocumentTransfer> transportDocumentTransfer = transportDocumentTransferRepo.findById(id);
         transportDocumentTransferRepo.delete(transportDocumentTransfer.get());
         return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
