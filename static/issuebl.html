@@ -38,9 +38,14 @@
                     <div class="card-body">
                         <h5 class="card-title">Issue Transport Document</h5>
                         <p class="card-text">
-                    Carrier's Document Reference: <input type="text" class="form-control"><br>
+                    Carrier's Document Reference: <input type="text" class="form-control" id="carrierDocumentReference"><br>
+                    Load Port: <input type="text" class="form-control" id="loadPort"><br>
+                    Discharge Port: <input type="text" class="form-control" id="dischargePort"><br>
+                    Commodity: <input type="text" class="form-control" id="commodity"><br>
+                    Vessel: <input type="text" class="form-control" id="vesselName"><br>
+                    Voyage: <input type="text" class="form-control" id="voyageNumber"><br>
                     Document Type: <select class="form-select" aria-label="BL Type">
-                        <option value="2">Generic document</option>
+                        <option value="2" disabled="true">Generic document</option>
                         <option value="1">DCSA eBL</option>
                         </select><br>
                     Endorsement Type: <select class="form-select" aria-label="Endorsement Type">
@@ -165,9 +170,29 @@ yQIDAQAB
             const button = document.getElementById('post-btn');
             button.addEventListener('click', async _ => {
                 try {
+                    var arrayEncoder = new TextEncoder(); // always utf-8
+                    const transportDocument = {
+                        documentReference: document.getElementById("carrierDocumentReference").value,
+                        portOfLoad: document.getElementById("loadPort").value,
+                        portOfDischarge: document.getElementById("dischargePort").value,
+                        commodity: document.getElementById("commodity").value,
+                        vessel: document.getElementById("vesselName").value,
+                        voyage: document.getElementById("voyageNumber").value
+                    }
+                    const stringifiedTransportDocument = JSON.stringify(transportDocument);
+                    const documentHash = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', arrayEncoder.encode(stringifiedTransportDocument)));
+                    await fetch('/api/v1/addTransportDocument', {
+                    method: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        documentHash : documentHash,
+                        transportDocumentJson: JSON.stringify(transportDocument)
+                        })
+                    });
+
                     const shipperPublicKeyFromPem = KEYUTIL.getKey(document.getElementById("shipperPublicKeytextArea").value);
                     const shipperPublicKeyJWK = KEYUTIL.getJWKFromKey(shipperPublicKeyFromPem);
-                    const carrierTDT = {holder: shipperPublicKeyJWK, possessor: shipperPublicKeyJWK, documentHash:"afe69d1b7ddb203ce7fc8b4ed4b972f126e0749a4cde160127a92eb1c74a2fa6", isToOrder:true};
+                    const carrierTDT = {holder: shipperPublicKeyJWK, possessor: shipperPublicKeyJWK, documentHash: documentHash, isToOrder:true};
 
                     var carrierPrivateKeyFromPem = new RSAKey();
                     carrierPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("carrierPrivateKeytextArea").value);
@@ -175,9 +200,8 @@ yQIDAQAB
                     const carrierJWT = KJUR.jws.JWS.sign(null, {alg: "RS256"}, JSON.stringify(carrierTDT), carrierPrivateKeyFromPem);
                     const isValid2 = KJUR.jws.JWS.verifyJWT(carrierJWT, carrierPublicKeyFromPem, {alg: ['RS256']});
                     console.log("valid JWT?: ", isValid2);
-                    var tdtHash = await crypto.subtle.digest('SHA-256', Uint8Array.from(carrierJWT));
-                    console.log(ArrayBuffertohex(tdtHash));
-                    const response = await fetch('/api/v1/add', {
+                    const tdtHash = await crypto.subtle.digest('SHA-256', arrayEncoder.encode(carrierJWT));
+                    await fetch('/api/v1/addTransportDocumentTransfer', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -185,7 +209,7 @@ yQIDAQAB
                         transportDocumentTransfer: carrierJWT
                         })
                     });
-                    console.log('Completed!', response);
+
                     location.href = "transportdocumenttransfer.html?id=" + ArrayBuffertohex(tdtHash);
                 } catch(err) {
                     console.error(`Error: ${err}`);

@@ -27,16 +27,16 @@ public class TransportDocumentTransferController {
         return new ResponseEntity<TransportDocumentTransfer>(transportDocumentTransfer.get(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/add",consumes = {"application/json"},produces = {"application/json"})
+    @PostMapping(value = "/addTransportDocumentTransfer",consumes = {"application/json"},produces = {"application/json"})
     @ResponseBody
     public ResponseEntity<TransportDocumentTransfer> addTransportDocumentTransfer(@RequestBody TransportDocumentTransfer transportDocumentTransfer, UriComponentsBuilder builder){
         transportDocumentTransferRepo.save(transportDocumentTransfer);
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("/addTransportDocumentTransfer/{id}").buildAndExpand(transportDocumentTransfer.getId()).toUri());
+        headers.setLocation(builder.path("/addTransportDocumentTransfer/{id}").buildAndExpand(transportDocumentTransfer.getTdtHash()).toUri());
         return new ResponseEntity<TransportDocumentTransfer>(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/updateTransportDocumentTransfer")
     @ResponseBody
     public ResponseEntity<TransportDocumentTransfer> updateTransportDocumentTransfer(@RequestBody TransportDocumentTransfer transportDocumentTransfer){
         if(transportDocumentTransfer != null){
@@ -45,7 +45,7 @@ public class TransportDocumentTransferController {
         return new ResponseEntity<TransportDocumentTransfer>(transportDocumentTransfer, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/deleteTransportDocumentTransfer/{id}")
     @ResponseBody
     public ResponseEntity<Void> deleteTransportDocumentTransfer(@PathVariable String id){
         Optional<TransportDocumentTransfer> transportDocumentTransfer = transportDocumentTransferRepo.findById(id);

@@ -40,10 +40,13 @@
                         <h5 class="card-title">Transport Document</h5>
                           <img src="images/latest.png" class="img-fluid rounded-start" alt="...">
                         <p class="card-text">
-                    Carrier Reference: CBA98732498732<br>
-                    Type: DCSA eBL <a href="dummy-pdf-export.pdf">Download as pdf</a><br>
+                    Document Hash: <span id="documentHash">fc68f3b1c9b809ce39d3142d79d18a22df73914008f0378eb23a487f12c895de</span><br>
+                    Type: DCSA eBL (Carrier Reference: <span id="documentReference">CBA98732498732</span>)
+                    <button type="button" class="btn-xs btn-primary" data-bs-toggle="modal" data-bs-target="#viewDCSAeBLModal">
+                        View
+                    </button>
+                    <br>
                     Is to order: <span style="color: green;"><b>yes</b></span><br>
-                    Hash (SHA256): <span id="documentHash">fc68f3b1c9b809ce39d3142d79d18a22df73914008f0378eb23a487f12c895de</span><br>
                     <a href="previous.html">Previous possessor</a><br>
                     <a href="by-laws.html">By-laws</a><br>
                         </p>
@@ -85,13 +88,38 @@
                 </div>
             </div>
         </div>
-        
+
+        <!-- View BL Modal -->
+        <div class="modal fade" tabindex="-1" id="viewDCSAeBLModal" aria-labelledby="viewDCSAeBLModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" >Bill of Lading</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-outline">
+                            <div class="card">
+                                <div class="card-body">
+                                    Port of load: <span id="portOfLoad"></span><br>
+                                    Port of discharge: <span id="portOfDischarge"></span><br>
+                                    Port of vessel: <span id="vessel"></span><br>
+                                    Port of voyage: <span id="voyage"></span><br>
+                                    Port of commodity: <span id="commodity"></span><br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Transfer title</h5>
+                <h5 class="modal-title">Transfer title</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -161,7 +189,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Transfer title</h5>
+                <h5 class="modal-title">Transfer title</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -249,12 +277,25 @@ wQIDAQAB
         window.onload = function(){
             const url = new URL(location.href);
             const hashId = url.searchParams.get('id');
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/api/v1/transportDocumentTransfer/" + hashId);
-            xhr.onload = function() {
-                const receivedJWT = JSON.parse(xhr.response)["transportDocumentTransfer"];
+            var xhrTdt = new XMLHttpRequest();
+            xhrTdt.open("GET", "/api/v1/transportDocumentTransfer/" + hashId);
+            xhrTdt.onload = function() {
+                const receivedJWT = JSON.parse(xhrTdt.response)["transportDocumentTransfer"];
                 let tdt = JSON.parse(KJUR.jws.JWS.parse(receivedJWT).payloadPP);
                 document.getElementById("documentHash").innerHTML = tdt.documentHash;
+
+                var xhrTD = new XMLHttpRequest();
+                xhrTD.open("GET", "/api/v1/transportDocument/" + tdt.documentHash);
+                xhrTD.onload = function() {
+                    const receivedTD = JSON.parse(JSON.parse(xhrTD.response)["transportDocumentJson"]);
+                    document.getElementById('documentReference').innerHTML = receivedTD.documentReference;
+                    document.getElementById('portOfLoad').innerHTML = receivedTD.portOfLoad;
+                    document.getElementById('portOfDischarge').innerHTML = receivedTD.portOfDischarge;
+                    document.getElementById('vessel').innerHTML = receivedTD.vessel;
+                    document.getElementById('voyage').innerHTML = receivedTD.voyage;
+                    document.getElementById('commodity').innerHTML = receivedTD.commodity;
+                }
+                xhrTD.send();
 
                 const button = document.getElementById('transferPossessionButton');
                 console.log(button);
@@ -262,7 +303,7 @@ wQIDAQAB
                     try {
                         const transfereePublicKeyFromPem = KEYUTIL.getKey(document.getElementById("transfereePublicKeyTextArea").value);
                         const transfereePublicKeyJWK = KEYUTIL.getJWKFromKey(transfereePublicKeyFromPem);
-                        let newTdt = {holder: tdt.holder, possessor: transfereePublicKeyJWK, documentHash: tdt.documentHash, isToOrder: tdt.isToOrder};
+                        const newTdt = {holder: tdt.holder, possessor: transfereePublicKeyJWK, documentHash: tdt.documentHash, isToOrder: tdt.isToOrder};
                         
                         var transfererPrivateKeyFromPem = new RSAKey();
                         transfererPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("transfererPrivateKeyTextArea").value);
@@ -271,7 +312,7 @@ wQIDAQAB
                         const isValid = KJUR.jws.JWS.verifyJWT(newJWT, transfererPublicKey, {alg: ['RS256']});
                         
                         console.log("chain link is valid?: ", isValid);
-                        var tdtHash = await crypto.subtle.digest('SHA-256', Uint8Array.from(newJWT));
+                        const tdtHash = await crypto.subtle.digest('SHA-256', Uint8Array.from(newJWT));
                         const response = await fetch('/api/v1/add', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
@@ -287,9 +328,7 @@ wQIDAQAB
                     }
                 });
             };
-            xhr.send();
-
-
+            xhrTdt.send();
         }
     </script>
 </html>
