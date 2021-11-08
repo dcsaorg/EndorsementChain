@@ -313,7 +313,7 @@ wQIDAQAB
                         
                         console.log("chain link is valid?: ", isValid);
                         const tdtHash = await crypto.subtle.digest('SHA-256', Uint8Array.from(newJWT));
-                        const response = await fetch('/api/v1/add', {
+                        const response = await fetch('/api/v1/addTransportDocumentTransfer', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
