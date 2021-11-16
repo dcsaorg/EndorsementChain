@@ -1,6 +1,5 @@
 package dk.ange.jwtexperiment;
 
-import org.junit.Test;
 import org.jose4j.jwe.*;
 import org.jose4j.jwk.*;
 import org.jose4j.jws.*;
@@ -14,8 +13,8 @@ import java.util.Arrays;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import static org.junit.Assert.*;
-
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 public class Jose4JTest {
 
     @Test
@@ -81,7 +80,7 @@ public class Jose4JTest {
         JsonWebSignature shipperJws = new JsonWebSignature();
         shipperJws.setPayload(shipperTDT.toJson());
         shipperJws.setKey(shipperKey.getPrivateKey());
-        assertEquals(shipperJws.getKey(), shipperKey.getPrivateKey());
+        Assertions.assertEquals(shipperJws.getKey(), shipperKey.getPrivateKey());
         shipperJws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
         final String shipperJwt = shipperJws.getCompactSerialization();
 

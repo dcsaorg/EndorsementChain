@@ -29,7 +29,7 @@ public class TransportDocumentTransfer {
     @Column(columnDefinition="text")
     private String transportDocumentTransfer;
 
-    @Column
+    @Column(columnDefinition = "varchar(255) default 'current'")
     private String transferStatus; //"current", "transferred", "surrendered"
 
     /*
