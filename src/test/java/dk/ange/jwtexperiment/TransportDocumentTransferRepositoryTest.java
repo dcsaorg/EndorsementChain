@@ -1,0 +1,24 @@
+package dk.ange.jwtexperiment;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import java.util.Optional;
+
+@DataJpaTest
+public class TransportDocumentTransferRepositoryTest {
+    private final String tdtHash = "d17d8fbbd0caf68f010fc80f36d0f8917e4a38c75fc1ebe80607554b8ec0bce6";
+    private final String tdtPayload = "eyJhbGciOiJSUzI1NiJ9.eyJob2xkZXIiOnsia3R5IjoiUlNBIiwibiI6Imk3MU9PQnNuRDhrUXBqREQzSl9WSUJoeGR6NTNfNHkzeTU0cldOc09DSlIyamktZ1ozODcyTDVEOXlPSHFwM0JGZGgwZXhlWHpWX3NGUkx5M2lXU2JfRC05Z1duSm96R2RKU1h3RzRuNnlBVmt6ZUhib29NSl8xcDNPUm9NNVJTZmlETmlHaDB4ZE5MMGxfNTB5RkNrT2tzdklJRXU4LS1lY1hvY3E3eFJjR0lIWWE2cVFKVUV3S0EyZ2lTZEdNVzc2OWZZVkhNMDVmcGlTS3FyNHR4dUlYX1A3NEJHUmcwU0llX2kydEZQMGNNMEV5YXFDcWdCVEdQYTZ4N2dxczZtaWlHa0lFeE80dlVidG9mQlBwbS11c3hYR2VvRDJMbDBGT1R6V3oxTVlRd3dJdk5oWXVGYUxjdi1tbXlnbkFKaXVVREp0ZHd4ZXo1LS1HMVpTZkN5USIsImUiOiJBUUFCIn0sInBvc3Nlc3NvciI6eyJrdHkiOiJSU0EiLCJuIjoiaTcxT09Cc25EOGtRcGpERDNKX1ZJQmh4ZHo1M180eTN5NTRyV05zT0NKUjJqaS1nWjM4NzJMNUQ5eU9IcXAzQkZkaDBleGVYelZfc0ZSTHkzaVdTYl9ELTlnV25Kb3pHZEpTWHdHNG42eUFWa3plSGJvb01KXzFwM09Sb001UlNmaUROaUdoMHhkTkwwbF81MHlGQ2tPa3N2SUlFdTgtLWVjWG9jcTd4UmNHSUhZYTZxUUpVRXdLQTJnaVNkR01XNzY5ZllWSE0wNWZwaVNLcXI0dHh1SVhfUDc0QkdSZzBTSWVfaTJ0RlAwY00wRXlhcUNxZ0JUR1BhNng3Z3FzNm1paUdrSUV4TzR2VWJ0b2ZCUHBtLXVzeFhHZW9EMkxsMEZPVHpXejFNWVF3d0l2TmhZdUZhTGN2LW1teWduQUppdVVESnRkd3hlejUtLUcxWlNmQ3lRIiwiZSI6IkFRQUIifSwiZG9jdW1lbnRIYXNoIjoiNmY5YTY3MTI3ZjNiOTc4ZmI5OTFjZGRmZWNkYzdjODRjMGQ2MTQ4MDlkNzljYjk1MGUyMDNlOWUxM2RjYmRjMiIsImlzVG9PcmRlciI6dHJ1ZSwicHJldmlvdXNURFRoYXNoIjpudWxsfQ.PhPSkAZ-or2DJLXIMLdknC-nRcvNNU8qBo_OeXiCFnLAzzeU8WB8aoPbcuziVjrRNQS-djJmYxF3xj_8_y9vhVXfyBI8ThsitClgww_pVgfHvCHQOIEzSM5cC7n4lofGVCe-Xd3w-ucuCXxHIFV6vd1Q6PK6PUeAWaIRvpu0Hw7E_3XOfVtdlIeZzWuGo3Z-4pLHB60Pu_87cdx7dWh4wtRK8SOyooX-1FoGCGUXTA3IemPqH4T-OVegvFLa-WhjFDlFMkBryGF9zA0W3su8Tn-TL2d8i_qwRKft_aWOPkCfscaOON7khhq7NKYu26L0TAWx286KEIyB5YbXUAhtjQ";
+    @Autowired
+    private TransportDocumentTransferRepository repository;
+
+    @Test
+    public void testSaveTDT() {
+        repository.save(new TransportDocumentTransfer(tdtHash, tdtPayload, "current"));
+        Optional<TransportDocumentTransfer> tdt = repository.findById(tdtHash);
+        Assertions.assertEquals(tdt.get().getTdtHash(),tdtHash);
+        Assertions.assertEquals(tdt.get().getTransferStatus(),"current");
+    }
+}
