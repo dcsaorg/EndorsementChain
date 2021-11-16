@@ -195,8 +195,8 @@ yQIDAQAB
                 const shipperPublicKeyJWK = KEYUTIL.getJWKFromKey(shipperPublicKeyFromPem);
                 var carrierPrivateKeyFromPem = new RSAKey();
                 carrierPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("carrierPrivateKeytextArea").value);
-                const issueBLtdt = new TransportDocumentTransfer(shipperPublicKeyJWK, shipperPublicKeyJWK, documentHash, true, null, carrierPrivateKeyFromPem);
                 const carrierPublicKeyFromPem = KEYUTIL.getKey(carrierPublicKey);
+                const issueBLtdt = new TransportDocumentTransfer(shipperPublicKeyJWK, shipperPublicKeyJWK, documentHash, true, null, carrierPrivateKeyFromPem);
                 const isValid2 = KJUR.jws.JWS.verifyJWT(issueBLtdt.asJWT, carrierPublicKeyFromPem, {alg: ['RS256']});
                 console.log("valid JWT?: ", isValid2);
                 await fetch('/api/v1/addTransportDocumentTransfer', {

@@ -36,13 +36,13 @@
         <div class="container" id="supportingText">
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="card" style="background-image: url('images/current.png'); background-repeat: no-repeat; background-position: right top;">
+                    <div class="card" id="mainCard" style="background-image: url('images/current.png'); background-repeat: no-repeat; background-position: right top;">
                     <div class="card-body">
                         <h5 class="card-title">Transport Document</h5>
                           <img src="images/latest.png" class="img-fluid rounded-start" alt="...">
                         <p class="card-text">
                     Document Hash: <span id="documentHash">fc68f3b1c9b809ce39d3142d79d18a22df73914008f0378eb23a487f12c895de</span><br>
-                    Type: DCSA eBL (Carrier Reference: <span id="documentReference">CBA98732498732</span>)
+                    Type: DCSA eBL (Carrier Transport Document Reference: <span id="documentReference">CBA98732498732</span>)
                     <button type="button" class="btn-xs btn-primary" data-bs-toggle="modal" data-bs-target="#viewDCSAeBLModal">
                         View
                     </button>
@@ -272,6 +272,8 @@
                 const receivedJWT = JSON.parse(xhrTdt.response)["transportDocumentTransfer"];
                 let tdt = JSON.parse(KJUR.jws.JWS.parse(receivedJWT).payloadPP);
                 document.getElementById("documentHash").innerHTML = tdt.documentHash;
+                const receivedStatus = JSON.parse(xhrTdt.response)["transferStatus"];
+                document.getElementById("mainCard").style["background-image"] =  "url('images/" + receivedStatus + ".png')";
                  if(tdt.previousTDThash) {
                     document.getElementById("previousPossessor").href = url.pathname + "?id=" + tdt.previousTDThash;
                  }

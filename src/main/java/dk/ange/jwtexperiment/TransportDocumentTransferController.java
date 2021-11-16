@@ -8,9 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.List;
 import java.util.Optional;
+import org.jose4j.jwt.consumer.InvalidJwtException;
 
 //test with curl -X POST -H "Content-Type: application/json" -d '{"tdtHash": "dsfds", "transportDocumentTransfer": "sdfs"}' http://localhost:9090/api/v1/add
 
@@ -29,10 +29,18 @@ public class TransportDocumentTransferController {
 
     @PostMapping(value = "/addTransportDocumentTransfer",consumes = {"application/json"},produces = {"application/json"})
     @ResponseBody
-    public ResponseEntity<TransportDocumentTransfer> addTransportDocumentTransfer(@RequestBody TransportDocumentTransfer transportDocumentTransfer, UriComponentsBuilder builder){
+    public ResponseEntity<TransportDocumentTransfer> addTransportDocumentTransfer(@RequestBody TransportDocumentTransfer transportDocumentTransfer, UriComponentsBuilder builder) throws InvalidJwtException {
+        transportDocumentTransfer.setTransferStatus("current");
         transportDocumentTransferRepo.save(transportDocumentTransfer);
+        transportDocumentTransfer.asJwtClaims();
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.path("/addTransportDocumentTransfer/{id}").buildAndExpand(transportDocumentTransfer.getTdtHash()).toUri());
+        Object previousTDThash = transportDocumentTransfer.asJwtClaims().getClaimValue("previousTDThash");
+        if (previousTDThash != null) {
+            Optional<TransportDocumentTransfer> previousTDT = transportDocumentTransferRepo.findById(previousTDThash.toString());
+            previousTDT.get().setTransferStatus("transferred");
+            transportDocumentTransferRepo.save(previousTDT.get());
+        }
         return new ResponseEntity<TransportDocumentTransfer>(headers, HttpStatus.CREATED);
     }
 
