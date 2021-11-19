@@ -290,6 +290,10 @@
                 const possessorThumbprint = hextob64(ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(tdt.possessor))))).slice(0,20);
                 document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint;
                 document.getElementById("holderThumbprint").innerHTML = holderThumbprint;
+                if (!(holderThumbprint === possessorThumbprint)) {
+                    document.getElementById('transferTitleButton').disabled = "true";
+                    document.getElementById('preTransferTitleButton').disabled = "true";
+                }
 
                 var xhrTD = new XMLHttpRequest();
                 xhrTD.open("GET", "/api/v1/transportDocument/" + tdt.documentHash);
