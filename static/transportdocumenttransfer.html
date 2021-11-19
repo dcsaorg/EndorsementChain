@@ -60,7 +60,7 @@
                     <div class="card" style="background-image: url('images/holder-w-seal-48x48.png'); background-repeat: no-repeat; background-position: center top;">
                     <div class="card-body">
                         <h5 class="card-title">Title</h5>
-                        <p class="card-text">Current holder: 0F AB 6D 9F 17 F1 08 1A EE</p>
+                        <p class="card-text">Current holder: <span id="holderThumbprint">0F AB 6D 9F 17 F1 08 1A EE</span></p>
                         <button type="button" class="btn btn-primary" id="preTransferTitleButton" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         Transfer
                         </button>
@@ -71,7 +71,7 @@
                     <div class="card" style="background-image: url('images/relay-48x48.png'); background-repeat: no-repeat; background-position: center top;">
                     <div class="card-body">
                         <h5 class="card-title">Control</h5>
-                        <p class="card-text">Current possessor: 0F AB 6D 9F 17 F1 08 1A EE</p>
+                        <p class="card-text">Current possessor: <span id="possessorThumbprint">0F AB 6D 9F 17 F1 08 1A EE</span></p>
                         <button type="button" class="btn btn-primary" id="preTransferPossessionButton" data-bs-toggle="modal" data-bs-target="#exampleModal2">
                         Transfer
                         </button>
@@ -270,7 +270,7 @@
             const hashId = url.searchParams.get('id');
             var xhrTdt = new XMLHttpRequest();
             xhrTdt.open("GET", "/api/v1/transportDocumentTransfer/" + hashId);
-            xhrTdt.onload = function() {
+            xhrTdt.onload = async function() {
                 const receivedJWT = JSON.parse(xhrTdt.response)["transportDocumentTransfer"];
                 let tdt = JSON.parse(KJUR.jws.JWS.parse(receivedJWT).payloadPP);
                 document.getElementById("documentHash").innerHTML = tdt.documentHash;
@@ -280,12 +280,16 @@
                     ['transferPossessionButton', 'preTransferPossessionButton',
                      'transferTitleButton', 'preTransferTitleButton',
                      'preTransferToRegistryButton'].forEach(function(buttonName){
-                            document.getElementById(buttonName).disabled = "true";
+                        document.getElementById(buttonName).disabled = "true";
                     });
                 }
                 if(tdt.previousTDThash) {
                     document.getElementById("previousPossessor").href = url.pathname + "?id=" + tdt.previousTDThash;
                 }
+                const holderThumbprint = hextob64(ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(tdt.holder))))).slice(0,20);
+                const possessorThumbprint = hextob64(ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(tdt.possessor))))).slice(0,20);
+                document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint;
+                document.getElementById("holderThumbprint").innerHTML = holderThumbprint;
 
                 var xhrTD = new XMLHttpRequest();
                 xhrTD.open("GET", "/api/v1/transportDocument/" + tdt.documentHash);
