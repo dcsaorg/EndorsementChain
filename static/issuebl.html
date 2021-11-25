@@ -116,18 +116,18 @@
                 var carrierPrivateKeyFromPem = new RSAKey();
                 carrierPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("carrierPrivateKeytextArea").value);
                 const carrierPublicKeyFromPem = KEYUTIL.getKey(carrierPublicKey);
-                const issueBLtdt = new TransportDocumentTransfer(shipperPublicKeyJWK, shipperPublicKeyJWK, documentHash, true, null, carrierPrivateKeyFromPem);
-                const isValid2 = KJUR.jws.JWS.verifyJWT(issueBLtdt.asJWT, carrierPublicKeyFromPem, {alg: ['RS256']});
+                const issueBLtdt = new TransportDocumentTransfer()
+                issueBLtdt.createTdt(shipperPublicKeyJWK, shipperPublicKeyJWK, documentHash, true, null, carrierPrivateKeyFromPem);
+                const isValid2 = KJUR.jws.JWS.verifyJWT(issueBLtdt.asJWT(), carrierPublicKeyFromPem, {alg: ['RS256']});
                 console.log("valid JWT?: ", isValid2);
                 await fetch('/api/v1/addTransportDocumentTransfer', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     tdtHash : await issueBLtdt.tdtHash(),
-                    transportDocumentTransfer: issueBLtdt.asJWT
+                    transportDocumentTransfer: issueBLtdt.asJWT()
                     })
                 });
-
                 location.href = "transportdocumenttransfer.html?id=" + await issueBLtdt.tdtHash();
             });
         }

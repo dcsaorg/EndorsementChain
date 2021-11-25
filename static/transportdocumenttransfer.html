@@ -143,7 +143,9 @@
                             <label class="form-check-label" for="flexRadioDefault3">To named endorsee</label>
                         </div>
                         Paste endorsee's public key or choose from address book.
-                        <textarea class="form-control" id="textAreaExample1" rows="4"></textarea>
+                        <textarea class="form-control" id="endorseePublicKeyTextArea" rows="4"></textarea>
+                        Paste endorser's private key:
+                        <textarea class="form-control" id="endorserPrivateKeyTextArea" rows="4"></textarea>
                     </div>
                     </div>
                     <div class="card">
@@ -272,8 +274,8 @@
             xhrTdt.open("GET", "/api/v1/transportDocumentTransfer/" + hashId);
             xhrTdt.onload = async function() {
                 const receivedJWT = JSON.parse(xhrTdt.response)["transportDocumentTransfer"];
-                let tdt = JSON.parse(KJUR.jws.JWS.parse(receivedJWT).payloadPP);
-                document.getElementById("documentHash").innerHTML = tdt.documentHash;
+                let tdt = new TransportDocumentTransfer(receivedJWT);
+                document.getElementById("documentHash").innerHTML = tdt.documentHash();
                 const receivedStatus = JSON.parse(xhrTdt.response)["transferStatus"];
                 document.getElementById("mainCard").style["background-image"] =  "url('images/" + receivedStatus + ".png')";
                 if (!(receivedStatus === "current")) {
@@ -283,11 +285,11 @@
                         document.getElementById(buttonName).disabled = "true";
                     });
                 }
-                if(tdt.previousTDThash) {
-                    document.getElementById("previousPossessor").href = url.pathname + "?id=" + tdt.previousTDThash;
+                if(tdt.previousTDThash()) {
+                    document.getElementById("previousPossessor").href = url.pathname + "?id=" + tdt.previousTDThash();
                 }
-                const holderThumbprint = hextob64(ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(tdt.holder))))).slice(0,20);
-                const possessorThumbprint = hextob64(ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(tdt.possessor))))).slice(0,20);
+                const holderThumbprint = (await tdt.holderThumbprint()).slice(0,20);
+                const possessorThumbprint = (await tdt.possessorThumbprint()).slice(0,20);
                 document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint;
                 document.getElementById("holderThumbprint").innerHTML = holderThumbprint;
                 if (!(holderThumbprint === possessorThumbprint)) {
@@ -296,7 +298,7 @@
                 }
 
                 var xhrTD = new XMLHttpRequest();
-                xhrTD.open("GET", "/api/v1/transportDocument/" + tdt.documentHash);
+                xhrTD.open("GET", "/api/v1/transportDocument/" + tdt.documentHash());
                 xhrTD.onload = function() {
                     const receivedTD = JSON.parse(JSON.parse(xhrTD.response)["transportDocumentJson"]);
                     document.getElementById('documentReference').innerHTML = receivedTD.documentReference;
@@ -308,23 +310,47 @@
                 }
                 xhrTD.send();
 
-                const button = document.getElementById('transferPossessionButton');
+                let button = document.getElementById('transferPossessionButton');
                 button.addEventListener('click', async _ => {
                     const transfereePublicKeyFromPem = KEYUTIL.getKey(document.getElementById("transfereePublicKeyTextArea").value);
                     const transfereePublicKeyJWK = KEYUTIL.getJWKFromKey(transfereePublicKeyFromPem);
                     var transfererPrivateKeyFromPem = new RSAKey();
                     transfererPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("transfererPrivateKeyTextArea").value);
-                    const transfererPublicKey = KEYUTIL.getKey(tdt.possessor);
-                    const newTdt = new TransportDocumentTransfer(tdt.holder, transfereePublicKeyJWK, tdt.documentHash, tdt.isToOrder, hashId, transfererPrivateKeyFromPem);
-                    const isValid = KJUR.jws.JWS.verifyJWT(newTdt.asJWT, transfererPublicKey, {alg: ['RS256']});
-
+                    const transfererPublicKey = KEYUTIL.getKey(tdt.possessor());
+                    const newTdt = new TransportDocumentTransfer();
+                    newTdt.createTdt(tdt.holder(), transfereePublicKeyJWK, tdt.documentHash(), tdt.isToOrder(), hashId, transfererPrivateKeyFromPem);
+                    const isValid = KJUR.jws.JWS.verifyJWT(newTdt.asJWT(), transfererPublicKey, {alg: ['RS256']});
                     console.log("chain link is valid?: ", isValid);
                     const response = await fetch('/api/v1/addTransportDocumentTransfer', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         tdtHash : await newTdt.tdtHash(),
-                        transportDocumentTransfer: newTdt.asJWT
+                        transportDocumentTransfer: newTdt.asJWT()
+                        })
+                    });
+                    console.log('Completed!', response);
+                    location.href = "transportdocumenttransfer.html?id=" + await newTdt.tdtHash() ;
+                });
+
+                let transferTitleButton = document.getElementById('transferTitleButton');
+                transferTitleButton .addEventListener('click', async _ => {
+                    const endorseePublicKeyFromPem = KEYUTIL.getKey(document.getElementById("endorseePublicKeyTextArea").value);
+                    const endorseePublicKeyJWK = KEYUTIL.getJWKFromKey(endorseePublicKeyFromPem);
+                    var endorserPrivateKeyFromPem = new RSAKey();
+                    endorserPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("endorserPrivateKeyTextArea").value);
+                    const endorserPublicKey = KEYUTIL.getKey(tdt.holder());
+                    const newTdt = new TransportDocumentTransfer();
+                    newTdt.createTdt(endorseePublicKeyJWK, tdt.possessor(), tdt.documentHash(), tdt.isToOrder(), hashId, endorserPrivateKeyFromPem);
+                    const isValid = KJUR.jws.JWS.verifyJWT(newTdt.asJWT(), endorserPublicKey, {alg: ['RS256']});
+
+                    console.log("chain link is valid (title transfer)?: ", isValid);
+                    const response = await fetch('/api/v1/addTransportDocumentTransfer', {
+                    method: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        tdtHash : await newTdt.tdtHash(),
+                        transportDocumentTransfer: newTdt.asJWT()
                         })
                     });
                     console.log('Completed!', response);
