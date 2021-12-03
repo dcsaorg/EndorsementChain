@@ -1,7 +1,7 @@
 package dk.ange.jwtexperiment;
 
 import dk.ange.jwtexperiment.TransportDocumentTransfer;
-import dk.ange.jwtexperiment.TransportDocumentTransferRepository;
+import dk.ange.jwtexperiment.TransportDocumentTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,12 +18,12 @@ import org.jose4j.jwt.consumer.InvalidJwtException;
 @RequestMapping("/api/v1")
 public class TransportDocumentTransferController {
     @Autowired
-    TransportDocumentTransferRepository transportDocumentTransferRepo;
+    TransportDocumentTransferService transportDocumentTransferService;
 
     @GetMapping("/transportDocumentTransfer/{transportDocumentTransferId}")
     @ResponseBody
     public ResponseEntity<TransportDocumentTransfer> getTransportDocumentTransfer(@PathVariable String transportDocumentTransferId){
-        Optional<TransportDocumentTransfer> transportDocumentTransfer = transportDocumentTransferRepo.findById(transportDocumentTransferId);
+        Optional<TransportDocumentTransfer> transportDocumentTransfer = transportDocumentTransferService.findById(transportDocumentTransferId);
         return new ResponseEntity<TransportDocumentTransfer>(transportDocumentTransfer.get(), HttpStatus.OK);
     }
 
@@ -31,33 +31,11 @@ public class TransportDocumentTransferController {
     @ResponseBody
     public ResponseEntity<TransportDocumentTransfer> addTransportDocumentTransfer(@RequestBody TransportDocumentTransfer transportDocumentTransfer, UriComponentsBuilder builder) throws InvalidJwtException {
         transportDocumentTransfer.setTransferStatus("current");
-        transportDocumentTransferRepo.save(transportDocumentTransfer);
+        transportDocumentTransferService.save(transportDocumentTransfer);
         transportDocumentTransfer.asJwtClaims();
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.path("/addTransportDocumentTransfer/{id}").buildAndExpand(transportDocumentTransfer.getTdtHash()).toUri());
-        Object previousTDThash = transportDocumentTransfer.asJwtClaims().getClaimValue("previousTDThash");
-        if (previousTDThash != null) {
-            Optional<TransportDocumentTransfer> previousTDT = transportDocumentTransferRepo.findById(previousTDThash.toString());
-            previousTDT.get().setTransferStatus("transferred");
-            transportDocumentTransferRepo.save(previousTDT.get());
-        }
         return new ResponseEntity<TransportDocumentTransfer>(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updateTransportDocumentTransfer")
-    @ResponseBody
-    public ResponseEntity<TransportDocumentTransfer> updateTransportDocumentTransfer(@RequestBody TransportDocumentTransfer transportDocumentTransfer){
-        if(transportDocumentTransfer != null){
-            transportDocumentTransferRepo.save(transportDocumentTransfer);
-        }
-        return new ResponseEntity<TransportDocumentTransfer>(transportDocumentTransfer, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/deleteTransportDocumentTransfer/{id}")
-    @ResponseBody
-    public ResponseEntity<Void> deleteTransportDocumentTransfer(@PathVariable String id){
-        Optional<TransportDocumentTransfer> transportDocumentTransfer = transportDocumentTransferRepo.findById(id);
-        transportDocumentTransferRepo.delete(transportDocumentTransfer.get());
-        return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
-    }
 }
