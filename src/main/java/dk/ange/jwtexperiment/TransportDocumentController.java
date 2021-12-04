@@ -19,23 +19,23 @@ public class TransportDocumentController {
     @Autowired
     TransportDocumentRepository transportDocumentRepo;
 
-    @GetMapping("/transportDocument/{transportDocumentId}")
+    @GetMapping("/transport-documents/{transportDocumentId}")
     @ResponseBody
     public ResponseEntity<TransportDocument> getTransportDocument(@PathVariable String transportDocumentId){
         Optional<TransportDocument> transportDocument = transportDocumentRepo.findById(transportDocumentId);
         return new ResponseEntity<TransportDocument>(transportDocument.get(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/addTransportDocument",consumes = {"application/json"},produces = {"application/json"})
+    @PostMapping(value = "/transport-documents",consumes = {"application/json"},produces = {"application/json"})
     @ResponseBody
     public ResponseEntity<TransportDocument> addTransportDocument(@RequestBody TransportDocument transportDocument, UriComponentsBuilder builder){
         transportDocumentRepo.save(transportDocument);
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("/addTransportDocument/{id}").buildAndExpand(transportDocument.getDocumentHash()).toUri());
+        headers.setLocation(builder.path("/transport-document/{id}").buildAndExpand(transportDocument.getDocumentHash()).toUri());
         return new ResponseEntity<TransportDocument>(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updateTransportDocument")
+    @PutMapping("/transport-documents")
     @ResponseBody
     public ResponseEntity<TransportDocument> updateTransportDocument(@RequestBody TransportDocument transportDocument){
         if(transportDocument != null){
@@ -44,10 +44,10 @@ public class TransportDocumentController {
         return new ResponseEntity<TransportDocument>(transportDocument, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteTransportDocument/{id}")
+    @DeleteMapping("/transport-documents/{transportDocumentId}")
     @ResponseBody
-    public ResponseEntity<Void> deleteTransportDocument(@PathVariable String id){
-        Optional<TransportDocument> transportDocument = transportDocumentRepo.findById(id);
+    public ResponseEntity<Void> deleteTransportDocument(@PathVariable String transportDocumentId){
+        Optional<TransportDocument> transportDocument = transportDocumentRepo.findById(transportDocumentId);
         transportDocumentRepo.delete(transportDocument.get());
         return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
     }

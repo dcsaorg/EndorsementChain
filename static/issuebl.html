@@ -102,7 +102,7 @@
                 console.log(transportDocument);
                 const stringifiedTransportDocument = JSON.stringify(transportDocument);
                 const documentHash = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', arrayEncoder.encode(stringifiedTransportDocument)));
-                await fetch('/api/v1/addTransportDocument', {
+                await fetch('/api/v1/transport-documents', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -120,7 +120,7 @@
                 issueBLtdt.createTdt(shipperPublicKeyJWK, shipperPublicKeyJWK, documentHash, true, null, carrierPrivateKeyFromPem);
                 const isValid2 = KJUR.jws.JWS.verifyJWT(issueBLtdt.asJWT(), carrierPublicKeyFromPem, {alg: ['RS256']});
                 console.log("valid JWT?: ", isValid2);
-                await fetch('/api/v1/addTransportDocumentTransfer', {
+                await fetch('/api/v1/transport-document-transfers', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({

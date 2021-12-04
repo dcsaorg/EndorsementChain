@@ -20,21 +20,21 @@ public class TransportDocumentTransferController {
     @Autowired
     TransportDocumentTransferService transportDocumentTransferService;
 
-    @GetMapping("/transportDocumentTransfer/{transportDocumentTransferId}")
+    @GetMapping("/transport-document-transfers/{transportDocumentTransferId}")
     @ResponseBody
     public ResponseEntity<TransportDocumentTransfer> getTransportDocumentTransfer(@PathVariable String transportDocumentTransferId){
         Optional<TransportDocumentTransfer> transportDocumentTransfer = transportDocumentTransferService.findById(transportDocumentTransferId);
         return new ResponseEntity<TransportDocumentTransfer>(transportDocumentTransfer.get(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/addTransportDocumentTransfer",consumes = {"application/json"},produces = {"application/json"})
+    @PostMapping(value = "/transport-document-transfers",consumes = {"application/json"},produces = {"application/json"})
     @ResponseBody
     public ResponseEntity<TransportDocumentTransfer> addTransportDocumentTransfer(@RequestBody TransportDocumentTransfer transportDocumentTransfer, UriComponentsBuilder builder) throws InvalidJwtException {
         transportDocumentTransfer.setTransferStatus("current");
         transportDocumentTransferService.save(transportDocumentTransfer);
         transportDocumentTransfer.asJwtClaims();
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("/addTransportDocumentTransfer/{id}").buildAndExpand(transportDocumentTransfer.getTdtHash()).toUri());
+        headers.setLocation(builder.path("/transport-document-transfers/{id}").buildAndExpand(transportDocumentTransfer.getTdtHash()).toUri());
         return new ResponseEntity<TransportDocumentTransfer>(headers, HttpStatus.CREATED);
     }
 

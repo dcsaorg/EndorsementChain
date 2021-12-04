@@ -271,7 +271,7 @@
             const url = new URL(location.href);
             const hashId = url.searchParams.get('id');
             var xhrTdt = new XMLHttpRequest();
-            xhrTdt.open("GET", "/api/v1/transportDocumentTransfer/" + hashId);
+            xhrTdt.open("GET", "/api/v1/transport-document-transfers/" + hashId);
             xhrTdt.onload = async function() {
                 const receivedJWT = JSON.parse(xhrTdt.response)["transportDocumentTransfer"];
                 let tdt = new TransportDocumentTransfer(receivedJWT);
@@ -298,7 +298,7 @@
                 }
 
                 var xhrTD = new XMLHttpRequest();
-                xhrTD.open("GET", "/api/v1/transportDocument/" + tdt.documentHash());
+                xhrTD.open("GET", "/api/v1/transport-documents/" + tdt.documentHash());
                 xhrTD.onload = function() {
                     const receivedTD = JSON.parse(JSON.parse(xhrTD.response)["transportDocumentJson"]);
                     document.getElementById('documentReference').innerHTML = receivedTD.documentReference;
@@ -321,7 +321,7 @@
                     newTdt.createTdt(tdt.holder(), transfereePublicKeyJWK, tdt.documentHash(), tdt.isToOrder(), hashId, transfererPrivateKeyFromPem);
                     const isValid = KJUR.jws.JWS.verifyJWT(newTdt.asJWT(), transfererPublicKey, {alg: ['RS256']});
                     console.log("chain link is valid?: ", isValid);
-                    const response = await fetch('/api/v1/addTransportDocumentTransfer', {
+                    const response = await fetch('/api/v1/transport-document-transfers', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -345,7 +345,7 @@
                     const isValid = KJUR.jws.JWS.verifyJWT(newTdt.asJWT(), endorserPublicKey, {alg: ['RS256']});
 
                     console.log("chain link is valid (title transfer)?: ", isValid);
-                    const response = await fetch('/api/v1/addTransportDocumentTransfer', {
+                    const response = await fetch('/api/v1/transport-document-transfers', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
