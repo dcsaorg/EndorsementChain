@@ -159,22 +159,7 @@
                                 <th scope="col">Fingerprint</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                <td>Juan Zu Ltd.</td>
-                                <td>RSA</td>
-                                <td>0F AB 6D 9F 17</td>
-                                </tr>
-                                <tr>
-                                <td>Ali En Gros S/A</td>
-                                <td>ECDSA</td>
-                                <td>9F 0F AB 6D 11</td>
-                                </tr>
-                                <tr>
-                                <td>Totech Inc.</th>
-                                <td>ECDSA</td>
-                                <td>AB 0F 6D 17 9F </td>
-                                </tr>
+                            <tbody id = "TitleAddressBook">
                             </tbody>
                         </table>
                     </div>
@@ -194,7 +179,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Transfer title</h5>
+                <h5 class="modal-title">Transfer control</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -235,22 +220,7 @@
                                 <th scope="col">Fingerprint</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                <td>Juan Zu Ltd.</td>
-                                <td>RSA</td>
-                                <td>0F AB 6D 9F 17</td>
-                                </tr>
-                                <tr>
-                                <td>Ali En Gros S/A</td>
-                                <td>ECDSA</td>
-                                <td>9F 0F AB 6D 11</td>
-                                </tr>
-                                <tr>
-                                <td>Totech Inc.</th>
-                                <td>ECDSA</td>
-                                <td>AB 0F 6D 17 9F </td>
-                                </tr>
+                            <tbody id = "ControlAddressBook">
                             </tbody>
                         </table>
                     </div>
@@ -358,6 +328,16 @@
                 });
             };
             xhrTdt.send();
+
+            var addressBook = [
+                {"name":"Juan Zu Ltd.", "keyType":"RSA","fingerprint":"0F AB 6D 9F 17"},
+                {"name":"Ali En Gros S/A", "keyType":"ECDSA","fingerprint":"9F 0F AB 6D 11"},
+                {"name":"Totech Inc.", "keyType":"ECDSA","fingerprint":"AB 0F 6D 17 9F "}
+            ]
+            let adressBookString = "";
+            addressBook.forEach(function(entry){adressBookString += "<tr><td>"+entry.name+"</td><td>"+entry.keyType+"</td><td>"+entry.fingerprint+"</td> </tr>"});
+            document.getElementById("TitleAddressBook").innerHTML = adressBookString;
+            document.getElementById("ControlAddressBook").innerHTML = adressBookString;
         }
     </script>
 </html>
