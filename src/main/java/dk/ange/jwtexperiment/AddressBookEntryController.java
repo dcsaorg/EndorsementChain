@@ -19,23 +19,30 @@ public class AddressBookEntryController {
     @Autowired
     AddressBookEntryRepository addressBookEntryRepo;
 
-    @GetMapping("/AddressBookEntry/{AddressBookEntryId}")
+    @GetMapping("/address-book-entries/{AddressBookEntryId}")
     @ResponseBody
     public ResponseEntity<AddressBookEntry> getAddressBookEntry(@PathVariable String AddressBookEntryId){
         Optional<AddressBookEntry> addressBookEntry = addressBookEntryRepo.findById(AddressBookEntryId);
         return new ResponseEntity<AddressBookEntry>(addressBookEntry.get(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/addAddressBookEntry",consumes = {"application/json"},produces = {"application/json"})
+    @GetMapping("/address-book-entries/")
+    @ResponseBody
+    public ResponseEntity<List<AddressBookEntry>> getAddressBookEntries() {
+        List<AddressBookEntry> addressBookEntries = addressBookEntryRepo.findAll();
+        return new ResponseEntity<List<AddressBookEntry>>(addressBookEntries, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/add-address-book-entries",consumes = {"application/json"},produces = {"application/json"})
     @ResponseBody
     public ResponseEntity<AddressBookEntry> getAddressBookEntry(@RequestBody AddressBookEntry addressBookEntry, UriComponentsBuilder builder){
         addressBookEntryRepo.save(addressBookEntry);
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("/addAddressBookEntry/{id}").buildAndExpand(addressBookEntry.getName()).toUri());
+        headers.setLocation(builder.path("/add-address-book-entries/{id}").buildAndExpand(addressBookEntry.getId()).toUri());
         return new ResponseEntity<AddressBookEntry>(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updateAddressBookEntry")
+    @PutMapping("/update-address-book-entries")
     @ResponseBody
     public ResponseEntity<AddressBookEntry> updateAddressBookEntry(@RequestBody AddressBookEntry addressBookEntry){
         if(addressBookEntry != null){
@@ -44,7 +51,7 @@ public class AddressBookEntryController {
         return new ResponseEntity<AddressBookEntry>(addressBookEntry, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteAddressBookEntry/{id}")
+    @DeleteMapping("/delete-address-book-entries/{id}")
     @ResponseBody
     public ResponseEntity<Void> deleteAddressBookEntry(@PathVariable String id){
         Optional<AddressBookEntry> addressBookEntry = addressBookEntryRepo.findById(id);

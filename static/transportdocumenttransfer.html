@@ -330,9 +330,9 @@
             xhrTdt.send();
 
             var addressBook = [
-                {"name":"Juan Zu Ltd.", "keyType":"RSA","fingerprint":"0F AB 6D 9F 17"},
-                {"name":"Ali En Gros S/A", "keyType":"ECDSA","fingerprint":"9F 0F AB 6D 11"},
-                {"name":"Totech Inc.", "keyType":"ECDSA","fingerprint":"AB 0F 6D 17 9F "}
+                {"id":"0F AB 6D 9F 17", "name":"Juan Zu Ltd.","publicKey":"298217398"},
+                {"id":"9F 0F AB 6D 11", "name":"Ali En Gros S/A","publicKey":"387491"},
+                {"id":"AB 0F 6D 17 9F", "name":"Totech Inc.","publicKey":"219873"}
             ]
             let adressBookString = "";
             addressBook.forEach(function(entry){adressBookString += "<tr><td>"+entry.name+"</td><td>"+entry.keyType+"</td><td>"+entry.fingerprint+"</td> </tr>"});
