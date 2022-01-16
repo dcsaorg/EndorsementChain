@@ -329,15 +329,16 @@
             };
             xhrTdt.send();
 
-            var addressBook = [
-                {"id":"0F AB 6D 9F 17", "name":"Juan Zu Ltd.","publicKey":"298217398"},
-                {"id":"9F 0F AB 6D 11", "name":"Ali En Gros S/A","publicKey":"387491"},
-                {"id":"AB 0F 6D 17 9F", "name":"Totech Inc.","publicKey":"219873"}
-            ]
-            let adressBookString = "";
-            addressBook.forEach(function(entry){adressBookString += "<tr><td>"+entry.name+"</td><td>"+entry.keyType+"</td><td>"+entry.fingerprint+"</td> </tr>"});
-            document.getElementById("TitleAddressBook").innerHTML = adressBookString;
-            document.getElementById("ControlAddressBook").innerHTML = adressBookString;
+            var xhrAddressBook = new XMLHttpRequest();
+            xhrAddressBook.open("GET", "/api/v1/address-book-entries/");
+            xhrAddressBook.onload = async function() {
+                const addressBook = JSON.parse(xhrAddressBook.response);
+                let adressBookString = "";
+                addressBook.forEach(function(entry){adressBookString += "<tr><td>"+entry.name+"</td><td>"+entry.publicKey+"</td><td>"+entry.id+"</td> </tr>"});
+                document.getElementById("TitleAddressBook").innerHTML = adressBookString;
+                document.getElementById("ControlAddressBook").innerHTML = adressBookString;
+            }
+            xhrAddressBook.send();
         }
     </script>
 </html>
