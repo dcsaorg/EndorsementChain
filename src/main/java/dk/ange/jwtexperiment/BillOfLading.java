@@ -1,10 +1,14 @@
 package dk.ange.jwtexperiment;
 
 import javax.persistence.*;
-import lombok.Setter;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
+import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.lang.reflect.Field;
+import java.io.File;
+import java.io.IOException;
 
 /*
  * A class representing a Bill of Lading as rendered to paper.
@@ -12,8 +16,17 @@ import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "billoflading")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
 public class BillOfLading {
+
+    public BillOfLading(String jsonSource) throws IOException, IllegalAccessException {
+        ObjectMapper mapper = new ObjectMapper();
+        BillOfLading bol = mapper.readValue(jsonSource, BillOfLading.class);
+        Field[] fields = BillOfLading.class.getFields();
+        for (int i = 0; i < fields.length; ++i) {
+            fields[i].set(this, fields[i].get(bol));
+        }
+    }
 
     @Id
     @Column
@@ -141,4 +154,15 @@ public class BillOfLading {
 
     @Column
     public String noAndSequenceOfOriginalBLs;
+
+    public PDDocument toPdf() throws IOException, IllegalAccessException {
+        PDDocument pdfDocument = PDDocument.load(new File(Thread.currentThread().getContextClassLoader().getResource("BillOfLadingWithForms.pdf").getPath()));
+        PDAcroForm acroForm = pdfDocument.getDocumentCatalog().getAcroForm();
+        Field[] fields = BillOfLading.class.getFields();
+        for (int i = 0; i < fields.length; ++i) {
+            String k = fields[i].toString().split("\\.")[6];
+            acroForm.getField(k).setValue((String)fields[i].get(this));
+        }
+        return pdfDocument;
+    };
 }
