@@ -13,6 +13,7 @@
         <script src="jsrsasign-latest-all-min.js"></script>
         <script src="transportdocumenttransfer.js"></script>
         <script src="testkeys.js"></script>
+        <script src="blfields.js"></script>
         <link href="custom.css" rel="stylesheet">
         <title>Title Registry</title>
         <style>
@@ -39,28 +40,55 @@
                     <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Issue Transport Document</h5>
-                        <p class="card-text">
-                    Carrier's Document Reference: <input type="text" class="form-control" id="carrierDocumentReference"><br>
-                    Load Port: <input type="text" class="form-control" id="loadPort"><br>
-                    Discharge Port: <input type="text" class="form-control" id="dischargePort"><br>
-                    Commodity: <input type="text" class="form-control" id="commodity"><br>
-                    Vessel: <input type="text" class="form-control" id="vesselName"><br>
-                    Voyage: <input type="text" class="form-control" id="voyageNumber"><br>
-                    Document Type: <select class="form-select" aria-label="BL Type">
-                        <option value="2" disabled="true">Generic document</option>
-                        <option value="1">DCSA eBL</option>
-                        </select><br>
-                    Endorsement Type: <select class="form-select" aria-label="Endorsement Type">
-                        <option value="1">To order</option>
-                        <option value="2">To order of consignee</option>
-                        <option value="3">To order of bank</option>
-                        <option value="4">Straight</option>
-                        </select><br>
-                    Consignee
-                    <input type="text" class="form-control" placeholder="Consignee public key"><br>
-                    Upload document or paste in its hash:
-                    <input type="file" class="form-control" id="customFile" />
-                    <input type="text" class="form-control" placeholder="Document hash (SHA256)"><br>
+                        <p class="card-text" id="blFields">
+                            Carrier's Document Reference: <input type="text" class="form-control" id="blno"><br>
+                            Port Of Loading: <input type="text" class="form-control" id="portOfLoading"><br>
+                            Port Of Discharge: <input type="text" class="form-control" id="portOfDischarge"><br>
+                            Commodity: <input type="text" class="form-control" id="descriptionOfGoods"><br>
+                            Vessel: <input type="text" class="form-control" id="vessel"><br>
+                            Voyage: <input type="text" class="form-control" id="voyageNo"><br>
+                            Shipper: <input type="text" class="form-control" id="shipper"><br>
+                            Export Import Svc Ref: <input type="text" class="form-control" id="exportImportSvcRef"><br>
+                            Forwarding Agent References: <input type="text" class="form-control" id="forwardingAgentReferences"><br>
+                            Consignee: <input type="text" class="form-control" id="consignee"><br>
+                            Notify Party: <input type="text" class="form-control" id="notifyParty"><br>
+                            Also Notify Party: <input type="text" class="form-control" id="alsoNotifyParty"><br>
+                            Booking No/ Carrier Ref: <input type="text" class="form-control" id="bookingNoCarrierRef"><br>
+                            Pre-carriage by: <input type="text" class="form-control" id="preCarriageBy"><br>
+                            Place of Receipt: <input type="text" class="form-control" id="placeOfReceipt"><br>
+                            Place of Delivery: <input type="text" class="form-control" id="placeOfDelivery"><br>
+                            Onward Inland Routing Final Destination: <input type="text" class="form-control" id="onwardInlandRoutingFinalDestination"><br>
+                            Container Numbers: <input type="text" class="form-control" id="containerNumbers"><br>
+                            Size/Types: <input type="text" class="form-control" id="sizeTypes"><br>
+                            Seal Nos: <input type="text" class="form-control" id="sealNos"><br>
+                            Description Of Goods: <input type="text" class="form-control" id="descriptionOfGoods"><br>
+                            Cargo Gross Weights: <input type="text" class="form-control" id="cargoGrossWeights"><br>
+                            Receipt Delivery Type: <input type="text" class="form-control" id="receiptDeliveryType"><br>
+                            Cargo Movement Type: <input type="text" class="form-control" id="cargoMovementType"><br>
+                            Is Part Load: <input type="text" class="form-control" id="isPartLoad"><br>
+                            HS Code: <input type="text" class="form-control" id="hsCode"><br>
+                            Reefer Settings: <input type="text" class="form-control" id="reeferSettings"><br>
+                            Point And Country Of Origin Of Goods: <input type="text" class="form-control" id="pointAndCountryOfOriginOfGoods"><br>
+                            Shipper Declared Value: <input type="text" class="form-control" id="shipperDeclaredValue"><br>
+                            Freight And Charges Payable By At: <input type="text" class="form-control" id="freightAndChargesPayableByAt"><br>
+                            Freight And Charges: <input type="text" class="form-control" id="freightAndCharges"><br>
+                            Basis: <input type="text" class="form-control" id="basis"><br>
+                            Rate: <input type="text" class="form-control" id="rate"><br>
+                            Prepaid: <input type="text" class="form-control" id="prepaid"><br>
+                            Collect: <input type="text" class="form-control" id="collect"><br>
+                            Total Freight: <input type="text" class="form-control" id="totalFreight"><br>
+                            Carrier Clauses: <input type="text" class="form-control" id="carrierClauses"><br>
+                            Total Number Of Containers Received: <input type="text" class="form-control" id="totalNumberOfContainersReceived"><br>
+                            Place Of Issue: <input type="text" class="form-control" id="placeOfIssue"><br>
+                            Shipped On Board Date: <input type="text" class="form-control" id="shippedOnBoardDate"><br>
+                            Date Of Issue: <input type="text" class="form-control" id="dateOfIssue"><br>
+                            No And Sequence Of Original BLs: <input type="text" class="form-control" id="noAndSequenceOfOriginalBLs"><br>
+                            Endorsement Type: <select class="form-select" aria-label="Endorsement Type">
+                                <option value="1">To order</option>
+                                <option value="2">To order of consignee</option>
+                                <option value="3">To order of bank</option>
+                                <option value="4">Straight</option>
+                                </select><br>
                         </p>
                     </div>
                     </div>
@@ -87,18 +115,14 @@
         window.onload = function(){
             document.getElementById("carrierPrivateKeytextArea").value = carrierPrivateKey;
             document.getElementById("shipperPublicKeytextArea").value = shipperPublicKey;
-
             const button = document.getElementById('post-btn');
             button.addEventListener('click', async _ => {
                 var arrayEncoder = new TextEncoder(); // always utf-8
-                const transportDocument = {
-                    documentReference: document.getElementById("carrierDocumentReference").value,
-                    portOfLoad: document.getElementById("loadPort").value,
-                    portOfDischarge: document.getElementById("dischargePort").value,
-                    commodity: document.getElementById("commodity").value,
-                    vessel: document.getElementById("vesselName").value,
-                    voyage: document.getElementById("voyageNumber").value
-                }
+                var transportDocument = {};
+                blFields.forEach(function(field) {
+                    console.log(field);
+                    transportDocument[field] = document.getElementById(field).value;
+                });
                 console.log(transportDocument);
                 const stringifiedTransportDocument = JSON.stringify(transportDocument);
                 const documentHash = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', arrayEncoder.encode(stringifiedTransportDocument)));

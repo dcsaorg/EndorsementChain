@@ -15,7 +15,7 @@ public class TransportDocument {
     @Column
     private String documentHash;
 
-    @Column
+    @Column(columnDefinition="TEXT")
     private String transportDocumentJson;
 
 }

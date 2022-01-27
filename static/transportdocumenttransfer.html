@@ -13,6 +13,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.js" type="text/javascript"></script>
         <script src="jsrsasign-latest-all-min.js"></script>
         <script src="transportdocumenttransfer.js"></script>
+        <script src="blfields.js"></script>
         <link href="custom.css" rel="stylesheet">
         <title>Title Registry</title>
         <style>
@@ -42,7 +43,7 @@
                           <img src="images/latest.png" class="img-fluid rounded-start" alt="...">
                         <p class="card-text">
                     Document Hash: <span id="documentHash">fc68f3b1c9b809ce39d3142d79d18a22df73914008f0378eb23a487f12c895de</span><br>
-                    Type: DCSA eBL (Carrier Transport Document Reference: <span id="documentReference">CBA98732498732</span>)
+                    Type: DCSA eBL (Carrier Transport Document Reference: <span id="blno">CBA98732498732</span>)
                     <button type="button" class="btn-xs btn-primary" data-bs-toggle="modal" data-bs-target="#viewDCSAeBLModal">
                         View
                     </button>
@@ -103,12 +104,7 @@
                     <div class="modal-body">
                         <div class="form-outline">
                             <div class="card">
-                                <div class="card-body">
-                                    Port of load: <span id="portOfLoad"></span><br>
-                                    Port of discharge: <span id="portOfDischarge"></span><br>
-                                    Port of vessel: <span id="vessel"></span><br>
-                                    Port of voyage: <span id="voyage"></span><br>
-                                    Port of commodity: <span id="commodity"></span><br>
+                                <div class="card-body" id="blFields">
                                 </div>
                             </div>
                         </div>
@@ -117,7 +113,7 @@
             </div>
         </div>
 
-        <!-- Modal -->
+        <!-- Transfer Title Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -174,7 +170,7 @@
         </div>
         </div>
 
-        <!-- Modal 2-->
+        <!-- Transfer Possession Modal -->
         <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -271,12 +267,10 @@
                 xhrTD.open("GET", "/api/v1/transport-documents/" + tdt.documentHash());
                 xhrTD.onload = function() {
                     const receivedTD = JSON.parse(JSON.parse(xhrTD.response)["transportDocumentJson"]);
-                    document.getElementById('documentReference').innerHTML = receivedTD.documentReference;
-                    document.getElementById('portOfLoad').innerHTML = receivedTD.portOfLoad;
-                    document.getElementById('portOfDischarge').innerHTML = receivedTD.portOfDischarge;
-                    document.getElementById('vessel').innerHTML = receivedTD.vessel;
-                    document.getElementById('voyage').innerHTML = receivedTD.voyage;
-                    document.getElementById('commodity').innerHTML = receivedTD.commodity;
+                    blFields.forEach(function(field) {
+                        document.getElementById('blFields').innerHTML += field + ": <span>" + receivedTD[field] + "</span><br>" ;
+                    });
+                    document.getElementById('blno').innerHTML = receivedTD.blno;
                 }
                 xhrTD.send();
 
