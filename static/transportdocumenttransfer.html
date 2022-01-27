@@ -47,6 +47,9 @@
                     <button type="button" class="btn-xs btn-primary" data-bs-toggle="modal" data-bs-target="#viewDCSAeBLModal">
                         View
                     </button>
+                    <a id="pdfDownloadLink">
+                        Download
+                    </a>
                     <br>
                     Is to order: <span style="color: green;"><b>yes</b></span><br>
                     <a id="previousPossessor" href="previous.html">Previous possessor</a><br>
@@ -273,7 +276,7 @@
                     document.getElementById('blno').innerHTML = receivedTD.blno;
                 }
                 xhrTD.send();
-
+                document.getElementById("pdfDownloadLink").href = "/api/v1/transport-documents/" + tdt.documentHash() + "/pdf"
                 let button = document.getElementById('transferPossessionButton');
                 button.addEventListener('click', async _ => {
                     const transfereePublicKeyFromPem = KEYUTIL.getKey(document.getElementById("transfereePublicKeyTextArea").value);

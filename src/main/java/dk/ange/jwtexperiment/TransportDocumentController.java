@@ -11,6 +11,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
+import java.io.ByteArrayOutputStream;
+import org.apache.pdfbox.pdmodel.PDDocument;
 
 
 @RestController
@@ -19,14 +21,26 @@ public class TransportDocumentController {
     @Autowired
     TransportDocumentRepository transportDocumentRepo;
 
-    @GetMapping("/transport-documents/{transportDocumentId}")
+    @GetMapping(value = "/transport-documents/{transportDocumentId}", produces = {"application/json"})
     @ResponseBody
     public ResponseEntity<TransportDocument> getTransportDocument(@PathVariable String transportDocumentId){
         Optional<TransportDocument> transportDocument = transportDocumentRepo.findById(transportDocumentId);
         return new ResponseEntity<TransportDocument>(transportDocument.get(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/transport-documents",consumes = {"application/json"},produces = {"application/json"})
+    @GetMapping(value = "/transport-documents/{transportDocumentId}/pdf", produces = {"application/pdf"})
+    @ResponseBody
+    public byte[] getTransportDocumentAsPdf(@PathVariable String transportDocumentId) throws java.io.IOException, java.lang.IllegalAccessException {
+        Optional<TransportDocument> transportDocument = transportDocumentRepo.findById(transportDocumentId);
+        BillOfLading bol = new BillOfLading(transportDocument.get().getTransportDocumentJson());
+        PDDocument bolPdf = bol.toPdf();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bolPdf.save(baos);
+        bolPdf.close();
+        return baos.toByteArray();
+    }
+
+    @PostMapping(value = "/transport-documents", consumes = {"application/json"}, produces = {"application/json"})
     @ResponseBody
     public ResponseEntity<TransportDocument> addTransportDocument(@RequestBody TransportDocument transportDocument, UriComponentsBuilder builder){
         transportDocumentRepo.save(transportDocument);
