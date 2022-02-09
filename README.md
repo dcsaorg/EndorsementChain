@@ -13,7 +13,7 @@ It revolves around a GET and a POST endpoint for *document transfer blocks*, eac
  * a boolean indicating whether the eBL is to order
  * the hash of the previous transfer block
 
-The block (a JWT) is signed by the previous possessor, in effect creating a cryptographically linked list. One of the purposes of the POC is to determine if this signing scheme is implementable in practice by the existing eBL solution providers.
+The block (a JWT) is signed by the previous possessor, in effect creating a cryptographically linked list, functionally equivalent to the list of signatures on the paper bill of lading. One of the purposes of the POC is to determine if this signing scheme is implementable in practice by the existing eBL solution providers.
 
 To build and run it:
 ```
