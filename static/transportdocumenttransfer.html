@@ -62,7 +62,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <div class="card" style="background-image: url('images/holder-w-seal-48x48.png'); background-repeat: no-repeat; background-position: center top;">
                     <div class="card-body">
                         <h5 class="card-title">Title</h5>
@@ -73,23 +73,12 @@
                     </div>
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <div class="card" style="background-image: url('images/relay-48x48.png'); background-repeat: no-repeat; background-position: center top;">
                     <div class="card-body">
                         <h5 class="card-title">Control</h5>
                         <p class="card-text">Current possessor: <span id="possessorThumbprint">0F AB 6D 9F 17 F1 08 1A EE</span></p>
                         <button type="button" class="btn btn-primary" id="preTransferPossessionButton" data-bs-toggle="modal" data-bs-target="#exampleModal2">
-                        Transfer
-                        </button>
-                    </div>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Transfer to other registry</h5>
-                        <p class="card-text"><br></p>
-                        <button type="button" class="btn btn-primary" id="preTransferToRegistryButton" data-bs-toggle="modal" data-bs-target="#transferRegistryModal">
                         Transfer
                         </button>
                     </div>
@@ -151,6 +140,8 @@
                     </div>
                     <div class="card">
                     <div class="card-body">
+                        <label class="form-label" for="transferTypeTextAreaExample">Select receiving registry</label>
+                        <input type="text" class="form-control" id="receivingRegistryTitle"><br>
                         <label class="form-label" for="textAreaExample">Address Book</label>
                         <table class="table">
                             <thead>
@@ -212,6 +203,8 @@
                     </div>
                     <div class="card">
                     <div class="card-body">
+                        <label class="form-label" for="transferTypeTextAreaExample">Select receiving registry</label>
+                        <input type="text" class="form-control" id="receivingRegistryPossession"><br>
                         <label class="form-label" for="textAreaExample">Address Book</label>
                         <table class="table">
                             <thead>
@@ -236,52 +229,6 @@
         </div>
         </div>
 
-        <!-- Transfer Registry Modal -->
-        <div class="modal fade" id="transferRegistryModal" tabindex="-1" aria-labelledby="transferRegistryModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Transfer to registry</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-outline">
-                    <div class="card">
-                        <div class="card-body">
-                            <label class="form-label" for="transferTypeTextAreaExample">Select receiving registry</label>
-                            <input type="text" class="form-control" id="receivingRegistry"><br>
-                            Paste transferee's public key or choose from address book.
-                            <textarea class="form-control" id="transferRegistryTransfereePublicKeyTextArea" rows="4"></textarea>
-                            Paste transferer's private key:
-                            <textarea class="form-control" id="transferRegistryTransfererPrivateKeyTextArea" rows="4"></textarea>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <label class="form-label" for="textAreaExample">Address Book (retrieved from receiving registry)</label>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Key type</th>
-                                    <th scope="col">Fingerprint</th>
-                                    </tr>
-                                </thead>
-                                <tbody id = "ControlAddressBook">
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="transferPossessionButton">Transfer</button>
-            </div>
-            </div>
-        </div>
-        </div>
-
     </body>
     <script>
         window.onload = function(){
@@ -291,14 +238,13 @@
             xhrTdt.open("GET", "/api/v1/transport-document-transfers/" + hashId);
             xhrTdt.onload = async function() {
                 const receivedJWT = JSON.parse(xhrTdt.response)["transportDocumentTransfer"];
-                let tdt = new TransportDocumentTransfer(receivedJWT);
+                let tdt = new TransportDocumentTransfer(JSON.parse(receivedJWT));
                 document.getElementById("documentHash").innerHTML = tdt.documentHash();
                 const receivedStatus = JSON.parse(xhrTdt.response)["transferStatus"];
                 document.getElementById("mainCard").style["background-image"] =  "url('images/" + receivedStatus + ".png')";
                 if (!(receivedStatus === "current")) {
                     ['transferPossessionButton', 'preTransferPossessionButton',
-                     'transferTitleButton', 'preTransferTitleButton',
-                     'preTransferToRegistryButton'].forEach(function(buttonName){
+                     'transferTitleButton', 'preTransferTitleButton'].forEach(function(buttonName){
                         document.getElementById(buttonName).disabled = "true";
                     });
                 }
@@ -334,14 +280,16 @@
                     const transfererPublicKey = KEYUTIL.getKey(tdt.possessor());
                     const newTdt = new TransportDocumentTransfer();
                     newTdt.createTdt(tdt.holder(), transfereePublicKeyJWK, tdt.documentHash(), tdt.isToOrder(), hashId, transfererPrivateKeyFromPem);
-                    const isValid = KJUR.jws.JWS.verifyJWT(newTdt.asJWT(), transfererPublicKey, {alg: ['RS256']});
+                    let verifierJWT = new KJUR.jws.JWSJS();
+                    verifierJWT.readJWSJS(newTdt.asJWT())
+                    const isValid = verifierJWT.verifyNth(0, transfererPublicKey, {alg: ['RS256']});
                     console.log("chain link is valid?: ", isValid);
                     const response = await fetch('/api/v1/transport-document-transfers', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         tdtHash : await newTdt.tdtHash(),
-                        transportDocumentTransfer: newTdt.asJWT()
+                        transportDocumentTransfer: JSON.stringify(newTdt.asValidJWT())
                         })
                     });
                     console.log('Completed!', response);
@@ -357,15 +305,16 @@
                     const endorserPublicKey = KEYUTIL.getKey(tdt.holder());
                     const newTdt = new TransportDocumentTransfer();
                     newTdt.createTdt(endorseePublicKeyJWK, tdt.possessor(), tdt.documentHash(), tdt.isToOrder(), hashId, endorserPrivateKeyFromPem);
-                    const isValid = KJUR.jws.JWS.verifyJWT(newTdt.asJWT(), endorserPublicKey, {alg: ['RS256']});
-
+                    let verifierJWT = new KJUR.jws.JWSJS();
+                    verifierJWT.readJWSJS(newTdt.asJWT())
+                    const isValid = verifierJWT.verifyNth(0, endorserPublicKey, {alg: ['RS256']});
                     console.log("chain link is valid (title transfer)?: ", isValid);
                     const response = await fetch('/api/v1/transport-document-transfers', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         tdtHash : await newTdt.tdtHash(),
-                        transportDocumentTransfer: newTdt.asJWT()
+                        transportDocumentTransfer: JSON.stringify(newTdt.asValidJWT())
                         })
                     });
                     console.log('Completed!', response);

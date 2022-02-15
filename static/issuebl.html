@@ -141,14 +141,16 @@
                 const carrierPublicKeyFromPem = KEYUTIL.getKey(carrierPublicKey);
                 const issueBLtdt = new TransportDocumentTransfer()
                 issueBLtdt.createTdt(shipperPublicKeyJWK, shipperPublicKeyJWK, documentHash, true, null, carrierPrivateKeyFromPem);
-                const isValid2 = KJUR.jws.JWS.verifyJWT(issueBLtdt.asJWT(), carrierPublicKeyFromPem, {alg: ['RS256']});
+                let verifierJWT = new KJUR.jws.JWSJS();
+                verifierJWT.readJWSJS(issueBLtdt.asJWT())
+                const isValid2 = verifierJWT.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']});
                 console.log("valid JWT?: ", isValid2);
                 await fetch('/api/v1/transport-document-transfers', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     tdtHash : await issueBLtdt.tdtHash(),
-                    transportDocumentTransfer: issueBLtdt.asJWT()
+                    transportDocumentTransfer: JSON.stringify(issueBLtdt.asValidJWT())
                     })
                 });
                 location.href = "transportdocumenttransfer.html?id=" + await issueBLtdt.tdtHash();

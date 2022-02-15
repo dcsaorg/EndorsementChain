@@ -19,11 +19,14 @@ describe("TDT", function() {
 
     it("should return proper SHA256 hash", async function() {
         const hash = await tdt.tdtHash();
-        expect(hash).toEqual("1842cf2d3125671cbde4be4b8d8cfed0c77c076a3453bdfe26935ba5bfafc9db");
+        expect(hash).toEqual("1d402d14de9fc064f2ad7e8d82b489b013e238e30dcf33c7750e77e535320c40");
+        expect(hash).not.toEqual("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"); //hash of null
     });
 
-    it("should have valid JWT", function() {
-        const signatureIsValid = KJUR.jws.JWS.verifyJWT(tdt.asJWT(), carrierPublicKeyFromPem, {alg: ['RS256']});
+    it("should have valid signature", function() {
+        let verifierJWT = new KJUR.jws.JWSJS();
+        verifierJWT.readJWSJS(tdt.asJWT())
+        const signatureIsValid = verifierJWT.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']});
         expect(signatureIsValid).toEqual(true);
     });
 

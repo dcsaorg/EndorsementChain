@@ -4,13 +4,14 @@ import lombok.Setter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-
 import javax.persistence.*;
-
-import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.consumer.JwtConsumer;
-import org.jose4j.jwt.consumer.JwtConsumerBuilder;
-import org.jose4j.jwt.consumer.InvalidJwtException;
+import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.*;
+import com.nimbusds.jose.jwk.*;
+import com.nimbusds.jose.jwk.gen.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /*
  * The Transport Document Transfer object
@@ -32,14 +33,10 @@ public class TransportDocumentTransfer {
     @Column(columnDefinition = "varchar(255) default 'current'")
     private String transferStatus; //"current", "transferred", "surrendered"
 
-    /*
-     * Extract the JSON structure from the JWT
-     */
-    public JwtClaims asJwtClaims() throws InvalidJwtException {
-        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-            .setSkipSignatureVerification()
-            .build();
-        JwtClaims jsonTDT = jwtConsumer.processToClaims(transportDocumentTransfer);
-        return jsonTDT;
+    public String getPreviousTDThash() throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JWSObjectJSON transferBlockAsJson = JWSObjectJSON.parse(transportDocumentTransfer);
+        JsonNode transferBlock = (JsonNode) mapper.readTree(transferBlockAsJson.getPayload().toString());
+        return transferBlock.hasNonNull("previousTDThash")? transferBlock.get("previousTDThash").textValue() : null;
     }
 }

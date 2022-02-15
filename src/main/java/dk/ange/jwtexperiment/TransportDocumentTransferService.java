@@ -5,7 +5,6 @@ import dk.ange.jwtexperiment.TransportDocumentTransferRepository;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.jose4j.jwt.consumer.InvalidJwtException;
 
 @Service
 public class TransportDocumentTransferService {
@@ -16,10 +15,10 @@ public class TransportDocumentTransferService {
         return transportDocumentTransferRepository.findById(id);
     }
 
-    public void save(TransportDocumentTransfer transportDocumentTransfer) throws InvalidJwtException {
-        Object previousTDThash = transportDocumentTransfer.asJwtClaims().getClaimValue("previousTDThash");
+    public void save(TransportDocumentTransfer transportDocumentTransfer) throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
+        String previousTDThash = transportDocumentTransfer.getPreviousTDThash();
         if (previousTDThash != null) {
-            Optional<TransportDocumentTransfer> previousTDT = transportDocumentTransferRepository.findById(previousTDThash.toString());
+            Optional<TransportDocumentTransfer> previousTDT = transportDocumentTransferRepository.findById(previousTDThash);
             previousTDT.get().setTransferStatus("transferred");
             transportDocumentTransferRepository.save(previousTDT.get());
         }
