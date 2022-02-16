@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
         <meta name="keywords" content="title, electronic, bill of lading">
-        <meta name="description" content="The Registry">
+        <meta name="description" content="The eBL Platform">
         <meta name="robots" content="all">
         <meta charset="utf-8">
         <link rel="icon" href="images/logo-simple.jpg">
@@ -15,7 +15,7 @@
         <script src="transportdocumenttransfer.js"></script>
         <script src="blfields.js"></script>
         <link href="custom.css" rel="stylesheet">
-        <title>Title Registry</title>
+        <title>Title eBL Platform</title>
         <style>
             #menuList {margin-left: auto; margin-right: 20px !important;}
             .navbar {margin-bottom: 25px;}
@@ -24,7 +24,7 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-default navbar-dark shadow">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/">The Registry</a>
+                <a class="navbar-brand" href="/">The eBL Platform</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -76,7 +76,7 @@
                 <div class="col-sm-6">
                     <div class="card" style="background-image: url('images/relay-48x48.png'); background-repeat: no-repeat; background-position: center top;">
                     <div class="card-body">
-                        <h5 class="card-title">Control</h5>
+                        <h5 class="card-title">Possession</h5>
                         <p class="card-text">Current possessor: <span id="possessorThumbprint">0F AB 6D 9F 17 F1 08 1A EE</span></p>
                         <button type="button" class="btn btn-primary" id="preTransferPossessionButton" data-bs-toggle="modal" data-bs-target="#exampleModal2">
                         Transfer
@@ -118,43 +118,43 @@
             <div class="modal-body">
                 <div class="form-outline">
                     <div class="card">
-                    <div class="card-body">
-                        <label class="form-label" for="textAreaExample">Endorsement Type</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" disabled="true">
-                            <label class="form-check-label" for="flexRadioDefault1">To order (blank)</label>
+                        <div class="card-body">
+                            <label class="form-label" for="transferTypeTextAreaExample">Select receiving eBL Platform</label>
+                            <input type="text" class="form-control" id="receivingRegistryTitle"><br>
+                            <label class="form-label" for="textAreaExample">Address Book</label>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Key type</th>
+                                    <th scope="col">Fingerprint</th>
+                                    </tr>
+                                </thead>
+                                <tbody id = "TitleAddressBook">
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                            <label class="form-check-label" for="flexRadioDefault2">To order of endorsee</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3" disabled="true">
-                            <label class="form-check-label" for="flexRadioDefault3">To named endorsee</label>
-                        </div>
-                        Paste endorsee's public key or choose from address book.
-                        <textarea class="form-control" id="endorseePublicKeyTextArea" rows="4"></textarea>
-                        Paste endorser's private key:
-                        <textarea class="form-control" id="endorserPrivateKeyTextArea" rows="4"></textarea>
-                    </div>
                     </div>
                     <div class="card">
-                    <div class="card-body">
-                        <label class="form-label" for="transferTypeTextAreaExample">Select receiving registry</label>
-                        <input type="text" class="form-control" id="receivingRegistryTitle"><br>
-                        <label class="form-label" for="textAreaExample">Address Book</label>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                <th scope="col">Name</th>
-                                <th scope="col">Key type</th>
-                                <th scope="col">Fingerprint</th>
-                                </tr>
-                            </thead>
-                            <tbody id = "TitleAddressBook">
-                            </tbody>
-                        </table>
-                    </div>
+                        <div class="card-body">
+                            <label class="form-label" for="textAreaExample">Endorsement Type</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" disabled="true">
+                                <label class="form-check-label" for="flexRadioDefault1">To order (blank)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                                <label class="form-check-label" for="flexRadioDefault2">To order of endorsee</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3" disabled="true">
+                                <label class="form-check-label" for="flexRadioDefault3">To named endorsee</label>
+                            </div>
+                            Paste endorsee's public key or choose from address book.
+                            <textarea class="form-control" id="endorseePublicKeyTextArea" rows="4"></textarea>
+                            Paste endorser's private key:
+                            <textarea class="form-control" id="endorserPrivateKeyTextArea" rows="4"></textarea>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -171,11 +171,29 @@
         <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Transfer control</h5>
+                <h5 class="modal-title">Transfer possession</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="form-outline">
+                    <div class="card">
+                        <div class="card-body">
+                            <label class="form-label" for="transferTypeTextAreaExample">Select receiving eBL Platform</label>
+                            <input type="text" class="form-control" id="receivingRegistryPossession"><br>
+                            <label class="form-label" for="textAreaExample">Address Book</label>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Key type</th>
+                                    <th scope="col">Fingerprint</th>
+                                    </tr>
+                                </thead>
+                                <tbody id = "PossessionAddressBook">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     <div class="card">
                         <div class="card-body">
                             <label class="form-label" for="transferTypeTextAreaExample">Transfer Type</label>
@@ -197,27 +215,9 @@
                             </div>
                             Paste transferee's public key or choose from address book.
                             <textarea class="form-control" id="transfereePublicKeyTextArea" rows="4"></textarea>
-                            Paste transferer's private key:
-                            <textarea class="form-control" id="transfererPrivateKeyTextArea" rows="4"></textarea>
+                            Paste transferor's private key:
+                            <textarea class="form-control" id="transferorPrivateKeyTextArea" rows="4"></textarea>
                         </div>
-                    </div>
-                    <div class="card">
-                    <div class="card-body">
-                        <label class="form-label" for="transferTypeTextAreaExample">Select receiving registry</label>
-                        <input type="text" class="form-control" id="receivingRegistryPossession"><br>
-                        <label class="form-label" for="textAreaExample">Address Book</label>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                <th scope="col">Name</th>
-                                <th scope="col">Key type</th>
-                                <th scope="col">Fingerprint</th>
-                                </tr>
-                            </thead>
-                            <tbody id = "ControlAddressBook">
-                            </tbody>
-                        </table>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -275,14 +275,14 @@
                 button.addEventListener('click', async _ => {
                     const transfereePublicKeyFromPem = KEYUTIL.getKey(document.getElementById("transfereePublicKeyTextArea").value);
                     const transfereePublicKeyJWK = KEYUTIL.getJWKFromKey(transfereePublicKeyFromPem);
-                    var transfererPrivateKeyFromPem = new RSAKey();
-                    transfererPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("transfererPrivateKeyTextArea").value);
-                    const transfererPublicKey = KEYUTIL.getKey(tdt.possessor());
+                    var transferorPrivateKeyFromPem = new RSAKey();
+                    transferorPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("transferorPrivateKeyTextArea").value);
+                    const transferorPublicKey = KEYUTIL.getKey(tdt.possessor());
                     const newTdt = new TransportDocumentTransfer();
-                    newTdt.createTdt(tdt.holder(), transfereePublicKeyJWK, tdt.documentHash(), tdt.isToOrder(), hashId, transfererPrivateKeyFromPem);
+                    newTdt.createTdt(tdt.holder(), transfereePublicKeyJWK, tdt.documentHash(), tdt.isToOrder(), hashId, transferorPrivateKeyFromPem);
                     let verifierJWT = new KJUR.jws.JWSJS();
                     verifierJWT.readJWSJS(newTdt.asJWT())
-                    const isValid = verifierJWT.verifyNth(0, transfererPublicKey, {alg: ['RS256']});
+                    const isValid = verifierJWT.verifyNth(0, transferorPublicKey, {alg: ['RS256']});
                     console.log("chain link is valid?: ", isValid);
                     const response = await fetch('/api/v1/transport-document-transfers', {
                     method: 'post',
@@ -330,7 +330,7 @@
                 let adressBookString = "";
                 addressBook.forEach(function(entry){adressBookString += "<tr><td>"+entry.name+"</td><td>"+entry.publicKey+"</td><td>"+entry.id+"</td> </tr>"});
                 document.getElementById("TitleAddressBook").innerHTML = adressBookString;
-                document.getElementById("ControlAddressBook").innerHTML = adressBookString;
+                document.getElementById("PossessionAddressBook").innerHTML = adressBookString;
             }
             xhrAddressBook.send();
         }
