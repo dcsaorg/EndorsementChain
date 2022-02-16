@@ -19,6 +19,8 @@ To build and run it:
 ```
 cat initdb.sql |sudo -u postgres psql
 mvn spring-boot:run
+keytool -genkeypair -alias dcsa-kid -keyalg RSA  -keypass dcsa-pass -keystore dcsa-jwt.jks  -storepass dcsa-pass
+mv dcsa-jwt.jks src/main/resources
 ```
 
 Then point your browser to http://localhost:9090/static/issuebl.html
