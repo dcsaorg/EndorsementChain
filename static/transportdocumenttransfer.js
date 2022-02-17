@@ -5,9 +5,9 @@
 function TransportDocumentTransfer(jwt) {
 
     this.JWT = jwt;
-    this.createTdt = function(holder, possessor, documentHash, isToOrder, previousTDThash, transfererPrivateKey) {
+    this.createTdt = function(holder, possessor, documentHash, isToOrder, previousTDThash, transfererPrivateKey, nextRegistry) {
         let tmpJWT =  KJUR.jws.JWS.sign(null, {alg: "RS256"},
-                                     JSON.stringify({holder: holder, possessor: possessor, documentHash: documentHash, isToOrder: isToOrder, previousTDThash: previousTDThash}),
+                                     JSON.stringify({holder: holder, possessor: possessor, documentHash: documentHash, isToOrder: isToOrder, previousTDThash: previousTDThash, nextRegistry: nextRegistry}),
                                      transfererPrivateKey);
 
         this.JWT = new KJUR.jws.JWSJS();
@@ -58,6 +58,10 @@ function TransportDocumentTransfer(jwt) {
 
     this.previousTDThash = function() {
         return JSON.parse(b64utos(this.JWT.payload))["previousTDThash"];
+    }
+
+    this.nextRegistry = function() {
+        return JSON.parse(b64utos(this.JWT.payload))["nextRegistry"];
     }
 
     this.holderThumbprint = async function () {

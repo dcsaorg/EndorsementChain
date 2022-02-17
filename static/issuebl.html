@@ -140,7 +140,7 @@
                 carrierPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("carrierPrivateKeytextArea").value);
                 const carrierPublicKeyFromPem = KEYUTIL.getKey(carrierPublicKey);
                 const issueBLtdt = new TransportDocumentTransfer()
-                issueBLtdt.createTdt(shipperPublicKeyJWK, shipperPublicKeyJWK, documentHash, true, null, carrierPrivateKeyFromPem);
+                issueBLtdt.createTdt(shipperPublicKeyJWK, shipperPublicKeyJWK, documentHash, true, null, carrierPrivateKeyFromPem, null);
                 let verifierJWT = new KJUR.jws.JWSJS();
                 verifierJWT.readJWSJS(issueBLtdt.asJWT())
                 const isValid2 = verifierJWT.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']});

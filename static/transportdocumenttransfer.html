@@ -56,6 +56,7 @@
                     Is to order: <span style="color: green;"><b>yes</b></span><br>
                     <a id="previousPossessor" href="previous.html">Previous possessor</a><br>
                     <a href="by-laws.html">By-laws</a><br>
+                    <div id="nextRegistryImportLink"></div>
                         </p>
                     </div>
                     </div>
@@ -178,7 +179,7 @@
                 <div class="form-outline">
                     <div class="card">
                         <div class="card-body">
-                            <label class="form-label" for="transferTypeTextAreaExample">Select receiving eBL Platform</label>
+                            <label class="form-label">Select receiving eBL Platform</label>
                             <input type="text" class="form-control" id="receivingRegistryPossession"><br>
                             <label class="form-label" for="textAreaExample">Address Book</label>
                             <table class="table">
@@ -251,6 +252,9 @@
                 if(tdt.previousTDThash()) {
                     document.getElementById("previousPossessor").href = url.pathname + "?id=" + tdt.previousTDThash();
                 }
+                if(tdt.nextRegistry()) {
+                    document.getElementById("nextRegistryImportLink").innerHTML = "This document has been transferred to another platform. Paste in the following link to import and activate it on the other platform:<br>" + window.location.host + "/api/v1/transport-document-transfers/" + hashId;
+                }
                 const holderThumbprint = (await tdt.holderThumbprint()).slice(0,20);
                 const possessorThumbprint = (await tdt.possessorThumbprint()).slice(0,20);
                 document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint;
@@ -278,13 +282,18 @@
                     var transferorPrivateKeyFromPem = new RSAKey();
                     transferorPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("transferorPrivateKeyTextArea").value);
                     const transferorPublicKey = KEYUTIL.getKey(tdt.possessor());
+                    let nextRegistryJwk = null;
+                    const nextRegistry = document.getElementById("receivingRegistryPossession").value;
+                    if (nextRegistry.length > 0) {
+                        nextRegistryJwk = await fetch('http://' + nextRegistry+'/.well-known/jwks.json');
+                    }
                     const newTdt = new TransportDocumentTransfer();
-                    newTdt.createTdt(tdt.holder(), transfereePublicKeyJWK, tdt.documentHash(), tdt.isToOrder(), hashId, transferorPrivateKeyFromPem);
+                    newTdt.createTdt(tdt.holder(), transfereePublicKeyJWK, tdt.documentHash(), tdt.isToOrder(), hashId, transferorPrivateKeyFromPem, nextRegistryJwk);
                     let verifierJWT = new KJUR.jws.JWSJS();
                     verifierJWT.readJWSJS(newTdt.asJWT())
                     const isValid = verifierJWT.verifyNth(0, transferorPublicKey, {alg: ['RS256']});
                     console.log("chain link is valid?: ", isValid);
-                    const response = await fetch('/api/v1/transport-document-transfers', {
+                    const postTDTresponse = await fetch('/api/v1/transport-document-transfers', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -292,19 +301,18 @@
                         transportDocumentTransfer: JSON.stringify(newTdt.asValidJWT())
                         })
                     });
-                    console.log('Completed!', response);
                     location.href = "transportdocumenttransfer.html?id=" + await newTdt.tdtHash() ;
                 });
 
                 let transferTitleButton = document.getElementById('transferTitleButton');
-                transferTitleButton .addEventListener('click', async _ => {
+                transferTitleButton.addEventListener('click', async _ => {
                     const endorseePublicKeyFromPem = KEYUTIL.getKey(document.getElementById("endorseePublicKeyTextArea").value);
                     const endorseePublicKeyJWK = KEYUTIL.getJWKFromKey(endorseePublicKeyFromPem);
                     var endorserPrivateKeyFromPem = new RSAKey();
                     endorserPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("endorserPrivateKeyTextArea").value);
                     const endorserPublicKey = KEYUTIL.getKey(tdt.holder());
                     const newTdt = new TransportDocumentTransfer();
-                    newTdt.createTdt(endorseePublicKeyJWK, tdt.possessor(), tdt.documentHash(), tdt.isToOrder(), hashId, endorserPrivateKeyFromPem);
+                    newTdt.createTdt(endorseePublicKeyJWK, tdt.possessor(), tdt.documentHash(), tdt.isToOrder(), hashId, endorserPrivateKeyFromPem, null);
                     let verifierJWT = new KJUR.jws.JWSJS();
                     verifierJWT.readJWSJS(newTdt.asJWT())
                     const isValid = verifierJWT.verifyNth(0, endorserPublicKey, {alg: ['RS256']});

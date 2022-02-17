@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <meta name="keywords" content="title, electronic, bill of lading">
+        <meta name="description" content="The Other eBL Platform">
+        <meta name="robots" content="all">
+        <meta charset="utf-8">
+        <link rel="icon" href="images/logo-simple.jpg">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="jsrsasign-latest-all-min.js"></script>
+        <script src="transportdocumenttransfer.js"></script>
+        <script src="testkeys.js"></script>
+        <script src="blfields.js"></script>
+        <link href="custom.css" rel="stylesheet">
+        <title>The Other eBL Platform</title>
+        <style>
+            #menuList {margin-left: auto; margin-right: 20px !important;}
+            .navbar {margin-bottom: 25px;}
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light shadow">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">The Other Registry</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul id="menuList" class="navbar-nav me-auto mb-2 mb-lg-0">
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container" id="supportingText">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Import Bill of Lading to platform</h5>
+                        <p class="card-text" id="blFields">
+                            Paste importer's private key:
+                            <textarea class="form-control" id="importerPrivateKeyTextArea" rows="4"></textarea>
+                            Paste your source registry URL and BL identifier: <input type="text" class="form-control" id="registryurl"><br>
+                            <button type="button" class="btn btn-primary" id="importBolButton">
+                                Import
+                            </button>
+                        </p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        window.onload = function(){
+            let importBolButton = document.getElementById("importBolButton");
+            importBolButton.addEventListener('click', async _ => {
+                let bolSource = document.getElementById("registryurl").value;
+                let fetchedTdt= new TransportDocumentTransfer(JSON.parse((await (await fetch('http://' + bolSource)).json())["transportDocumentTransfer"]));
+                let importerPrivateKey = document.getElementById("importerPrivateKeyTextArea").value;
+                let importedTdt = new TransportDocumentTransfer();
+                importedTdt.createTdt(fetchedTdt.holder(), fetchedTdt.possessor(), fetchedTdt.documentHash(), fetchedTdt.isToOrder(), await fetchedTdt.tdtHash(), importerPrivateKey, null);
+                let verifierJWT = new KJUR.jws.JWSJS();
+                verifierJWT.readJWSJS(importedTdt.asJWT());
+                const isValid = verifierJWT.verifyNth(0, KEYUTIL.getKey(fetchedTdt.possessor()), {alg: ['RS256']});
+                console.log("jwt is valid: " + isValid);
+                const postTDTresponse = await fetch('/api/v1/transport-document-transfers', {
+                    method: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        tdtHash : await importedTdt.tdtHash(),
+                        transportDocumentTransfer: JSON.stringify(importedTdt.asValidJWT())
+                        })
+                    });
+                location.href = "transportdocumenttransfer.html?id=" + await importedTdt.tdtHash() ;
+            });
+        }
+    </script>
+</html>
