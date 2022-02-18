@@ -314,16 +314,39 @@
             };
             xhrTdt.send();
 
+            let addressBook;
             var xhrAddressBook = new XMLHttpRequest();
             xhrAddressBook.open("GET", "/api/v1/address-book-entries/");
             xhrAddressBook.onload = async function() {
-                const addressBook = JSON.parse(xhrAddressBook.response);
+                addressBook = JSON.parse(xhrAddressBook.response);
                 let adressBookString = "";
                 addressBook.forEach(function(entry){adressBookString += "<tr><td>"+entry.name+"</td><td>"+entry.publicKey+"</td><td>"+entry.id+"</td> </tr>"});
                 document.getElementById("TitleAddressBook").innerHTML = adressBookString;
                 document.getElementById("PossessionAddressBook").innerHTML = adressBookString;
             }
             xhrAddressBook.send();
+
+            let apiKey;
+            document.getElementById('target').addEventListener('change', function () {
+                switch(target.value) {
+                    case "shipperPublicKey":
+                        apiKey = addressBook[2].publicKey;
+                        console.log(apiKey)
+                        break;
+                    case "carrierPublicKey":
+                        apiKey = addressBook[1].publicKey;
+                        console.log(apiKey)
+                        break;
+                    case "endorseePublicKey":
+                        apiKey = addressBook[0].publicKey;
+                        console.log(apiKey)
+                        break;
+                    default:
+                        apiKey = null;
+                        console.log(apiKey)
+                }
+
+            })
         }
     </script>
 </html>
