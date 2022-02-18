@@ -23,6 +23,7 @@ public class TransportDocumentController {
 
     @GetMapping(value = "/transport-documents/{transportDocumentId}", produces = {"application/json"})
     @ResponseBody
+    @CrossOrigin(origins = "*")
     public ResponseEntity<TransportDocument> getTransportDocument(@PathVariable String transportDocumentId){
         Optional<TransportDocument> transportDocument = transportDocumentRepo.findById(transportDocumentId);
         return new ResponseEntity<TransportDocument>(transportDocument.get(), HttpStatus.OK);

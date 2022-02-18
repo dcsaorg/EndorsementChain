@@ -59,7 +59,7 @@
             let importBolButton = document.getElementById("importBolButton");
             importBolButton.addEventListener('click', async _ => {
                 let bolSource = document.getElementById("registryurl").value;
-                let fetchedTdt= new TransportDocumentTransfer(JSON.parse((await (await fetch('http://' + bolSource)).json())["transportDocumentTransfer"]));
+                let fetchedTdt= new TransportDocumentTransfer(JSON.parse((await (await fetch('https://' + bolSource)).json())["transportDocumentTransfer"]));
                 let importerPrivateKey = document.getElementById("importerPrivateKeyTextArea").value;
                 let importedTdt = new TransportDocumentTransfer();
                 importedTdt.createTdt(fetchedTdt.holder(), fetchedTdt.possessor(), fetchedTdt.documentHash(), fetchedTdt.isToOrder(), await fetchedTdt.tdtHash(), importerPrivateKey, null);

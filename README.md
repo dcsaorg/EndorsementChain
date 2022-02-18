@@ -18,9 +18,10 @@ The block (a JWT) is signed by the previous possessor, in effect creating a cryp
 To build and run it:
 ```
 cat initdb.sql |sudo -u postgres psql
+keytool -genkeypair -alias dcsa-kid -keyalg RSA -keystore dcsa-jwt.jks -storepass dcsa-pass
+keytool -genkeypair -alias springboot-https -keyalg RSA -storetype PKCS12 -keystore springboot-https.p12 -storepass your_key-store_password
+mv dcsa-jwt.jks springboot-https.p12 src/main/resources
 mvn spring-boot:run
-keytool -genkeypair -alias dcsa-kid -keyalg RSA  -keypass dcsa-pass -keystore dcsa-jwt.jks  -storepass dcsa-pass
-mv dcsa-jwt.jks src/main/resources
 ```
 
 Then point your browser to http://localhost:9090/static/issuebl.html

@@ -20,6 +20,7 @@ public class AddressBookEntryController {
     AddressBookEntryRepository addressBookEntryRepo;
 
     @GetMapping("/address-book-entries/{AddressBookEntryId}")
+    @CrossOrigin(origins = "*")
     @ResponseBody
     public ResponseEntity<AddressBookEntry> getAddressBookEntry(@PathVariable String AddressBookEntryId){
         Optional<AddressBookEntry> addressBookEntry = addressBookEntryRepo.findById(AddressBookEntryId);
@@ -27,6 +28,7 @@ public class AddressBookEntryController {
     }
 
     @GetMapping("/address-book-entries/")
+    @CrossOrigin(origins = "*")
     @ResponseBody
     public ResponseEntity<List<AddressBookEntry>> getAddressBookEntries() {
         List<AddressBookEntry> addressBookEntries = addressBookEntryRepo.findAll();

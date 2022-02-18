@@ -20,6 +20,7 @@ public class TransportDocumentTransferController {
     TransportDocumentTransferService transportDocumentTransferService;
 
     @GetMapping("/transport-document-transfers/{transportDocumentTransferId}")
+    @CrossOrigin(origins = "*")
     @ResponseBody
     public ResponseEntity<TransportDocumentTransfer> getTransportDocumentTransfer(@PathVariable String transportDocumentTransferId){
         Optional<TransportDocumentTransfer> transportDocumentTransfer = transportDocumentTransferService.findById(transportDocumentTransferId);

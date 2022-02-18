@@ -285,7 +285,7 @@
                     let nextRegistryJwk = null;
                     const nextRegistry = document.getElementById("receivingRegistryPossession").value;
                     if (nextRegistry.length > 0) {
-                        nextRegistryJwk = await fetch('http://' + nextRegistry+'/.well-known/jwks.json');
+                        nextRegistryJwk = await fetch('https://' + nextRegistry+'/.well-known/jwks.json');
                     }
                     const newTdt = new TransportDocumentTransfer();
                     newTdt.createTdt(tdt.holder(), transfereePublicKeyJWK, tdt.documentHash(), tdt.isToOrder(), hashId, transferorPrivateKeyFromPem, nextRegistryJwk);

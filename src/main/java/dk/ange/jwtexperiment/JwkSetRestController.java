@@ -12,6 +12,7 @@ public class JwkSetRestController {
     private JWKSet jwkSet;
 
     @GetMapping("/.well-known/jwks.json")
+    @CrossOrigin(origins = "*")
     public Map<String, Object> keys() {
         return this.jwkSet.toJSONObject();
     }

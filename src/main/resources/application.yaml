@@ -13,5 +13,9 @@ spring:
       ddl-auto: update
 
 server:
-  port: 9090
-
+  ssl:
+    key-store: classpath:springboot-https.p12
+    key-store-password: your_key-store_password
+    key-store-type: pkcs12
+    key-alias: springboot-https
+  port: 8443

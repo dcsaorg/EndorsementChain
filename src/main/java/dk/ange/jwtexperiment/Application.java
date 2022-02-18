@@ -16,9 +16,10 @@ import org.springframework.core.io.ClassPathResource;
 import java.security.KeyPair;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
-//key store generated with:
-// keytool -genkeypair -alias dcsa-kid -keyalg RSA  -keypass dcsa-pass -keystore dcsa-jwt.jks  -storepass dcsa-pass
+
+//See README.md regarding the key store generation
 
 @SpringBootApplication(exclude={SecurityAutoConfiguration.class})
 public class Application {
@@ -30,7 +31,7 @@ public class Application {
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public KeyPair platformKeyPair() {
-        ClassPathResource ksFile = new ClassPathResource("dcsa-jwt.jks");
+        ClassPathResource ksFile = new ClassPathResource("dcsa-jwk.jks");
         KeyStoreKeyFactory ksFactory = new KeyStoreKeyFactory(ksFile, "dcsa-pass".toCharArray());
         return ksFactory.getKeyPair("dcsa-kid");
     }
@@ -43,6 +44,10 @@ public class Application {
             .algorithm(JWSAlgorithm.RS256)
             .keyID("dcsa-kid");
         return new JWKSet(builder.build());
+    }
+
+    protected void configure(HttpSecurity http)  throws Exception {
+         http.authorizeRequests().anyRequest().permitAll();
     }
 
 }
