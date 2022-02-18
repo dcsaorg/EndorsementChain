@@ -19,6 +19,7 @@
         <style>
             #menuList {margin-left: auto; margin-right: 20px !important;}
             .navbar {margin-bottom: 25px;}
+            .noPaddingLeft{padding-left: 0;}
         </style>
     </head>
     <body>
@@ -122,36 +123,26 @@
                             <label class="form-label" for="transferTypeTextAreaExample">Select receiving eBL Platform</label>
                             <input type="text" class="form-control" id="receivingRegistryTitle"><br>
                             <label class="form-label" for="textAreaExample">Address Book</label>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Key type</th>
-                                    <th scope="col">Fingerprint</th>
-                                    </tr>
-                                </thead>
-                                <tbody id = "TitleAddressBook">
-                                </tbody>
-                            </table>
+                            <div class="form-check noPaddingLeft">
+                                <select id="target">
+                                    <option value="">Select...</option>
+                                    <option value="shipperPublicKey">Shipper</option>
+                                    <option value="carrierPublicKey">Carrier</option>
+                                    <option value="endorseePublicKey">Endorsee</option>
+                                <select>
+                            </div>
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-body">
                             <label class="form-label" for="textAreaExample">Endorsement Type</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" disabled="true">
-                                <label class="form-check-label" for="flexRadioDefault1">To order (blank)</label>
+                            <div class="form-check noPaddingLeft" style="margin-bottom: 1rem">
+                                <select >
+                                    <option disabled="true">To order (blank)</option>
+                                    <option checked>To order of endorsee</option>
+                                    <option disabled="true">To named endorsee</option>
+                                </select>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                                <label class="form-check-label" for="flexRadioDefault2">To order of endorsee</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3" disabled="true">
-                                <label class="form-check-label" for="flexRadioDefault3">To named endorsee</label>
-                            </div>
-                            Paste endorsee's public key or choose from address book.
-                            <textarea class="form-control" id="endorseePublicKeyTextArea" rows="4"></textarea>
                             Paste endorser's private key:
                             <textarea class="form-control" id="endorserPrivateKeyTextArea" rows="4"></textarea>
                         </div>
