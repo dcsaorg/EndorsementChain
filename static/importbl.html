@@ -55,27 +55,38 @@
         </div>
     </body>
     <script>
-        window.onload = function(){
+        window.onload = async function(){
             let importBolButton = document.getElementById("importBolButton");
             importBolButton.addEventListener('click', async _ => {
-                let bolSource = document.getElementById("registryurl").value;
-                let fetchedTdt= new TransportDocumentTransfer(JSON.parse((await (await fetch('https://' + bolSource)).json())["transportDocumentTransfer"]));
-                let importerPrivateKey = document.getElementById("importerPrivateKeyTextArea").value;
+                const bolSource = document.getElementById("registryurl").value;
+                const bolSourceDomain = bolSource.split('/')[0];
+                const fetchedTdt= new TransportDocumentTransfer(JSON.parse((await (await fetch('https://' + bolSource)).json())["transportDocumentTransfer"]));
+                const fetchBLString = 'https://'+bolSourceDomain +'/api/v1/transport-documents/' + fetchedTdt.documentHash();
+                const fetchedBL = await (await fetch(fetchBLString)).json();
+                const importerPrivateKey = document.getElementById("importerPrivateKeyTextArea").value;
                 let importedTdt = new TransportDocumentTransfer();
                 importedTdt.createTdt(fetchedTdt.holder(), fetchedTdt.possessor(), fetchedTdt.documentHash(), fetchedTdt.isToOrder(), await fetchedTdt.tdtHash(), importerPrivateKey, null);
                 let verifierJWT = new KJUR.jws.JWSJS();
                 verifierJWT.readJWSJS(importedTdt.asJWT());
-                const isValid = verifierJWT.verifyNth(0, KEYUTIL.getKey(fetchedTdt.possessor()), {alg: ['RS256']});
-                console.log("jwt is valid: " + isValid);
-                const postTDTresponse = await fetch('/api/v1/transport-document-transfers', {
+                const signatureIsValid = verifierJWT.verifyNth(0, KEYUTIL.getKey(fetchedTdt.possessor()), {alg: ['RS256']});
+                if(signatureIsValid) {
+                await fetch('/api/v1/transport-document-transfers', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         tdtHash : await importedTdt.tdtHash(),
                         transportDocumentTransfer: JSON.stringify(importedTdt.asValidJWT())
-                        })
-                    });
+                    })
+                });
+                await fetch('/api/v1/transport-documents', {
+                    method: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(fetchedBL)
+                });
                 location.href = "transportdocumenttransfer.html?id=" + await importedTdt.tdtHash() ;
+                } else {
+                    alert("Invalid signature. Mismatch between signature and private key.");
+                }
             });
         }
     </script>
