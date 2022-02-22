@@ -33,7 +33,7 @@ public class TransportDocumentTransferController {
         transportDocumentTransfer.setTransferStatus("current");
         transportDocumentTransferService.save(transportDocumentTransfer);
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("/transport-document-transfers/{id}").buildAndExpand(transportDocumentTransfer.getTdtHash()).toUri());
+        headers.setLocation(builder.path("/transport-document-transfers/{id}").buildAndExpand(transportDocumentTransfer.getTransferBlockHash()).toUri());
         return new ResponseEntity<TransportDocumentTransfer>(headers, HttpStatus.CREATED);
     }
 

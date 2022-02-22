@@ -11,7 +11,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <script src="jsrsasign-latest-all-min.js"></script>
-        <script src="transportdocumenttransfer.js"></script>
+        <script src="transferblock.js"></script>
         <script src="testkeys.js"></script>
         <script src="blfields.js"></script>
         <link href="custom.css" rel="stylesheet">
@@ -58,32 +58,54 @@
         window.onload = async function(){
             let importBolButton = document.getElementById("importBolButton");
             importBolButton.addEventListener('click', async _ => {
+                const importerPrivateKey = document.getElementById("importerPrivateKeyTextArea").value;
                 const bolSource = document.getElementById("registryurl").value;
                 const bolSourceDomain = bolSource.split('/')[0];
-                const fetchedTdt= new TransportDocumentTransfer(JSON.parse((await (await fetch('https://' + bolSource)).json())["transportDocumentTransfer"]));
-                const fetchBLString = 'https://'+bolSourceDomain +'/api/v1/transport-documents/' + fetchedTdt.documentHash();
+                const exportBlock= new PlatformExportTransferBlock(JSON.parse((await (await fetch('https://' + bolSource)).json())["transferBlock"]));
+                const importedPossessionBlock = new PossessionTransferBlock(JSON.parse((await (await fetch('https://' + bolSourceDomain + '/api/v1/transport-document-transfers/' +
+                                                                                                            exportBlock.possessionTransferBlockhash())).json())["transferBlock"]));
+                let importBlock= new PlatformImportTransferBlock();
+                importBlock.init(importedPossessionBlock.transferee(), {"previousRegistryURL" : bolSource}, importerPrivateKey);
+                const importedTitleBlock= new TitleTransferBlock(JSON.parse((await (await fetch('https://' + bolSourceDomain + '/api/v1/transport-document-transfers/' +
+                                                                                                importedPossessionBlock.titleTransferBlockHash())).json())["transferBlock"]));
+                const fetchBLString = 'https://'+bolSourceDomain +'/api/v1/transport-documents/' + importedTitleBlock.documentHash();
                 const fetchedBL = await (await fetch(fetchBLString)).json();
-                const importerPrivateKey = document.getElementById("importerPrivateKeyTextArea").value;
-                let importedTdt = new TransportDocumentTransfer();
-                importedTdt.createTdt(fetchedTdt.holder(), fetchedTdt.possessor(), fetchedTdt.documentHash(), fetchedTdt.isToOrder(), await fetchedTdt.tdtHash(), importerPrivateKey, null);
-                let verifierJWT = new KJUR.jws.JWSJS();
-                verifierJWT.readJWSJS(importedTdt.asJWT());
-                const signatureIsValid = verifierJWT.verifyNth(0, KEYUTIL.getKey(fetchedTdt.possessor()), {alg: ['RS256']});
-                if(signatureIsValid) {
-                await fetch('/api/v1/transport-document-transfers', {
+
+                const signaturesAreValid = true; //TODO: fetch relevant public keys from exporting platform and check signatures
+                if(signaturesAreValid) {
+                    await fetch('/api/v1/transport-document-transfers', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        tdtHash : await importedTdt.tdtHash(),
-                        transportDocumentTransfer: JSON.stringify(importedTdt.asValidJWT())
-                    })
-                });
-                await fetch('/api/v1/transport-documents', {
+                        transferBlockHash : await importBlock.blockHash(),
+                        transferBlock: JSON.stringify(importBlock.JWS),
+                        previousTransferBlockHash: null
+                        })
+                    });
+                    await fetch('/api/v1/transport-document-transfers', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(fetchedBL)
-                });
-                location.href = "transportdocumenttransfer.html?id=" + await importedTdt.tdtHash() ;
+                    body: JSON.stringify({
+                        transferBlockHash : await importedTitleBlock.blockHash(),
+                        transferBlock: JSON.stringify(importedTitleBlock.JWS),
+                        previousTransferBlockHash: null
+                        })
+                    });
+                    await fetch('/api/v1/transport-document-transfers', {
+                    method: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        transferBlockHash : await importedPossessionBlock.blockHash(),
+                        transferBlock: JSON.stringify(importedPossessionBlock.JWS),
+                        previousTransferBlockHash: await importBlock.blockHash()
+                        })
+                    });
+                    await fetch('/api/v1/transport-documents', {
+                        method: 'post',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(fetchedBL)
+                    });
+                    location.href = "transportdocumenttransfer.html?id=" + await importedPossessionBlock.blockHash() ;
                 } else {
                     alert("Invalid signature. Mismatch between signature and private key.");
                 }

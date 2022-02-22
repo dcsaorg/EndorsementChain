@@ -12,7 +12,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.js" type="text/javascript"></script>
         <script src="jsrsasign-latest-all-min.js"></script>
-        <script src="transportdocumenttransfer.js"></script>
+        <script src="transferblock.js"></script>
         <script src="blfields.js"></script>
         <link href="custom.css" rel="stylesheet">
         <title>Title eBL Platform</title>
@@ -232,104 +232,127 @@
 
     </body>
     <script>
-        window.onload = function(){
+        window.onload = async function(){
             const url = new URL(location.href);
-            const hashId = url.searchParams.get('id');
-            var xhrTdt = new XMLHttpRequest();
-            xhrTdt.open("GET", "/api/v1/transport-document-transfers/" + hashId);
-            xhrTdt.onload = async function() {
-                const receivedJWT = JSON.parse(xhrTdt.response)["transportDocumentTransfer"];
-                let tdt = new TransportDocumentTransfer(JSON.parse(receivedJWT));
-                document.getElementById("documentHash").innerHTML = tdt.documentHash();
-                const receivedStatus = JSON.parse(xhrTdt.response)["transferStatus"];
-                document.getElementById("mainCard").style["background-image"] =  "url('images/" + receivedStatus + ".png')";
-                if (!(receivedStatus === "current")) {
-                    ['transferPossessionButton', 'preTransferPossessionButton',
-                     'transferTitleButton', 'preTransferTitleButton'].forEach(function(buttonName){
-                        document.getElementById(buttonName).disabled = "true";
-                    });
-                }
-                if(tdt.previousTDThash()) {
-                    document.getElementById("previousPossessor").href = url.pathname + "?id=" + tdt.previousTDThash();
-                }
-                if(tdt.nextRegistry()) {
-                    document.getElementById("nextRegistryImportLink").innerHTML = "This document has been transferred to another platform. Paste in the following link to import and activate it on the other platform:<br>" + window.location.host + "/api/v1/transport-document-transfers/" + hashId;
-                }
-                const holderThumbprint = (await tdt.holderThumbprint()).slice(0,20);
-                const possessorThumbprint = (await tdt.possessorThumbprint()).slice(0,20);
-                document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint;
-                document.getElementById("holderThumbprint").innerHTML = holderThumbprint;
-                if (!(holderThumbprint === possessorThumbprint)) {
-                    document.getElementById('transferTitleButton').disabled = "true";
-                    document.getElementById('preTransferTitleButton').disabled = "true";
-                }
+            const possessionHashId = url.searchParams.get('id');
+            const possessionTdt= await (await fetch("/api/v1/transport-document-transfers/" + possessionHashId)).json();
+            const possessionBlock = new PossessionTransferBlock(JSON.parse(possessionTdt["transferBlock"]));
+            const titleTdt= await (await fetch("/api/v1/transport-document-transfers/" + possessionBlock.titleTransferBlockHash())).json();
+            const titleBlock = new TitleTransferBlock(JSON.parse(titleTdt["transferBlock"]));
+            document.getElementById("documentHash").innerHTML = titleBlock.documentHash();
+            const receivedStatus = possessionTdt["transferStatus"];
+            document.getElementById("mainCard").style["background-image"] =  "url('images/" + receivedStatus + ".png')";
+            if (!(receivedStatus === "current")) {
+                ['transferPossessionButton', 'preTransferPossessionButton',
+                    'transferTitleButton', 'preTransferTitleButton'].forEach(function(buttonName){
+                    document.getElementById(buttonName).disabled = "true";
+                });
+            }
+            if(possessionTdt.previousTransferBlockHash) {
+                document.getElementById("previousPossessor").href = url.pathname + "?id=" + possessionTdt.previousTransferBlockHash;
+            }
+            const holderThumbprint = (await titleBlock.transfereeThumbprint()).slice(0,20);
+            const possessorThumbprint = (await possessionBlock.transfereeThumbprint()).slice(0,20);
+            document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint;
+            document.getElementById("holderThumbprint").innerHTML = holderThumbprint;
+            if (!(holderThumbprint === possessorThumbprint)) {
+                document.getElementById('transferTitleButton').disabled = "true";
+                document.getElementById('preTransferTitleButton').disabled = "true";
+            }
 
-                var xhrTD = new XMLHttpRequest();
-                xhrTD.open("GET", "/api/v1/transport-documents/" + tdt.documentHash());
-                xhrTD.onload = function() {
-                    const receivedTD = JSON.parse(JSON.parse(xhrTD.response)["transportDocumentJson"]);
-                    blFields.forEach(function(field) {
-                        document.getElementById('blFields').innerHTML += field + ": <span>" + receivedTD[field] + "</span><br>" ;
+            var xhrTD = new XMLHttpRequest();
+            xhrTD.open("GET", "/api/v1/transport-documents/" + titleBlock.documentHash());
+            xhrTD.onload = function() {
+                const receivedTD = JSON.parse(JSON.parse(xhrTD.response)["transportDocumentJson"]);
+                blFields.forEach(function(field) {
+                    document.getElementById('blFields').innerHTML += field + ": <span>" + receivedTD[field] + "</span><br>" ;
+                });
+                document.getElementById('blno').innerHTML = receivedTD.blno;
+            }
+            xhrTD.send();
+            document.getElementById("pdfDownloadLink").href = "/api/v1/transport-documents/" + titleBlock.documentHash() + "/pdf"
+            let button = document.getElementById('transferPossessionButton');
+            button.addEventListener('click', async _ => {
+                const transfereePublicKeyFromPem = KEYUTIL.getKey(document.getElementById("transfereePublicKeyTextArea").value);
+                const transfereePublicKeyJWK = KEYUTIL.getJWKFromKey(transfereePublicKeyFromPem);
+                let transferorPrivateKeyFromPem = new RSAKey();
+                transferorPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("transferorPrivateKeyTextArea").value);
+                const transferorPublicKey = possessionBlock.transferee();
+                let nextRegistryJWK = null;
+                const nextRegistry = document.getElementById("receivingRegistryPossession").value;
+                if (nextRegistry.length > 0) {
+                    nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
+                    let platformExportTransferBlock = new PlatformExportTransferBlock();
+                    platformExportTransferBlock.init(transfereePublicKeyJWK,
+                                                    {"possessionTransferBlockHash": await possessionBlock.blockHash(), "nextRegistryJWK" : nextRegistryJWK},
+                                                    transferorPrivateKeyFromPem);
+                    console.log("chain link is valid?: ", platformExportTransferBlock.verifyNth(0, transferorPublicKey, {alg: ['RS256']}));
+                    await fetch('/api/v1/transport-document-transfers', {
+                        method: 'post',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            transferBlockHash : await platformExportTransferBlock.blockHash(),
+                            transferBlock: JSON.stringify(platformExportTransferBlock.JWS),
+                            previousTransferBlockHash: await possessionBlock.blockHash()
+                        })
                     });
-                    document.getElementById('blno').innerHTML = receivedTD.blno;
+                    location .href = "blexported.html?id=" + await platformExportTransferBlock.blockHash();
+                } else {
+                    const newPossessionBlock = new PossessionTransferBlock();
+                    newPossessionBlock.init(transfereePublicKeyJWK, {"titleTransferBlockHash": await titleBlock.blockHash()}, transferorPrivateKeyFromPem);
+                    console.log("chain link is valid?: ", newPossessionBlock.verifyNth(0, transferorPublicKey, {alg: ['RS256']}));
+                    await fetch('/api/v1/transport-document-transfers', {
+                        method: 'post',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            transferBlockHash : await newPossessionBlock.blockHash(),
+                            transferBlock: JSON.stringify(newPossessionBlock.JWS),
+                            previousTransferBlockHash: await possessionBlock.blockHash()
+                        })
+                    });
+                    location .href = "transportdocumenttransfer.html?id=" + await newPossessionBlock.blockHash() ;
                 }
-                xhrTD.send();
-                document.getElementById("pdfDownloadLink").href = "/api/v1/transport-documents/" + tdt.documentHash() + "/pdf"
-                let button = document.getElementById('transferPossessionButton');
-                button.addEventListener('click', async _ => {
-                    const transfereePublicKeyFromPem = KEYUTIL.getKey(document.getElementById("transfereePublicKeyTextArea").value);
-                    const transfereePublicKeyJWK = KEYUTIL.getJWKFromKey(transfereePublicKeyFromPem);
-                    var transferorPrivateKeyFromPem = new RSAKey();
-                    transferorPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("transferorPrivateKeyTextArea").value);
-                    const transferorPublicKey = KEYUTIL.getKey(tdt.possessor());
-                    let nextRegistryJwk = null;
-                    const nextRegistry = document.getElementById("receivingRegistryPossession").value;
-                    if (nextRegistry.length > 0) {
-                        nextRegistryJwk = await fetch('https://' + nextRegistry+'/.well-known/jwks.json');
-                    }
-                    const newTdt = new TransportDocumentTransfer();
-                    newTdt.createTdt(tdt.holder(), transfereePublicKeyJWK, tdt.documentHash(), tdt.isToOrder(), hashId, transferorPrivateKeyFromPem, nextRegistryJwk);
-                    let verifierJWT = new KJUR.jws.JWSJS();
-                    verifierJWT.readJWSJS(newTdt.asJWT())
-                    const isValid = verifierJWT.verifyNth(0, transferorPublicKey, {alg: ['RS256']});
-                    console.log("chain link is valid?: ", isValid);
-                    const postTDTresponse = await fetch('/api/v1/transport-document-transfers', {
+            });
+
+            let transferTitleButton = document.getElementById('transferTitleButton');
+            transferTitleButton.addEventListener('click', async _ => {
+                const endorseePublicKeyFromPem = KEYUTIL.getKey(document.getElementById("endorseePublicKeyTextArea").value);
+                const endorseePublicKeyJWK = KEYUTIL.getJWKFromKey(endorseePublicKeyFromPem);
+                let endorserPrivateKeyFromPem = new RSAKey();
+                endorserPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("endorserPrivateKeyTextArea").value);
+                const endorserPublicKey = KEYUTIL.getKey(possessionBlock.transferee());
+                const newTitleBlock = new TitleTransferBlock();
+                newTitleBlock.init(endorseePublicKeyJWK, {"documentHash": titleBlock.documentHash()}, endorserPrivateKeyFromPem);
+
+                //transfer possession to self, but pointing to the new titleBlock
+                const newPossessionBlock = new PossessionTransferBlock();
+                newPossessionBlock.init(possessionBlock.transferee(), {"titleTransferBlockHash": await newTitleBlock.blockHash()}, endorserPrivateKeyFromPem);
+                let signaturesAreValid = newTitleBlock.verifyNth(0, endorserPublicKey, {alg: ['RS256']})
+                                      && newPossessionBlock.verifyNth(0, endorserPublicKey, {alg: ['RS256']});
+                if (signaturesAreValid) {
+                    await fetch('/api/v1/transport-document-transfers', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        tdtHash : await newTdt.tdtHash(),
-                        transportDocumentTransfer: JSON.stringify(newTdt.asValidJWT())
+                        transferBlockHash : await newTitleBlock.blockHash(),
+                        transferBlock: JSON.stringify(newTitleBlock.JWS),
+                        previousTransferBlockHash: null
                         })
                     });
-                    location.href = "transportdocumenttransfer.html?id=" + await newTdt.tdtHash() ;
-                });
-
-                let transferTitleButton = document.getElementById('transferTitleButton');
-                transferTitleButton.addEventListener('click', async _ => {
-                    const endorseePublicKeyFromPem = KEYUTIL.getKey(document.getElementById("endorseePublicKeyTextArea").value);
-                    const endorseePublicKeyJWK = KEYUTIL.getJWKFromKey(endorseePublicKeyFromPem);
-                    var endorserPrivateKeyFromPem = new RSAKey();
-                    endorserPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("endorserPrivateKeyTextArea").value);
-                    const endorserPublicKey = KEYUTIL.getKey(tdt.holder());
-                    const newTdt = new TransportDocumentTransfer();
-                    newTdt.createTdt(endorseePublicKeyJWK, tdt.possessor(), tdt.documentHash(), tdt.isToOrder(), hashId, endorserPrivateKeyFromPem, null);
-                    let verifierJWT = new KJUR.jws.JWSJS();
-                    verifierJWT.readJWSJS(newTdt.asJWT())
-                    const isValid = verifierJWT.verifyNth(0, endorserPublicKey, {alg: ['RS256']});
-                    console.log("chain link is valid (title transfer)?: ", isValid);
-                    const response = await fetch('/api/v1/transport-document-transfers', {
+                    await fetch('/api/v1/transport-document-transfers', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        tdtHash : await newTdt.tdtHash(),
-                        transportDocumentTransfer: JSON.stringify(newTdt.asValidJWT())
+                        transferBlockHash : await newPossessionBlock.blockHash(),
+                        transferBlock: JSON.stringify(newPossessionBlock.JWS),
+                        previousTransferBlockHash: await possessionBlock.blockHash()
                         })
                     });
-                    console.log('Completed!', response);
-                    location.href = "transportdocumenttransfer.html?id=" + await newTdt.tdtHash() ;
-                });
-            };
-            xhrTdt.send();
+                    location.href = "transportdocumenttransfer.html?id=" + await newPossessionBlock.blockHash();
+                } else {
+                    alert("Invalid signature. Mismatch between signature and private key.");
+                }
+            });
 
             var xhrAddressBook = new XMLHttpRequest();
             xhrAddressBook.open("GET", "/api/v1/address-book-entries/");

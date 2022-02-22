@@ -22,41 +22,53 @@ import java.security.KeyPair;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class TransportDocumentTransfer {
 
+    /*
+     * The hash of the transferBlock. Included for convenience, could be calculated from the transfer block
+     */
     @Id
     @Column
-    private String tdtHash;
+    private String transferBlockHash;
 
+    /*
+     * The hash of the previous transferBlock in the chain (they are supposed to come in chains).
+     * Included for convenience, the order of the blocks could in theory be deduced from the tranferee / transferrer
+     * pairs of the set of transfer blocks
+     */
     @Column(columnDefinition="text")
-    private String transportDocumentTransfer;
+    private String previousTransferBlockHash;
 
+    /*
+     * The transfer block as such. Type (possession, title) depends on the json itself
+     */
+    @Column(columnDefinition="text")
+    private String transferBlock;
+
+    /*
+     * The transfer status ("current", "transferred", "surrendered"), used for bookkeeping
+     */
     @Column(columnDefinition = "varchar(255) default 'current'")
-    private String transferStatus; //"current", "transferred", "surrendered"
+    private String transferStatus;
 
     private JsonNode transferBlockAsJsonNode() throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
-        JWSObjectJSON transferBlockAsJson = JWSObjectJSON.parse(transportDocumentTransfer);
+        JWSObjectJSON transferBlockAsJson = JWSObjectJSON.parse(transferBlock);
         ObjectMapper mapper = new ObjectMapper();
         return (JsonNode) mapper.readTree(transferBlockAsJson.getPayload().toString());
-    }
-
-    public String getPreviousTDThash() throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
-        JsonNode transferBlock = transferBlockAsJsonNode();
-        return transferBlock.hasNonNull("previousTDThash")? transferBlock.get("previousTDThash").textValue() : null;
     }
 
     /*
      * Tells if the transfer is to another platform (identified by its public key)
      */
-    public boolean isInterRegistryTransfer() throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
-        JsonNode transferBlock = transferBlockAsJsonNode();
-        return transferBlock.hasNonNull("nextRegistry");
+    public boolean isCrossPlatformTransfer() throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
+        JsonNode transferBlockJson = transferBlockAsJsonNode();
+        return transferBlockJson.hasNonNull("nextRegistryJWK");
     }
 
     public void addPlatformSignature(KeyPair hostPlatformKeyPair) throws java.text.ParseException, com.nimbusds.jose.JOSEException {
-        JWSObjectJSON transferBlockAsJson = JWSObjectJSON.parse(transportDocumentTransfer);
+        JWSObjectJSON transferBlockAsJson = JWSObjectJSON.parse(transferBlock);
         transferBlockAsJson.sign(
             new JWSHeader.Builder(JWSAlgorithm.RS256).build(),
             new RSASSASigner(hostPlatformKeyPair.getPrivate())
         );
-        transportDocumentTransfer = transferBlockAsJson.serializeGeneral();
+        transferBlock = transferBlockAsJson.serializeGeneral();
     }
 }

@@ -1,0 +1,12 @@
+<div id="importURL"></div><br>
+<a id="previousPossessionBlock" href="">Previous possessor</div>
+<script>
+window.onload = async function() {
+    const url = new URL(location.href);
+    const crossPlatformTdtHashId = url.searchParams.get('id');
+    const crossPlatformTdt= await (await fetch("/api/v1/transport-document-transfers/" + crossPlatformTdtHashId)).json();
+
+    document.getElementById("importURL").innerHTML = "This document has been exported to another platform. Paste in the following link to import and activate it on the other platform:<br><br>" + window.location.host + "/api/v1/transport-document-transfers/" + crossPlatformTdtHashId;
+    document.getElementById("previousPossessionBlock").href = "/static/transportdocumenttransfer.html?id=" + crossPlatformTdt.previousTransferBlockHash;
+};
+</script>

@@ -11,7 +11,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <script src="jsrsasign-latest-all-min.js"></script>
-        <script src="transportdocumenttransfer.js"></script>
+        <script src="transferblock.js"></script>
         <script src="testkeys.js"></script>
         <script src="blfields.js"></script>
         <link href="custom.css" rel="stylesheet">
@@ -119,10 +119,8 @@
                 var arrayEncoder = new TextEncoder(); // always utf-8
                 var transportDocument = {};
                 blFields.forEach(function(field) {
-                    console.log(field);
                     transportDocument[field] = document.getElementById(field).value;
                 });
-                console.log(transportDocument);
                 const stringifiedTransportDocument = JSON.stringify(transportDocument);
                 const documentHash = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', arrayEncoder.encode(stringifiedTransportDocument)));
                 await fetch('/api/v1/transport-documents', {
@@ -139,21 +137,31 @@
                 var carrierPrivateKeyFromPem = new RSAKey();
                 carrierPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("carrierPrivateKeytextArea").value);
                 const carrierPublicKeyFromPem = KEYUTIL.getKey(carrierPublicKey);
-                const issueBLtdt = new TransportDocumentTransfer()
-                issueBLtdt.createTdt(shipperPublicKeyJWK, shipperPublicKeyJWK, documentHash, true, null, carrierPrivateKeyFromPem, null);
-                let verifierJWT = new KJUR.jws.JWSJS();
-                verifierJWT.readJWSJS(issueBLtdt.asJWT())
-                const isValid2 = verifierJWT.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']});
-                console.log("valid JWT?: ", isValid2);
+                const issueBlTitleTransferBlock = new TitleTransferBlock();
+                issueBlTitleTransferBlock.init(shipperPublicKeyJWK, {"documentHash": documentHash, "isToOrder": true}, carrierPrivateKeyFromPem);
+                const issueBlPossessionTransferBlock = new PossessionTransferBlock();
+                issueBlPossessionTransferBlock.init(shipperPublicKeyJWK, {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash()}, carrierPrivateKeyFromPem);
+                console.log("valid?" + issueBlTitleTransferBlock.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']}) + ", " 
+                                     + issueBlPossessionTransferBlock.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']}));
                 await fetch('/api/v1/transport-document-transfers', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    tdtHash : await issueBLtdt.tdtHash(),
-                    transportDocumentTransfer: JSON.stringify(issueBLtdt.asValidJWT())
+                    transferBlockHash : await issueBlTitleTransferBlock.blockHash(),
+                    transferBlock: JSON.stringify(issueBlTitleTransferBlock.JWS),
+                    previousTransferBlockHash: null
                     })
                 });
-                location.href = "transportdocumenttransfer.html?id=" + await issueBLtdt.tdtHash();
+                await fetch('/api/v1/transport-document-transfers', {
+                method: 'post',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    transferBlockHash : await issueBlPossessionTransferBlock.blockHash(),
+                    transferBlock: JSON.stringify(issueBlPossessionTransferBlock.JWS),
+                    previousTransferBlockHash: null
+                    })
+                });
+                location.href = "transportdocumenttransfer.html?id=" + await issueBlPossessionTransferBlock.blockHash();
             });
         }
     </script>

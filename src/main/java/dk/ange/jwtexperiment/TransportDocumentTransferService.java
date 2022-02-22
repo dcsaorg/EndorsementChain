@@ -21,7 +21,7 @@ public class TransportDocumentTransferService {
     }
 
     public void save(TransportDocumentTransfer transportDocumentTransfer) throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException, com.nimbusds.jose.JOSEException {
-        String previousTDThash = transportDocumentTransfer.getPreviousTDThash();
+        String previousTDThash = transportDocumentTransfer.getPreviousTransferBlockHash();
         if (previousTDThash != null ) {
             Optional<TransportDocumentTransfer> previousTDT = transportDocumentTransferRepository.findById(previousTDThash);
             if(previousTDT.isPresent()) { //TODO: if there is no previous TDT, getting here should only be possible as a result of a
@@ -30,7 +30,7 @@ public class TransportDocumentTransferService {
                     transportDocumentTransferRepository.save(previousTDT.get());
             }
         }
-        if (transportDocumentTransfer.isInterRegistryTransfer()) {
+        if (transportDocumentTransfer.isCrossPlatformTransfer()) {
             transportDocumentTransfer.addPlatformSignature(platformKeyPair);
             transportDocumentTransfer.setTransferStatus("transferred");
         }
