@@ -1,311 +1,314 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8">
-        <meta name="keywords" content="title, electronic, bill of lading">
-        <meta name="description" content="The eBL Platform">
-        <meta name="robots" content="all">
-        <meta charset="utf-8">
-        <link rel="icon" href="images/logo-simple.jpg">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <script src="jsrsasign-latest-all-min.js"></script>
-        <script src="transportdocumenttransfer.js"></script>
-        <script src="testkeys.js"></script>
-        <script src="blfields.js"></script>
-        <link href="custom.css" rel="stylesheet">
-        <title>Title eBL Platform</title>
-        <style>
-            #menuList {margin-left: auto; margin-right: 20px !important;}
-            .navbar {margin-bottom: 25px;}
-            .container > div{min-height: fit-content; padding:1rem;}
-            .heightLarge{min-height:400px!important;}
-            .heightMedium{min-height:200px!important;}
-            .heightSmall{min-height:100px!important;}
-            .alignEnd{text-align:end;}
-            .extraHeight{min-height:130px;}
-            h1,h2,h5,h6{color:#008f92;}
-            .inputHeightMedium{height:100px!important;}
-            .extraMarginTop{margin-top:1rem;}
-            .specialBox{min-height: 105px!important;}
-            .container{border: 1px solid rgba(0,0,0,.125);border-radius: 0.25rem;padding:1rem;}
-            .minusMarginTop{margin-top:-25px}
-            .transferBtn{color: #fff;background-color: #008f92;border-color: #008f92;}
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="keywords" content="title, electronic, bill of lading">
+    <meta name="description" content="The eBL Platform">
+    <meta name="robots" content="all">
+    <meta charset="utf-8">
+    <link rel="icon" href="images/logo-simple.jpg">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="jsrsasign-latest-all-min.js"></script>
+    <script src="transportdocumenttransfer.js"></script>
+    <script src="testkeys.js"></script>
+    <script src="blfields.js"></script>
+    <link href="custom.css" rel="stylesheet">
+    <title>Title eBL Platform</title>
+    <style>
+        #menuList {margin-left: auto; margin-right: 20px !important;}
+        .navbar {margin-bottom: 25px;}
+        .container > div{min-height: fit-content; padding:1rem;}
+        .heightLarge{min-height:400px!important;}
+        .heightMedium{min-height:200px!important;}
+        .heightSmall{min-height:100px!important;}
+        .alignEnd{text-align:end;}
+        .extraHeight{min-height:130px;}
+        h1,h2,h5,h6{color:#008f92;}
+        .inputHeightMedium{height:100px!important;}
+        .extraMarginTop{margin-top:1rem;}
+        .specialBox{min-height: 105px!important;}
+        .container{border: 1px solid rgba(0,0,0,.125);border-radius: 0.25rem;padding:1rem;}
+        .minusMarginTop{margin-top:-25px}
+        .transferBtn{color: #fff;background-color: #008f92;border-color: #008f92;}
 
-            /* bootstrap CSS overwrite */
-            .transferBtn:hover{color:#fff;background-color: #008f92d4;}
-            .form-control{display:inline;}
-            .form-control:focus{
-                border-color: #008f92;
-                box-shadow: 0 0 0 0.25rem #008f9275;
-            }
+        /* bootstrap CSS overwrite */
+        .transferBtn:hover{color:#fff;background-color: #008f92d4;}
+        .form-control{display:inline;}
+        .form-control:focus{
+            border-color: #008f92;
+            box-shadow: 0 0 0 0.25rem #008f9275;
+        }
 
-            /* section for regular inputs and labels */
-            input{margin-bottom:0.5rem;outline:0;padding:4px;width:100%;}
-            label{position:absolute;left:0%;top:0;padding:7px;cursor:text;font-size:15px;transition:0.2s;pointer-events:none;}
-            .smallLabel{left:0;}
-            input.smallInput:focus~label,
-            input.smallInput:valid~label{top:-30px;font-size:12px;color:#008f92;}
+        /* section for regular inputs and labels */
+        input{margin-bottom:0.5rem;outline:0;padding:4px;width:100%;}
+        label{position:absolute;left:0%;top:0;padding:7px;cursor:text;font-size:15px;transition:0.2s;pointer-events:none;}
+        .smallLabel{left:0;}
+        input.smallInput:focus~label,
+        input.smallInput:valid~label{top:-30px;font-size:12px;color:#008f92;}
 
-            /* section for medium inputs, textareas and labels */
-            .mediumInput{margin-bottom:0.5rem;outline:0;padding:4px;width:100%;}
-            .mediumLabel{position:absolute;top:0;left:0;padding:7px;cursor:text;font-size:15px;transition:0.2s;pointer-events:none;}
-            textarea.mediumInput:focus~label,
-            textarea.mediumInput:valid~label{top:-30px;font-size:12px;color:#008f92;}
+        /* section for medium inputs, textareas and labels */
+        .mediumInput{margin-bottom:0.5rem;outline:0;padding:4px;width:100%;}
+        .mediumLabel{position:absolute;top:0;left:0;padding:7px;cursor:text;font-size:15px;transition:0.2s;pointer-events:none;}
+        textarea.mediumInput:focus~label,
+        textarea.mediumInput:valid~label{top:-30px;font-size:12px;color:#008f92;}
 
-            /* section for large inputs, textareas and labels */
-            .inputLarge{min-height:130px!important;}
+        /* section for large inputs, textareas and labels */
+        .inputLarge{min-height:130px!important;}
 
 
-        </style>
-    </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-default navbar-dark shadow">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="/">The eBL Platform</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul id="menuList" class="navbar-nav me-auto mb-2 mb-lg-0">
-                    </ul>
-                </div>
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-default navbar-dark shadow">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">The eBL Platform</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul id="menuList" class="navbar-nav me-auto mb-2 mb-lg-0">
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container mb-4" id="supportingText">
+    <div class="row heightMedium">
+        <div class="col-3">
+            <h2>Issue Transport Document</h2>
+        </div>
+        <div class="col-6 text-center">
+            <h1>Bill of Lading</h1>
+            <h5>Port to port of Multimodal Transports</h5>
+        </div>
+        <div class="col-3 alignEnd">
+            <div class="position-relative"><input class="smallInput form-control" required id="blno"><br><label>Bill of Lading No.</label><br></div>
+            <div class="position-relative"><input class="smallInput form-control" required id="bookingNoCarrierRef"><br><label>Booking No./ Carrier Ref</label><br></div>
+            <div class="position-relative"><input class="smallInput form-control" required id="exportImportSvcRef"><br><label>Export/Import/SVC. References</label></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 heightSmall">
+            <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="shipper"></textarea><label class="mediumLabel">Shipper</label></div>
+        </div>
+        <div class="col-6 heightSmall">
+            <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="forwardingAgentReferences"></textarea><label class="mediumLabel">Forwarding agent references</label></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 heightSmall">
+            <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="consignee"></textarea><label class="mediumLabel">Consignee</label></div>
+        </div>
+        <div class="col-6">
+            <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="notifyParty"></textarea><label class="mediumLabel">Notify Party</label></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <div class="position-relative"><input class="smallInput form-control" required><br><label class="smallLabel" id="vessel">Vessel</label><br></div>
+        </div>
+        <div class="col-3">
+            <div class="position-relative"><input class="smallInput form-control" required><br><label class="smallLabel" id="voyageNo">Voyage No.</label><br></div>
+        </div>
+        <div class="col-6 heightSmall">
+            <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="alsoNotifyParty"></textarea><label class="mediumLabel">Also Notify Party</label></div>
+        </div>
+        <div class="col-3">
+            <div class="position-relative"><input class="smallInput form-control" required><br><label class="smallLabel" id="portOfLoading">Port of Loading</label><br></div>
+        </div>
+        <div class="col-3">
+            <div class="position-relative"><input class="smallInput form-control" required><br><label class="smallLabel" id="portOfDischarge">Port of Discharge</label><br></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 heightSmall">
+            <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="preCarriageBy"></textarea><label class="mediumLabel">Pre-carriage by</label></div>
+        </div>
+        <div class="col-6 heightSmall">
+            <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="placeOfDelivery"></textarea><label class="mediumLabel">Place of Delivery</label></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 heightSmall">
+            <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="placeOfReceipt"></textarea><label class="mediumLabel">Place of Receipt</label></div>
+        </div>
+        <div class="col-6">
+            <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="onwardInlandRoutingFinalDestination"></textarea><label class="mediumLabel">Onward inland routing/Final destination</label></div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-3 text-center">
+            <h5>Description of goods</h5>
+        </div>
+    </div>
+    <div class="row heightLarge">
+        <div class="col-3">
+            <div class="">
+                <div class="position-relative"><input class="smallInput form-control" required id="sizeTypes"><br><label class="smallLabel">Size & type:</label><br></div>
             </div>
-        </nav>
-        <div class="container mb-4" id="supportingText">
-            <div class="row heightMedium">
-                <div class="col-3">
-                    <h2>Issue Transport Document</h2>
-                </div>
-                <div class="col-6 text-center">
-                    <h1>Bill of Lading</h1>
-                    <h5>Port to port of Multimodal Transports</h5>
-                </div>
-                <div class="col-3 alignEnd">
-                    <div class="position-relative"><input class="smallInput form-control" required id="blno"><br><label>Bill of Lading No.</label><br></div>
-                    <div class="position-relative"><input class="smallInput form-control" required id="bookingNoCarrierRef"><br><label>Booking No./ Carrier Ref</label><br></div>
-                    <div class="position-relative"><input class="smallInput form-control" required id="exportImportSvcRef"><br><label>Export/Import/SVC. References</label></div>
-                </div>
+            <div class="">
+                <div class="position-relative extraMarginTop extraHeight"><textarea class="mediumInput inputLarge form-control" required id="contNos"></textarea><br><label class="mediumLabel">Cont. Nos.:</label><br></div>
             </div>
-            <div class="row">
-                <div class="col-6 heightSmall">
-                    <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="shipper"></textarea><label class="mediumLabel">Shipper</label></div>
-                </div>
-                <div class="col-6 heightSmall">
-                    <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="forwardingAgentReferences"></textarea><label class="mediumLabel">Forwarding agent references</label></div>
-                </div>
+            <div class="">
+                <div class="position-relative extraMarginTop extraHeight"><textarea class="mediumInput inputLarge form-control" required id="sealNos"></textarea><br><label class="mediumLabel">Seal Nos.:</label><br></div>
             </div>
-            <div class="row">
-                <div class="col-6 heightSmall">
-                    <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="consignee"></textarea><label class="mediumLabel">Consignee</label></div>
-                </div>
-                <div class="col-6">
-                    <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="notifyParty"></textarea><label class="mediumLabel">Notify Party</label></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-3">
-                    <div class="position-relative"><input class="smallInput form-control" required><br><label class="smallLabel" id="vessel">Vessel</label><br></div>
-                </div>
-                <div class="col-3">
-                    <div class="position-relative"><input class="smallInput form-control" required><br><label class="smallLabel" id="voyageNo">Voyage No.</label><br></div>
-                </div>
-                <div class="col-6 heightSmall">
-                    <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="alsoNotifyParty"></textarea><label class="mediumLabel">Also Notify Party</label></div>
-                </div>
-                <div class="col-3">
-                    <div class="position-relative"><input class="smallInput form-control" required><br><label class="smallLabel" id="portOfLoading">Port of Loading</label><br></div>
-                </div>
-                <div class="col-3">
-                    <div class="position-relative"><input class="smallInput form-control" required><br><label class="smallLabel" id="portOfDischarge">Port of Discharge</label><br></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6 heightSmall">
-                    <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="preCarriageBy"></textarea><label class="mediumLabel">Pre-carriage by</label></div>
-                </div>
-                <div class="col-6 heightSmall">
-                    <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="placeOfDelivery"></textarea><label class="mediumLabel">Place of Delivery</label></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6 heightSmall">
-                    <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="placeOfReceipt"></textarea><label class="mediumLabel">Place of Receipt</label></div>
-                </div>
-                <div class="col-6">
-                    <div class="position-relative"><textarea class="mediumInput inputHeightMedium form-control" required id="onwardInlandRoutingFinalDestination"></textarea><label class="mediumLabel">Onward inland routing/Final destination</label></div>
-                </div>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-3 text-center">
-                    <h5>Description of goods</h5>
-                </div>
-            </div>
-            <div class="row heightLarge">
-                <div class="col-3">
+        </div>
+        <div class="col-6 heightLarge">
+            <div class="position-relative"><textarea class="mediumInput inputHeightMedium heightLarge form-control" required id="descriptionOfGoods"></textarea><label class="mediumLabel">Quantity/Number & kind of packages/pieces /Other marks & numbers</label></div>
+        </div>
+        <div class="col-3 heightLarge">
+            <div class="position-relative"><textarea class="mediumInput inputHeightMedium heightLarge form-control" required id="cargoGrossWeights"></textarea><label class="mediumLabel">Cargo gross weight/Measurement</label></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <div class="position-relative"><input class="smallInput form-control" required id="receiptDeliveryType"><br><label class="smallLabel">Receipt/Delivery Type</label><br></div>
+        </div>
+        <div class="col-3">
+            <div class="position-relative"><input class="smallInput form-control" required id="cargoMovementType"><br><label class="smallLabel">Cargo Movement Type</label><br></div>
+        </div>
+        <div class="col-2">
+            <div class="position-relative"><input class="smallInput form-control" required id="isPartLoad"><br><label class="smallLabel">Part Load (Y/N)</label><br></div>
+        </div>
+        <div class="col-2">
+            <div class="position-relative"><input class="smallInput form-control" required id="hsCode"><br><label class="smallLabel">HS Code</label><br></div>
+        </div>
+        <div class="col-2">
+            <div class="position-relative"><input class="smallInput form-control" required id="reeferSettings"><br><label class="smallLabel">Reefer settings</label><br></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <div class="position-relative"><input class="smallInput form-control" required id="pointAndCountryOfOriginOfGoods"><br><label class="smallLabel">Point & country of origin of goods</label><br></div>
+        </div>
+        <div class="col-4">
+            <div class="position-relative"><input class="smallInput form-control" required id="shipperDeclaredValue"><br><label class="smallLabel">Shipper declared value</label><br></div>
+        </div>
+        <div class="col-4">
+            <div class="position-relative"><input class="smallInput form-control" required id="freightAndChargesPayableByAt"><br><label class="smallLabel">Freight & Charges payable by/at</label><br></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <div class="position-relative"><input class="smallInput form-control" required id="freightAndCharges"><br><label class="smallLabel">Freight & Charges</label><br></div>
+        </div>
+        <div class="col-1">
+            <div class="position-relative"><input class="smallInput form-control" required id="basis"><br><label class="smallLabel">Basis</label><br></div>
+        </div>
+        <div class="col-1">
+            <div class="position-relative"><input class="smallInput form-control" required id="rate"><br><label class="smallLabel">Rate</label><br></div>
+        </div>
+        <div class="col-1">
+            <div class="position-relative"><input class="smallInput form-control" required id="prepaid"><br><label class="smallLabel">Prepaid</label><br></div>
+        </div>
+        <div class="col-1">
+            <div class="position-relative"><input class="smallInput form-control" required id="collect"><br><label class="smallLabel">Collect</label><br></div>
+        </div>
+        <div class="col-4">
+            <div class="position-relative"><input class="smallInput form-control" required id="totalFreight"><br><label class="smallLabel">Total Freight</label><br></div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="position-relative extraMarginTop extraHeight"><textarea class="mediumInput inputLarge form-control" required id="carrierClauses"></textarea><br><label class="mediumLabel">Carrier Clauses (for Carrier’s use only)</label><br></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-5">
+            <div class="position-relative"><input class="smallInput form-control" required id="totalNumberOfContainersReceived"><br><label class="smallLabel">Total number of containers or packages
+                received by the Carrier</label><br></div>
+        </div>
+        <div class="col-2">
+            <div class="position-relative"><input class="smallInput form-control" required id="dateOfIssue"><br><label class="smallLabel">Date of issue (UTC)</label><br></div>
+        </div>
+        <div class="col-3 minusMarginTop">
+            Endorsement Type:
+            <select class="form-select form-control" aria-label="Endorsement Type">
+                <option value="1">To order</option>
+                <option value="2">To order of consignee</option>
+                <option value="3">To order of bank</option>
+                <option value="4">Straight</option>
+            </select>
+        </div>
+        <div class="col-2"></div>
+        <div class="col-3">
+            <div class="position-relative"><input class="smallInput form-control" required id="shippedOnBoardDate"><br><label class="smallLabel">Shipped on Board Date (Local time)</label><br></div>
+            <div class="position-relative"><input class="smallInput form-control" required id="noAndSequenceOfOriginalBLs"><br><label class="smallLabel">No. & Sequence of Original Bs/L</label><br></div>
+        </div>
+        <div class="col-2">
+            <div class="position-relative extraHeight specialBox"><textarea class="mediumInput specialBox form-control" required id="placeOfIssue"></textarea><br><label class="mediumLabel">Place of issue</label><br></div>
+        </div>
+        <div class="col-7">
+            <div class="position-relative extraHeight specialBox"><textarea class="mediumInput specialBox form-control" required id="containerNumbers"></textarea><br><label class="mediumLabel">Container Numbers</label><br></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-7">
+                <div class="">
                     <div class="">
-                        <div class="position-relative"><input class="smallInput form-control" required id="sizeTypes"><br><label class="smallLabel">Size & type:</label><br></div>
-                    </div>
-                    <div class="">
-                        <div class="position-relative extraMarginTop extraHeight"><textarea class="mediumInput inputLarge form-control" required id="contNos"></textarea><br><label class="mediumLabel">Cont. Nos.:</label><br></div>
-                    </div>
-                    <div class="">
-                        <div class="position-relative extraMarginTop extraHeight"><textarea class="mediumInput inputLarge form-control" required id="sealNos"></textarea><br><label class="mediumLabel">Seal Nos.:</label><br></div>
-                    </div>
-                </div>
-                <div class="col-6 heightLarge">
-                    <div class="position-relative"><textarea class="mediumInput inputHeightMedium heightLarge form-control" required id="quantityNumberPackagesAndPiecesOtherMarksAndNumbers"></textarea><label class="mediumLabel">Quantity/Number & kind of packages/pieces /Other marks & numbers</label></div>
-                </div>
-                <div class="col-3 heightLarge">
-                    <div class="position-relative"><textarea class="mediumInput inputHeightMedium heightLarge form-control" required id="cargoGrossWeights"></textarea><label class="mediumLabel">Cargo gross weight/Measurement</label></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-3">
-                    <div class="position-relative"><input class="smallInput form-control" required id="receiptDeliveryType"><br><label class="smallLabel">Receipt/Delivery Type</label><br></div>
-                </div>
-                <div class="col-3">
-                    <div class="position-relative"><input class="smallInput form-control" required id="cargoMovementType"><br><label class="smallLabel">Cargo Movement Type</label><br></div>
-                </div>
-                <div class="col-2">
-                    <div class="position-relative"><input class="smallInput form-control" required id="isPartLoad"><br><label class="smallLabel">Part Load (Y/N)</label><br></div>
-                </div>
-                <div class="col-2">
-                    <div class="position-relative"><input class="smallInput form-control" required id="hsCode"><br><label class="smallLabel">HS Code</label><br></div>
-                </div>
-                <div class="col-2">
-                    <div class="position-relative"><input class="smallInput form-control" required id="reeferSettings"><br><label class="smallLabel">Reefer settings</label><br></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-4">
-                    <div class="position-relative"><input class="smallInput form-control" required id="pointAndCountryOfOriginOfGoods"><br><label class="smallLabel">Point & country of origin of goods</label><br></div>
-                </div>
-                <div class="col-4">
-                    <div class="position-relative"><input class="smallInput form-control" required id="shipperDeclaredValue"><br><label class="smallLabel">Shipper declared value</label><br></div>
-                </div>
-                <div class="col-4">
-                    <div class="position-relative"><input class="smallInput form-control" required id="freightAndChargesPayableByAt"><br><label class="smallLabel">Freight & Charges payable by/at</label><br></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-4">
-                    <div class="position-relative"><input class="smallInput form-control" required id="freightAndCharges"><br><label class="smallLabel">Freight & Charges</label><br></div>
-                </div>
-                <div class="col-1">
-                    <div class="position-relative"><input class="smallInput form-control" required id="basis"><br><label class="smallLabel">Basis</label><br></div>
-                </div>
-                <div class="col-1">
-                    <div class="position-relative"><input class="smallInput form-control" required id="rate"><br><label class="smallLabel">Rate</label><br></div>
-                </div>
-                <div class="col-1">
-                    <div class="position-relative"><input class="smallInput form-control" required id="prepaid"><br><label class="smallLabel">Prepaid</label><br></div>
-                </div>
-                <div class="col-1">
-                    <div class="position-relative"><input class="smallInput form-control" required id="collect"><br><label class="smallLabel">Collect</label><br></div>
-                </div>
-                <div class="col-4">
-                    <div class="position-relative"><input class="smallInput form-control" required id="totalFreight"><br><label class="smallLabel">Total Freight</label><br></div>
-                </div>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-12">
-                    <div class="position-relative extraMarginTop extraHeight"><textarea class="mediumInput inputLarge form-control" required id="carrierClauses"></textarea><br><label class="mediumLabel">Carrier Clauses (for Carrier’s use only)</label><br></div>
-                    </div>
-            </div>
-            <div class="row">
-                <div class="col-5">
-                    <div class="position-relative"><input class="smallInput form-control" required id="totalNumberOfContainersReceived"><br><label class="smallLabel">Total number of containers or packages
-                        received by the Carrier</label><br></div>
-                </div>
-                <div class="col-2">
-                    <div class="position-relative"><input class="smallInput form-control" required id="dateOfIssue"><br><label class="smallLabel">Date of issue (UTC)</label><br></div>
-                </div>
-                <div class="col-3 minusMarginTop">
-                    Endorsement Type:
-                    <select class="form-select form-control" aria-label="Endorsement Type">
-                    <option value="1">To order</option>
-                    <option value="2">To order of consignee</option>
-                    <option value="3">To order of bank</option>
-                    <option value="4">Straight</option>
-                    </select>
-                </div>
-                <div class="col-2"></div>
-                <div class="col-3">
-                    <div class="position-relative"><input class="smallInput form-control" required id="shippedOnBoardDate"><br><label class="smallLabel">Shipped on Board Date (Local time)</label><br></div>
-                    <div class="position-relative"><input class="smallInput form-control" required id="noAndSequenceOfOriginalBLs"><br><label class="smallLabel">No. & Sequence of Original Bs/L</label><br></div>
-                </div>
-                <div class="col-2"></div>
-                <div class="col-2">
-                    <div class="position-relative extraHeight specialBox"><textarea class="mediumInput specialBox form-control" required id="placeOfIssue"></textarea><br><label class="mediumLabel">Place of issue</label><br></div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-7">
-                        <div class="">
-                            <div class="">
-                                <h6 class="card-title">Issue to shipper with public key</h6>
-                                <textarea class="form-control" id="shipperPublicKeytextArea" rows="4"></textarea>
-                                <h6 class="card-text">Signing with carrier private key:</h6>
-                                <textarea class="form-control" id="carrierPrivateKeytextArea" rows="4"></textarea>
-                                <br>
-                                <button type="button" class="btn transferBtn" id="post-btn">
-                                    Issue
-                                </button>
-                            </div>
-                        </div>
+                        <h6 class="card-title">Issue to shipper with public key</h6>
+                        <textarea class="form-control" id="shipperPublicKeytextArea" rows="4"></textarea>
+                        <h6 class="card-text">Signing with carrier private key:</h6>
+                        <textarea class="form-control" id="carrierPrivateKeytextArea" rows="4"></textarea>
+                        <br>
+                        <button type="button" class="btn transferBtn" id="post-btn">
+                            Issue
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-    </body>
-    <script>
-        window.onload = function(){
-            document.getElementById("carrierPrivateKeytextArea").value = carrierPrivateKey;
-            document.getElementById("shipperPublicKeytextArea").value = shipperPublicKey;
-            const button = document.getElementById('post-btn');
-            button.addEventListener('click', async _ => {
-                var arrayEncoder = new TextEncoder(); // always utf-8
-                var transportDocument = {};
-                blFields.forEach(function(field) {
-                    console.log(field);
-                    transportDocument[field] = document.getElementById(field).value;
-                });
-                console.log(transportDocument);
-                const stringifiedTransportDocument = JSON.stringify(transportDocument);
-                const documentHash = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', arrayEncoder.encode(stringifiedTransportDocument)));
-                await fetch('/api/v1/transport-documents', {
+    </div>
+</div>
+</body>
+<script>
+    window.onload = function(){
+        document.getElementById("carrierPrivateKeytextArea").value = carrierPrivateKey;
+        document.getElementById("shipperPublicKeytextArea").value = shipperPublicKey;
+        const button = document.getElementById('post-btn');
+        button.addEventListener('click', async _ => {
+            var arrayEncoder = new TextEncoder(); // always utf-8
+            var transportDocument = {};
+            blFields.forEach(function(field) {
+                console.log(field);
+                transportDocument[field] = document.getElementById(field).value;
+            });
+            console.log(transportDocument);
+            const stringifiedTransportDocument = JSON.stringify(transportDocument);
+            const documentHash = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', arrayEncoder.encode(stringifiedTransportDocument)));
+            await fetch('/api/v1/transport-documents', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     documentHash : documentHash,
                     transportDocumentJson: JSON.stringify(transportDocument)
-                    })
-                });
+                })
+            });
 
-                const shipperPublicKeyFromPem = KEYUTIL.getKey(document.getElementById("shipperPublicKeytextArea").value);
-                const shipperPublicKeyJWK = KEYUTIL.getJWKFromKey(shipperPublicKeyFromPem);
-                var carrierPrivateKeyFromPem = new RSAKey();
-                carrierPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("carrierPrivateKeytextArea").value);
-                const carrierPublicKeyFromPem = KEYUTIL.getKey(carrierPublicKey);
-                const issueBLtdt = new TransportDocumentTransfer()
-                issueBLtdt.createTdt(shipperPublicKeyJWK, shipperPublicKeyJWK, documentHash, true, null, carrierPrivateKeyFromPem);
-                let verifierJWT = new KJUR.jws.JWSJS();
-                verifierJWT.readJWSJS(issueBLtdt.asJWT())
-                const isValid2 = verifierJWT.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']});
-                console.log("valid JWT?: ", isValid2);
-                await fetch('/api/v1/transport-document-transfers', {
+            const shipperPublicKeyFromPem = KEYUTIL.getKey(document.getElementById("shipperPublicKeytextArea").value);
+            const shipperPublicKeyJWK = KEYUTIL.getJWKFromKey(shipperPublicKeyFromPem);
+            var carrierPrivateKeyFromPem = new RSAKey();
+            carrierPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("carrierPrivateKeytextArea").value);
+            const carrierPublicKeyFromPem = KEYUTIL.getKey(carrierPublicKey);
+            const issueBLtdt = new TransportDocumentTransfer()
+            issueBLtdt.createTdt(shipperPublicKeyJWK, shipperPublicKeyJWK, documentHash, true, null, carrierPrivateKeyFromPem);
+            let verifierJWT = new KJUR.jws.JWSJS();
+            verifierJWT.readJWSJS(issueBLtdt.asJWT())
+            const isValid2 = verifierJWT.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']});
+            console.log("valid JWT?: ", isValid2);
+            await fetch('/api/v1/transport-document-transfers', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     tdtHash : await issueBLtdt.tdtHash(),
                     transportDocumentTransfer: JSON.stringify(issueBLtdt.asValidJWT())
-                    })
-                });
-                location.href = "transportdocumenttransfer.html?id=" + await issueBLtdt.tdtHash();
+                })
             });
+            location.href = "transportdocumenttransfer.html?id=" + await issueBLtdt.tdtHash();
+        });
 
 
-        }
-    </script>
+    }
+</script>
 </html>
