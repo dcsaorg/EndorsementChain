@@ -24,8 +24,13 @@ mv dcsa-jwk.jks springboot-https.p12 src/main/resources
 mvn spring-boot:run
 ```
 
-Then point your browser to http://localhost:9090/static/issuebl.html
+Then point your browser to https://localhost:8443/static/issuebl.html
 
-Test keys can be generated at http://localhost:9090/static/generatersakeypair.html
+Test keys can be generated at https://localhost:8443/static/generatersakeypair.html
 
-Run the front-end tests at http://localhost:9090/static/SpecRunner.html
+Run the front-end tests at https://localhost:8443/static/SpecRunner.html
+
+To populate the database with test data run:
+```
+./populatedatabase.sh
+```

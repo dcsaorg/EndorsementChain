@@ -4,21 +4,23 @@ import javax.persistence.*;
 import lombok.Setter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @Entity
 @Table(name = "addressbookentry")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter @Setter @RequiredArgsConstructor @NoArgsConstructor
 public class AddressBookEntry {
-
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
-    private String id;
+    private int id;
 
-    @Column
+    @Column(columnDefinition="text")
+    @NonNull
     private String name;
 
-    @Column
+    @Column(columnDefinition="text")
+    @NonNull
     private String publicKey;
-
 }
