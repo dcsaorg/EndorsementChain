@@ -22,7 +22,7 @@ public class AddressBookEntryController {
     @GetMapping("/address-book-entries/{AddressBookEntryId}")
     @CrossOrigin(origins = "*")
     @ResponseBody
-    public ResponseEntity<AddressBookEntry> getAddressBookEntry(@PathVariable String AddressBookEntryId){
+    public ResponseEntity<AddressBookEntry> getAddressBookEntry(@PathVariable int AddressBookEntryId){
         Optional<AddressBookEntry> addressBookEntry = addressBookEntryRepo.findById(AddressBookEntryId);
         return new ResponseEntity<AddressBookEntry>(addressBookEntry.get(), HttpStatus.OK);
     }
@@ -42,22 +42,5 @@ public class AddressBookEntryController {
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.path("/add-address-book-entries/{id}").buildAndExpand(addressBookEntry.getId()).toUri());
         return new ResponseEntity<AddressBookEntry>(headers, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/update-address-book-entries")
-    @ResponseBody
-    public ResponseEntity<AddressBookEntry> updateAddressBookEntry(@RequestBody AddressBookEntry addressBookEntry){
-        if(addressBookEntry != null){
-            addressBookEntryRepo.save(addressBookEntry);
-        }
-        return new ResponseEntity<AddressBookEntry>(addressBookEntry, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/delete-address-book-entries/{id}")
-    @ResponseBody
-    public ResponseEntity<Void> deleteAddressBookEntry(@PathVariable String id){
-        Optional<AddressBookEntry> addressBookEntry = addressBookEntryRepo.findById(id);
-        addressBookEntryRepo.delete(addressBookEntry.get());
-        return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
     }
 }
