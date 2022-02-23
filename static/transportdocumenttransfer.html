@@ -284,7 +284,7 @@
                     nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
                     let platformExportTransferBlock = new PlatformExportTransferBlock();
                     platformExportTransferBlock.init(transfereePublicKeyJWK,
-                                                    {"possessionTransferBlockHash": await possessionBlock.blockHash(), "nextRegistryJWK" : nextRegistryJWK},
+                                                    {"titleTransferBlockHash": await titleBlock.blockHash(), "nextRegistryJWK" : nextRegistryJWK},
                                                     transferorPrivateKeyFromPem);
                     console.log("chain link is valid?: ", platformExportTransferBlock.verifyNth(0, transferorPublicKey, {alg: ['RS256']}));
                     await fetch('/api/v1/transport-document-transfers', {
@@ -310,7 +310,7 @@
                             previousTransferBlockHash: await possessionBlock.blockHash()
                         })
                     });
-                    location .href = "transportdocumenttransfer.html?id=" + await newPossessionBlock.blockHash() ;
+                    location .href = "transportdocumenttransfer.html?id=" + await newPossessionBlock.blockHash();
                 }
             });
 
@@ -331,21 +331,21 @@
                                       && newPossessionBlock.verifyNth(0, endorserPublicKey, {alg: ['RS256']});
                 if (signaturesAreValid) {
                     await fetch('/api/v1/transport-document-transfers', {
-                    method: 'post',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        transferBlockHash : await newTitleBlock.blockHash(),
-                        transferBlock: JSON.stringify(newTitleBlock.JWS),
-                        previousTransferBlockHash: null
+                        method: 'post',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            transferBlockHash : await newTitleBlock.blockHash(),
+                            transferBlock: JSON.stringify(newTitleBlock.JWS),
+                            previousTransferBlockHash: null
                         })
                     });
                     await fetch('/api/v1/transport-document-transfers', {
-                    method: 'post',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        transferBlockHash : await newPossessionBlock.blockHash(),
-                        transferBlock: JSON.stringify(newPossessionBlock.JWS),
-                        previousTransferBlockHash: await possessionBlock.blockHash()
+                        method: 'post',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            transferBlockHash : await newPossessionBlock.blockHash(),
+                            transferBlock: JSON.stringify(newPossessionBlock.JWS),
+                            previousTransferBlockHash: await possessionBlock.blockHash()
                         })
                     });
                     location.href = "transportdocumenttransfer.html?id=" + await newPossessionBlock.blockHash();

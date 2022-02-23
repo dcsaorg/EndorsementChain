@@ -62,24 +62,24 @@
                 const bolSource = document.getElementById("registryurl").value;
                 const bolSourceDomain = bolSource.split('/')[0];
                 const exportBlock= new PlatformExportTransferBlock(JSON.parse((await (await fetch('https://' + bolSource)).json())["transferBlock"]));
-                const importedPossessionBlock = new PossessionTransferBlock(JSON.parse((await (await fetch('https://' + bolSourceDomain + '/api/v1/transport-document-transfers/' +
-                                                                                                            exportBlock.possessionTransferBlockhash())).json())["transferBlock"]));
                 let importBlock= new PlatformImportTransferBlock();
-                importBlock.init(importedPossessionBlock.transferee(), {"previousRegistryURL" : bolSource}, importerPrivateKey);
+                importBlock.init(exportBlock.transferee(),
+                                 {"titleTransferBlockHash" : exportBlock.titleTransferBlockHash(), "previousRegistryURL" : bolSource},
+                                 importerPrivateKey);
+                                 console.log(exportBlock.titleTransferBlockHash());
                 const importedTitleBlock= new TitleTransferBlock(JSON.parse((await (await fetch('https://' + bolSourceDomain + '/api/v1/transport-document-transfers/' +
-                                                                                                importedPossessionBlock.titleTransferBlockHash())).json())["transferBlock"]));
+                                                                                                exportBlock.titleTransferBlockHash())).json())["transferBlock"]));
                 const fetchBLString = 'https://'+bolSourceDomain +'/api/v1/transport-documents/' + importedTitleBlock.documentHash();
                 const fetchedBL = await (await fetch(fetchBLString)).json();
-
                 const signaturesAreValid = true; //TODO: fetch relevant public keys from exporting platform and check signatures
-                if(signaturesAreValid) {
+                if (signaturesAreValid) {
                     await fetch('/api/v1/transport-document-transfers', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         transferBlockHash : await importBlock.blockHash(),
                         transferBlock: JSON.stringify(importBlock.JWS),
-                        previousTransferBlockHash: null
+                        previousTransferBlockHash: await exportBlock.blockHash()
                         })
                     });
                     await fetch('/api/v1/transport-document-transfers', {
@@ -91,21 +91,12 @@
                         previousTransferBlockHash: null
                         })
                     });
-                    await fetch('/api/v1/transport-document-transfers', {
-                    method: 'post',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        transferBlockHash : await importedPossessionBlock.blockHash(),
-                        transferBlock: JSON.stringify(importedPossessionBlock.JWS),
-                        previousTransferBlockHash: await importBlock.blockHash()
-                        })
-                    });
                     await fetch('/api/v1/transport-documents', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(fetchedBL)
                     });
-                    location.href = "transportdocumenttransfer.html?id=" + await importedPossessionBlock.blockHash() ;
+                    location.href = "transportdocumenttransfer.html?id=" + await importBlock.blockHash();
                 } else {
                     alert("Invalid signature. Mismatch between signature and private key.");
                 }

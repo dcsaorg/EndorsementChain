@@ -44,7 +44,7 @@ class TransferBlock {
     };
 
     async blockHash() {
-        return ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(this.JWS.payload)));
+        return ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(this.JWS))));
     }
 
     transferee() {
@@ -60,6 +60,11 @@ class TransferBlock {
         verifierJWS.readJWSJS(this.asRsasignJWSJS());
         return verifierJWS.verifyNth(idx, key, acceptAlgs);
     }
+
+    blockPayloadAsJson() {
+        return JSON.parse(b64utos(this.JWS.payload))["blockPayload"];
+    }
+
 }
 
 /*
@@ -73,7 +78,7 @@ class TransferBlock {
  */
 class PossessionTransferBlock extends TransferBlock {
     titleTransferBlockHash() {
-        return JSON.parse(b64utos(this.JWS.payload))["blockPayload"]["titleTransferBlockHash"];
+        return this.blockPayloadAsJson()["titleTransferBlockHash"];
     }
 }
 
@@ -90,10 +95,10 @@ class PossessionTransferBlock extends TransferBlock {
 
 class TitleTransferBlock extends TransferBlock {
     documentHash() {
-         return JSON.parse(b64utos(this.JWS.payload))["blockPayload"]["documentHash"];
+         return this.blockPayloadAsJson()["documentHash"];
     }
     isToOrder() {
-         return JSON.parse(b64utos(this.JWS.payload))["blockPayload"]["isToOrder"];
+         return this.blockPayloadAsJson()["isToOrder"];
     }
 }
 
@@ -103,17 +108,13 @@ class TitleTransferBlock extends TransferBlock {
  * Expresses a transfer (continuation) of a possession chain on another platform, export part.
  * The blockPayload is required to have the form
  * {
- *   possessionTransferBlockHash: hash of / pointer to the last possessionTransferBlock on the hosting
- *                               (exporting) platform
+ *   titleTransferBlockHash: inherited from PossessionTransferBlock
  *   nextRegistryJWK: the key of the importing platform
  * }
  */
-class PlatformExportTransferBlock extends TransferBlock {
-    possessionTransferBlockhash() {
-         return JSON.parse(b64utos(this.JWS.payload))["blockPayload"]["possessionTransferBlockHash"];
-    }
+class PlatformExportTransferBlock extends PossessionTransferBlock {
     nextRegistryJWK() {
-        return JSON.parse(b64utos(this.JWS.payload))["blockPayload"]["nextRegistryJWK"];
+        return this.blockPayloadAsJson()["nextRegistryJWK"];
     }
 }
 
@@ -127,8 +128,8 @@ class PlatformExportTransferBlock extends TransferBlock {
  *   //note: should be key-based rather than DNS-based
  * }
  */
-class PlatformImportTransferBlock extends TransferBlock {
+class PlatformImportTransferBlock extends PossessionTransferBlock {
     previousRegistryURL() {
-        return JSON.parse(b64utos(this.JWS.payload))["blockPayload"]["previousRegistryURL"];
+        return this.blockPayloadAsJson()["previousRegistryURL"];
     }
 }
