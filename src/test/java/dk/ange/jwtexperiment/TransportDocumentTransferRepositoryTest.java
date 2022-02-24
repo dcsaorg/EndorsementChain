@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import java.util.Optional;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 
 @DataJpaTest
 public class TransportDocumentTransferRepositoryTest {
@@ -21,5 +23,17 @@ public class TransportDocumentTransferRepositoryTest {
         Assertions.assertEquals(tdt.get().getTdtHash(),tdtHash);
         Assertions.assertEquals(tdt.get().getTransferStatus(),"current");
         Assertions.assertEquals(tdt.get().getPreviousTDThash(), "4680d6582d269363ee50ad810b3407054a6005f2675b921736cd9944c8e431df");
+    }
+
+    @Test
+    public void testAddingPlatformSignature() throws java.text.ParseException, com.nimbusds.jose.JOSEException, java.security.NoSuchAlgorithmException {
+        TransportDocumentTransfer tdt = new TransportDocumentTransfer(tdtHash, tdtPayload, "current");
+        final int initialLength = tdt.getTransportDocumentTransfer().length();
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+        kpg.initialize(2048);
+        KeyPair keyPair = kpg.genKeyPair();
+        tdt.addPlatformSignature(keyPair);
+        final int finalLength = tdt.getTransportDocumentTransfer().length();
+        Assertions.assertTrue(finalLength > initialLength);
     }
 }

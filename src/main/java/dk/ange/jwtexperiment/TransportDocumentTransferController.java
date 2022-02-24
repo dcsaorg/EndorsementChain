@@ -28,7 +28,7 @@ public class TransportDocumentTransferController {
 
     @PostMapping(value = "/transport-document-transfers",consumes = {"application/json"},produces = {"application/json"})
     @ResponseBody
-    public ResponseEntity<TransportDocumentTransfer> addTransportDocumentTransfer(@RequestBody TransportDocumentTransfer transportDocumentTransfer, UriComponentsBuilder builder) throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
+    public ResponseEntity<TransportDocumentTransfer> addTransportDocumentTransfer(@RequestBody TransportDocumentTransfer transportDocumentTransfer, UriComponentsBuilder builder) throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException, com.nimbusds.jose.JOSEException {
         transportDocumentTransfer.setTransferStatus("current");
         transportDocumentTransferService.save(transportDocumentTransfer);
         HttpHeaders headers = new HttpHeaders();
