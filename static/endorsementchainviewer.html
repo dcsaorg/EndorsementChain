@@ -1,0 +1,35 @@
+<script src="chaincrawler.js"></script>
+<script src="transferblock.js"></script>
+<script src="jsrsasign-latest-all-min.js"></script>
+<table id="endorsementChainTable" border="1">
+<tr><th>Possessor</th><th>Title Holder</th><th>Platform</th></tr>
+</table>
+<script>
+    window.onload = async function() {
+        const url = new URL(location.href);
+        const chainStart = url.searchParams.get("chainstart").replace(/"/g,"") ;
+        let chainCrawler = new ChainCrawler();
+        const chains = await chainCrawler.crawlPossessionChain(chainStart);
+        const possessorChain = await Promise.all(
+            chains.possessionChain.map(function(jws) {
+                const transferBlock = new PossessionTransferBlock(JSON.parse(jws));
+                return transferBlock.transfereeThumbprint();
+            })
+        );
+        const titleHolderChain = await Promise.all(
+            chains.titleHolderChain.map(function(jws) {
+                const transferBlock = new PossessionTransferBlock(JSON.parse(jws));
+                return transferBlock.transfereeThumbprint();
+            })
+        );
+        let chainTable = document.getElementById("endorsementChainTable");
+        for (let i = 0; i < possessorChain.length; ++i) {
+            chainTable.innerHTML +=
+                "<tr>" +
+                "<td>" + possessorChain[i] + "</td>" +
+                "<td>" + titleHolderChain[i]+ "</td>" +
+                "<td>" + chains.platformChain[i] + "</td>" +
+                "</tr>";
+        }
+    }
+</script>

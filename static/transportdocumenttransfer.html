@@ -13,6 +13,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.js" type="text/javascript"></script>
         <script src="jsrsasign-latest-all-min.js"></script>
         <script src="transferblock.js"></script>
+        <script src="chaincrawler.js"></script>
         <script src="blfields.js"></script>
         <link href="custom.css" rel="stylesheet">
         <title>Title eBL Platform</title>
@@ -54,7 +55,7 @@
                     </a>
                     <br>
                     Is to order: <span style="color: green;"><b>yes</b></span><br>
-                    <a id="previousPossessor" href="previous.html">Previous possessor</a><br>
+                    <a id="endorsementChainViewer" href="">Endorsement Chain</a><br>
                     <a href="by-laws.html">By-laws</a><br>
                     <div id="nextRegistryImportLink"></div>
                         </p>
@@ -235,7 +236,8 @@
         window.onload = async function(){
             const url = new URL(location.href);
             const possessionHashId = url.searchParams.get('id');
-            const possessionTdt= await (await fetch("/api/v1/transport-document-transfers/" + possessionHashId)).json();
+            const possessionTdtUrl = "/api/v1/transport-document-transfers/" + possessionHashId; ;
+            const possessionTdt= await (await fetch(possessionTdtUrl)).json();
             const possessionBlock = new PossessionTransferBlock(JSON.parse(possessionTdt["transferBlock"]));
             const titleTdt= await (await fetch("/api/v1/transport-document-transfers/" + possessionBlock.titleTransferBlockHash())).json();
             const titleBlock = new TitleTransferBlock(JSON.parse(titleTdt["transferBlock"]));
@@ -248,9 +250,7 @@
                     document.getElementById(buttonName).disabled = "true";
                 });
             }
-            if(possessionTdt.previousTransferBlockHash) {
-                document.getElementById("previousPossessor").href = url.pathname + "?id=" + possessionTdt.previousTransferBlockHash;
-            }
+            document.getElementById("endorsementChainViewer").href = "endorsementchainviewer.html?chainstart=https://" + url.host + possessionTdtUrl;
             const holderThumbprint = (await titleBlock.transfereeThumbprint()).slice(0,20);
             const possessorThumbprint = (await possessionBlock.transfereeThumbprint()).slice(0,20);
             document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint;
