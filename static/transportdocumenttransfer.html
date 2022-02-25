@@ -21,6 +21,13 @@
         <style>
             #menuList {margin-left: auto; margin-right: 20px !important;}
             .navbar {margin-bottom: 25px;}
+            .noPaddingLeft {padding-left: 0;}
+            .btn,
+            .btn-primary{color: #fff;background-color: #008f92;border-color: #008f92;}
+            .btn:hover,
+            .btn-primary:hover,
+            .btn-primary:active{color:#fff;background-color: #008f92d4;border:none;}
+            .btn-primary:focus{border-color: #008f92;box-shadow: 0 0 0 0.25rem #008f9275;background-color:#008f92d4;}
         </style>
     </head>
     <body>
@@ -122,38 +129,36 @@
                 <div class="form-outline">
                     <div class="card">
                         <div class="card-body">
-                            <label class="form-label" for="transferTypeTextAreaExample">Select receiving eBL Platform</label>
-                            <input type="text" class="form-control" id="receivingRegistryTitle"><br>
+                            <label class="form-label" for="transferTypeTextAreaExample">Select receiving eBL
+                                Platform</label>
+                            <select>
+                                <option id="receivingRegistryTitle">Localhost</option>
+                                <option id="receivingRegistryTitle">< Empty ></option>
+                                <option id="receivingRegistryTitle">< Empty ></option>
+                            </select>
+                            <br>
                             <label class="form-label" for="textAreaExample">Address Book</label>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Public Key</th>
-                                    </tr>
-                                </thead>
-                                <tbody id = "TitleAddressBook">
-                                </tbody>
-                            </table>
+                            <div class="form-check noPaddingLeft">
+                                <select id="transferTitleAddressBookSelect">
+                                    <option value="" disabled selected>Select...</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-body">
                             <label class="form-label" for="textAreaExample">Endorsement Type</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" disabled="true">
-                                <label class="form-check-label" for="flexRadioDefault1">To order (blank)</label>
+                            <div class="form-check noPaddingLeft" style="margin-bottom: 1rem">
+                                <select>
+                                    <option checked name="possessionflexRadioDefault1" id="flexRadioDefault1">To order (blank)</option>
+                                    <option checked>To order of endorsee</option>
+                                   <option disabled="true">To named endorsee</option>
+                                </select>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                                <label class="form-check-label" for="flexRadioDefault2">To order of endorsee</label>
+                            <div id="endorseePublicKeyField">
+                                Paste endorsee's public key or choose from address book.
+                                <textarea class="form-control" id="endorseePublicKeyTextArea" rows="4"></textarea>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3" disabled="true">
-                                <label class="form-check-label" for="flexRadioDefault3">To named endorsee</label>
-                            </div>
-                            Paste endorsee's public key or choose from address book.
-                            <textarea class="form-control" id="endorseePublicKeyTextArea" rows="4"></textarea>
                             Paste endorser's private key:
                             <textarea class="form-control" id="endorserPrivateKeyTextArea" rows="4"></textarea>
                         </div>
@@ -180,42 +185,37 @@
                 <div class="form-outline">
                     <div class="card">
                         <div class="card-body">
-                            <label class="form-label">Select receiving eBL Platform</label>
-                            <input type="text" class="form-control" id="receivingRegistryPossession"><br>
+                            <label class="form-label" for="transferTypeTextAreaExample">Select receiving eBL
+                                Platform</label>
+                            <select>
+                                <option id="receivingRegistryPossession">Localhost</option>
+                                <option id="receivingRegistryPossession">< Empty ></option>
+                                <option id="receivingRegistryPossession">< Empty ></option>
+                            </select>
+                            <br>
                             <label class="form-label" for="textAreaExample">Address Book</label>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Public Key</th>
-                                    </tr>
-                                </thead>
-                                <tbody id = "PossessionAddressBook">
-                                </tbody>
-                            </table>
+                            <div class="form-check noPaddingLeft">
+                                <select id="transferPossessionAddressBookSelect">
+                                    <option value="" disabled selected>Select...</option>
+                                    </select>
+                            </div>
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-body">
                             <label class="form-label" for="transferTypeTextAreaExample">Transfer Type</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="possessionflexRadioDefault1" id="flexRadioDefault1" checked>
-                                <label class="form-check-label" for="flexRadioDefault1">Transfer to new possessor</label>
+                            <div class="form-check noPaddingLeft" style="margin-bottom: 1rem">
+                                <select>
+                                    <option checked="true" name="possessionflexRadioDefault1" id="flexRadioDefault1">Transfer to new possessor</option>
+                                    <option disabled="true" name="possessionflexRadioDefault2" id="flexRadioDefault2">Return to carrier for amendment</option>
+                                    <option disabled="true" name="possessionflexRadioDefault3" id="flexRadioDefault3">Surrender to carrier</option>
+                                    <option disabled="true" name="possessionflexRadioDefault4" id="flexRadioDefault4">Switch to paper</option>
+                                </select>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="possessionflexRadioDefault2" id="flexRadioDefault2" disabled="true">
-                                <label class="form-check-label" for="flexRadioDefault2">Return to carrier for amendment</label>
+                            <div id="transfereesPublicKeyField">
+                                Paste transferee's public key or choose from address book.
+                                <textarea class="form-control" id="transfereePublicKeyTextArea" rows="4"></textarea>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="possessionflexRadioDefault3" id="flexRadioDefault3" disabled="true">
-                                <label class="form-check-label" for="flexRadioDefault3">Surrender to carrier</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="possessionflexRadioDefault4" id="flexRadioDefault4" disabled="true">
-                                <label class="form-check-label" for="flexRadioDefault4">Switch to paper</label>
-                            </div>
-                            Paste transferee's public key or choose from address book.
-                            <textarea class="form-control" id="transfereePublicKeyTextArea" rows="4"></textarea>
                             Paste transferor's private key:
                             <textarea class="form-control" id="transferorPrivateKeyTextArea" rows="4"></textarea>
                         </div>
@@ -235,7 +235,7 @@
         window.onload = async function(){
             const url = new URL(location.href);
             const possessionHashId = url.searchParams.get('id');
-            const possessionTdtUrl = "/api/v1/transport-document-transfers/" + possessionHashId; ;
+            const possessionTdtUrl = "/api/v1/transport-document-transfers/" + possessionHashId;
             const possessionTdt= await (await fetch(possessionTdtUrl)).json();
             const possessionBlock = new PossessionTransferBlock(JSON.parse(possessionTdt["transferBlock"]));
             const titleTdt= await (await fetch("/api/v1/transport-document-transfers/" + possessionBlock.titleTransferBlockHash())).json();
@@ -354,19 +354,39 @@
                 }
             });
 
+            let addressBook;
             var xhrAddressBook = new XMLHttpRequest();
             xhrAddressBook.open("GET", "/api/v1/address-book-entries/");
-            xhrAddressBook.onload = async function() {
-                const addressBook = JSON.parse(xhrAddressBook.response);
-                let adressBookString = "";
-                addressBook.forEach(async function(entry){
-                    const publicKeyPem = KEYUTIL.getKey(entry.publicKey);
-                    const publicKeyJWK = KEYUTIL.getJWKFromKey(publicKeyPem);
-                    const publicKeyThumbPrint = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(publicKeyJWK))));
-                    adressBookString += "<tr><td>"+entry.name+"</td><td>"+publicKeyThumbPrint.slice(0,20)+"</td></tr>"
-                    document.getElementById("TitleAddressBook").innerHTML = adressBookString;
-                    document.getElementById("PossessionAddressBook").innerHTML = adressBookString;
+            xhrAddressBook.onload = async function () {
+                addressBook = JSON.parse(xhrAddressBook.response);
+                let addressBookString = "";
+                const selectTransferTitle = document.getElementById('transferTitleAddressBookSelect');
+                const selectTransferPossession = document.getElementById('transferPossessionAddressBookSelect');
+
+            addressBook.forEach(function (entry) {
+                addressBookString += "<tr><td>" + entry.name + "</td><td>" + entry.publicKey + "</td><td>" + entry.id + "</td></tr>";
+
+                const newOptionTitle = document.createElement("option");
+                newOptionTitle.value = entry.publicKey;
+                newOptionTitle.id = entry.id;
+                newOptionTitle.innerText = entry.name;
+                selectTransferTitle.appendChild(newOptionTitle);
+
+                const newOptionPossession = document.createElement("option");
+                newOptionPossession.value = entry.publicKey;
+                newOptionPossession.id = entry.id;
+                newOptionPossession.innerText = entry.name;
+                selectTransferPossession.appendChild(newOptionPossession);
+
+                document.getElementById("transferTitleAddressBookSelect").addEventListener("change", function (event){
+                    document.getElementById("endorseePublicKeyTextArea").value = event.target.value;
                 });
+
+                document.getElementById("transferPossessionAddressBookSelect").addEventListener("change", function (event){
+                    document.getElementById("transfereePublicKeyTextArea").value = event.target.value;
+                });
+            });
+
             }
             xhrAddressBook.send();
         }
