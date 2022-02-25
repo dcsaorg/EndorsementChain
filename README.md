@@ -1,19 +1,20 @@
-The DCSA eBL Endorsement Chain POC
-==================================
+The DCSA eBL Platform Interoperability POC
+==========================================
 
-This repository contains a proof of concept of an endorsement chain for an electronic bill of lading.
+This repository contains a proof of concept of a format for an electronic endorsement chain and how to transfer it across platforms.
 
 The purpose of the POC is to illustrate how transfer of title and possession can be standardized, in view of establishing interoperability between eBL solution providers.
 
 It revolves around a GET and a POST endpoint for *document transfer blocks*, each block consisting of:
 
- * a hash of the document whose ownership is managed
- * the public key of the current title holder
- * the public key of the current possessor
- * a boolean indicating whether the eBL is to order
- * the hash of the previous transfer block
+ * the transferee, identified by its public key
+ * a payload containing attributes such as:
+  * a hash of the document whose ownership is managed
+  * boolean indicating whether the eBL is to order
+  * a reference to the platform to which the document is being exported
+  * a reference to the platform from which the document is being
 
-The block (a JWT) is signed by the previous possessor, in effect creating a cryptographically linked list, functionally equivalent to the list of signatures on the paper bill of lading. One of the purposes of the POC is to determine if this signing scheme is implementable in practice by the existing eBL solution providers.
+The block (a JWS) is signed by the transferrer, i.e. the previous transferee. This in effect creates a cryptographically linked list, functionally equivalent to the list of signatures on the paper bill of lading. One of the purposes of the POC is to determine if this signing scheme is implementable in practice by the existing eBL solution providers.
 
 To build and run it:
 ```
