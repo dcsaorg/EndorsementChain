@@ -128,8 +128,7 @@
                                 <thead>
                                     <tr>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Key type</th>
-                                    <th scope="col">Fingerprint</th>
+                                    <th scope="col">Public Key</th>
                                     </tr>
                                 </thead>
                                 <tbody id = "TitleAddressBook">
@@ -187,8 +186,7 @@
                                 <thead>
                                     <tr>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Key type</th>
-                                    <th scope="col">Fingerprint</th>
+                                    <th scope="col">Public Key</th>
                                     </tr>
                                 </thead>
                                 <tbody id = "PossessionAddressBook">
@@ -359,9 +357,14 @@
             xhrAddressBook.onload = async function() {
                 const addressBook = JSON.parse(xhrAddressBook.response);
                 let adressBookString = "";
-                addressBook.forEach(function(entry){adressBookString += "<tr><td>"+entry.name+"</td><td>"+entry.publicKey+"</td><td>"+entry.id+"</td> </tr>"});
-                document.getElementById("TitleAddressBook").innerHTML = adressBookString;
-                document.getElementById("PossessionAddressBook").innerHTML = adressBookString;
+                addressBook.forEach(async function(entry){
+                    const publicKeyPem = KEYUTIL.getKey(entry.publicKey);
+                    const publicKeyJWK = KEYUTIL.getJWKFromKey(publicKeyPem);
+                    const publicKeyThumbPrint = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(publicKeyJWK))));
+                    adressBookString += "<tr><td>"+entry.name+"</td><td>"+publicKeyThumbPrint.slice(0,20)+"</td></tr>"
+                    document.getElementById("TitleAddressBook").innerHTML = adressBookString;
+                    document.getElementById("PossessionAddressBook").innerHTML = adressBookString;
+                });
             }
             xhrAddressBook.send();
         }
