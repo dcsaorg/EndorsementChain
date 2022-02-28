@@ -130,11 +130,11 @@
                         <div class="card-body">
                             <label class="form-label" for="transferTypeTextAreaExample">Select receiving eBL
                                 Platform</label>
-                            <select>
-                                <option id="receivingRegistryTitle">Localhost</option>
-                                <option id="receivingRegistryTitle">< Empty ></option>
-                                <option id="receivingRegistryTitle">< Empty ></option>
-                            </select>
+                            <div class="form-check noPaddingLeft">
+                                <select id="receivingEBLPlatform">
+                                    <option value="" disabled selected>Select platform...</option>
+                                </select>
+                            </div>
                             <br>
                             <label class="form-label" for="textAreaExample">Address Book</label>
                             <div class="form-check noPaddingLeft">
@@ -186,11 +186,11 @@
                         <div class="card-body">
                             <label class="form-label" for="transferTypeTextAreaExample">Select receiving eBL
                                 Platform</label>
-                            <select>
-                                <option id="receivingRegistryPossession">Localhost</option>
-                                <option id="receivingRegistryPossession">< Empty ></option>
-                                <option id="receivingRegistryPossession">< Empty ></option>
-                            </select>
+                            <div class="form-check noPaddingLeft">
+                                <select id="receivingEBLPlatform">
+                                    <option value="" disabled selected>Select platform...</option>
+                                </select>
+                            </div>
                             <br>
                             <label class="form-label" for="textAreaExample">Address Book</label>
                             <div class="form-check noPaddingLeft">
@@ -360,8 +360,6 @@
                 let addressBookString = "";
                 const selectTransferTitle = document.getElementById('transferTitleAddressBookSelect');
                 const selectTransferPossession = document.getElementById('transferPossessionAddressBookSelect');
-                const newTransferTitleSelect = document.getElementById("endorseePublicKeyField");
-                const newTransferPossessionSelect = document.getElementById("transfereesPublicKeyField");
 
                 addressBook.forEach(function (entry) {
                     addressBookString += "<tr><td>" + entry.name + "</td><td>" + entry.publicKey + "</td><td>" + entry.id + "</td></tr>";
@@ -377,14 +375,17 @@
                     newOptionPossession.id = entry.id;
                     newOptionPossession.innerText = entry.name;
                     selectTransferPossession.appendChild(newOptionPossession);
-
-                    document.getElementById("transferTitleAddressBookSelect").addEventListener("change", function (event){
-                        newTransferTitleSelect.style.display = "none"
-                    });
-                    document.getElementById("transferPossessionAddressBookSelect").addEventListener("change", function (event){
-                        newTransferPossessionSelect.style.display = "none"
-                    });
                 });
+
+                document.getElementById("transferTitleAddressBookSelect").addEventListener("change", function (event){
+                    document.getElementById("endorseePublicKeyTextArea").value = event.target.value;
+
+                });
+
+                document.getElementById("transferPossessionAddressBookSelect").addEventListener("change", function (event){
+                    document.getElementById("transfereePublicKeyTextArea").value = event.target.value;
+                });
+
             }
             xhrAddressBook.send();
         }
