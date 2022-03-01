@@ -14,5 +14,5 @@ Run the front-end tests at https://localhost:8443/static/SpecRunner.html
 
 To populate the database with test data run:
 ```
-./populatedatabase.sh
+cat populateaddressbook.sql | sudo -u postgres psql tdt_registry
 ```

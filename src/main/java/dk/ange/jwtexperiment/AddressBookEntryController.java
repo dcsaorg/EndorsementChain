@@ -34,13 +34,4 @@ public class AddressBookEntryController {
         List<AddressBookEntry> addressBookEntries = addressBookEntryRepo.findAll();
         return new ResponseEntity<List<AddressBookEntry>>(addressBookEntries, HttpStatus.OK);
     }
-
-    @PostMapping(value = "/add-address-book-entries",consumes = {"application/json"},produces = {"application/json"})
-    @ResponseBody
-    public ResponseEntity<AddressBookEntry> getAddressBookEntry(@RequestBody AddressBookEntry addressBookEntry, UriComponentsBuilder builder){
-        addressBookEntryRepo.save(addressBookEntry);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("/add-address-book-entries/{id}").buildAndExpand(addressBookEntry.getId()).toUri());
-        return new ResponseEntity<AddressBookEntry>(headers, HttpStatus.CREATED);
-    }
 }
