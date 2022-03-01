@@ -3,18 +3,16 @@ package dk.ange.jwtexperiment;
 import javax.persistence.*;
 import lombok.Setter;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 @Entity
 @Table(name = "addressbookentry")
-@Getter @Setter @RequiredArgsConstructor @NoArgsConstructor
+@Getter @Setter @AllArgsConstructor
 public class AddressBookEntry {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
-    private int id;
+    private String id;
 
     @Column(columnDefinition="text")
     @NonNull
