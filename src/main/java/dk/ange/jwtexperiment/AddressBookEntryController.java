@@ -22,7 +22,7 @@ public class AddressBookEntryController {
     @GetMapping("/address-book-entries/{AddressBookEntryId}")
     @CrossOrigin(origins = "*")
     @ResponseBody
-    public ResponseEntity<AddressBookEntry> getAddressBookEntry(@PathVariable int AddressBookEntryId){
+    public ResponseEntity<AddressBookEntry> getAddressBookEntry(@PathVariable String AddressBookEntryId){
         Optional<AddressBookEntry> addressBookEntry = addressBookEntryRepo.findById(AddressBookEntryId);
         return new ResponseEntity<AddressBookEntry>(addressBookEntry.get(), HttpStatus.OK);
     }

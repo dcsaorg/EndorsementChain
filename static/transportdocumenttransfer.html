@@ -129,7 +129,7 @@
                                 <thead>
                                     <tr>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Public Key</th>
+                                    <th scope="col">Id</th>
                                     </tr>
                                 </thead>
                                 <tbody id = "TitleAddressBook">
@@ -187,7 +187,7 @@
                                 <thead>
                                     <tr>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Public Key</th>
+                                    <th scope="col">Id</th>
                                     </tr>
                                 </thead>
                                 <tbody id = "PossessionAddressBook">
@@ -356,14 +356,11 @@
 
             var xhrAddressBook = new XMLHttpRequest();
             xhrAddressBook.open("GET", "/api/v1/address-book-entries/");
-            xhrAddressBook.onload = async function() {
+            xhrAddressBook.onload = function() {
                 const addressBook = JSON.parse(xhrAddressBook.response);
                 let adressBookString = "";
-                addressBook.forEach(async function(entry){
-                    const publicKeyPem = KEYUTIL.getKey(entry.publicKey);
-                    const publicKeyJWK = KEYUTIL.getJWKFromKey(publicKeyPem);
-                    const publicKeyThumbPrint = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(publicKeyJWK))));
-                    adressBookString += "<tr><td>"+entry.name+"</td><td>"+publicKeyThumbPrint.slice(0,20)+"</td></tr>"
+                addressBook.forEach(function(entry){
+                    adressBookString += "<tr><td>"+entry.name+"</td><td>"+entry.id+"</td></tr>"
                     document.getElementById("TitleAddressBook").innerHTML = adressBookString;
                     document.getElementById("PossessionAddressBook").innerHTML = adressBookString;
                 });
