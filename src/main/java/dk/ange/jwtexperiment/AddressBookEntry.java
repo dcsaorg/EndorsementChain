@@ -4,11 +4,12 @@ import javax.persistence.*;
 import lombok.Setter;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Entity
 @Table(name = "addressbookentry")
-@Getter @Setter @AllArgsConstructor
+@Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class AddressBookEntry {
     @Id
     @Column
