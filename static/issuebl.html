@@ -148,7 +148,7 @@
                         <div class="position-relative"><input class="smallInput form-control" required id="sizeTypes"><br><label class="smallLabel">Size & type:</label><br></div>
                     </div>
                     <div class="">
-                        <div class="position-relative extraMarginTop extraHeight"><textarea class="mediumInput inputLarge form-control" required id="contNos"></textarea><br><label class="mediumLabel">Cont. Nos.:</label><br></div>
+                        <div class="position-relative extraMarginTop extraHeight"><textarea class="mediumInput inputLarge form-control" required id="containerNumbers"></textarea><br><label class="mediumLabel">Cont. Nos.:</label><br></div>
                     </div>
                     <div class="">
                         <div class="position-relative extraMarginTop extraHeight"><textarea class="mediumInput inputLarge form-control" required id="sealNos"></textarea><br><label class="mediumLabel">Seal Nos.:</label><br></div>
@@ -240,13 +240,13 @@
                     <div class="position-relative extraHeight specialBox"><textarea class="mediumInput specialBox form-control" required id="placeOfIssue"></textarea><br><label class="mediumLabel">Place of issue</label><br></div>
                 </div>
                 <div class="col-7">
-                    <div class="position-relative extraHeight specialBox"><textarea class="mediumInput specialBox form-control" required id="containerNumbers"></textarea><br><label class="mediumLabel">Container Numbers</label><br></div>
                 </div>
 
                 <div class="row">
                     <div class="col-sm-7">
                         <div class="">
                             <div class="">
+                                <div class="position-relative"><input type="text" class="smallInput form-control" required id="receivingPlatform"></input><br><label class="smallLabel">Select receiving eBL Platform</label><br></div>
                                 <h6 class="card-title">Issue to shipper with public key</h6>
                                 <textarea class="form-control" id="shipperPublicKeytextArea" rows="4"></textarea>
                                 <h6 class="card-text">Signing with carrier private key:</h6>
@@ -304,16 +304,36 @@
                     previousTransferBlockHash: null
                     })
                 });
-                await fetch('/api/v1/transport-document-transfers', {
-                method: 'post',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    transferBlockHash : await issueBlPossessionTransferBlock.blockHash(),
-                    transferBlock: JSON.stringify(issueBlPossessionTransferBlock.JWS),
-                    previousTransferBlockHash: null
-                    })
-                });
-                location.href = "transportdocumenttransfer.html?id=" + await issueBlPossessionTransferBlock.blockHash();
+                const nextRegistry = document.getElementById("receivingPlatform").value;
+                if (nextRegistry.length > 0) {
+                    nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
+                    let platformExportTransferBlock = new PlatformExportTransferBlock();
+                    platformExportTransferBlock.init(shipperPublicKeyJWK,
+                                                    {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash(), "nextRegistryJWK" : nextRegistryJWK},
+                                                    carrierPrivateKeyFromPem);
+                    console.log("chain link is valid?: ", platformExportTransferBlock.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']}));
+                    await fetch('/api/v1/transport-document-transfers', {
+                        method: 'post',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            transferBlockHash : await platformExportTransferBlock.blockHash(),
+                            transferBlock: JSON.stringify(platformExportTransferBlock.JWS),
+                            previousTransferBlockHash: null
+                        })
+                    });
+                    location .href = "blexported.html?id=" + await platformExportTransferBlock.blockHash();
+                } else {
+                    await fetch('/api/v1/transport-document-transfers', {
+                    method: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        transferBlockHash : await issueBlPossessionTransferBlock.blockHash(),
+                        transferBlock: JSON.stringify(issueBlPossessionTransferBlock.JWS),
+                        previousTransferBlockHash: null
+                        })
+                    });
+                    location.href = "transportdocumenttransfer.html?id=" + await issueBlPossessionTransferBlock.blockHash();
+                }
             });
         }
     </script>
