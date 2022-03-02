@@ -22,6 +22,7 @@
         <style>
             #menuList {margin-left: auto; margin-right: 20px !important;}
             .navbar {margin-bottom: 25px;}
+            .noPaddingLeft{padding-left:0;}
         </style>
     </head>
     <body>
@@ -126,16 +127,11 @@
                             <label class="form-label" for="transferTypeTextAreaExample">Select receiving eBL Platform</label>
                             <input type="text" class="form-control" id="receivingRegistryTitle"><br>
                             <label class="form-label" for="textAreaExample">Address Book</label>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Id</th>
-                                    </tr>
-                                </thead>
-                                <tbody id = "TitleAddressBook">
-                                </tbody>
-                            </table>
+                            <div class="form-check noPaddingLeft">
+                                <select id="transferTitleAddressBookSelect">
+                                    <option value="" disabled selected>Select...</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="card">
@@ -185,16 +181,11 @@
                             <label class="form-label">Select receiving eBL Platform</label>
                             <input type="text" class="form-control" id="receivingRegistryPossession"><br>
                             <label class="form-label" for="textAreaExample">Address Book</label>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Id</th>
-                                    </tr>
-                                </thead>
-                                <tbody id = "PossessionAddressBook">
-                                </tbody>
-                            </table>
+                            <div class="form-check noPaddingLeft">
+                                <select id="transferPossessionAddressBookSelect">
+                                    <option value="" disabled selected>Select...</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="card">
@@ -360,11 +351,25 @@
             xhrAddressBook.open("GET", "/api/v1/address-book-entries/");
             xhrAddressBook.onload = function() {
                 const addressBook = JSON.parse(xhrAddressBook.response);
-                let adressBookString = "";
+                const selectTransferTitle = document.getElementById('transferTitleAddressBookSelect');
+                const selectTransferPossession = document.getElementById('transferPossessionAddressBookSelect');
                 addressBook.forEach(function(entry){
-                    adressBookString += "<tr><td>"+entry.name+"</td><td>"+entry.id+"</td></tr>"
-                    document.getElementById("TitleAddressBook").innerHTML = adressBookString;
-                    document.getElementById("PossessionAddressBook").innerHTML = adressBookString;
+                    const newOptionTitle = document.createElement("option");
+                    newOptionTitle.value = entry.publicKey;
+                    newOptionTitle.id = entry.id;
+                    newOptionTitle.innerText = entry.name + " (" + entry.id + ")";
+                    selectTransferTitle.appendChild(newOptionTitle);
+                    const newOptionPossession = document.createElement("option");
+                    newOptionPossession.value = entry.publicKey;
+                    newOptionPossession.id = entry.id;
+                    newOptionPossession.innerText = entry.name + " (" + entry.id + ")";
+                    selectTransferPossession.appendChild(newOptionPossession);
+                    document.getElementById("transferTitleAddressBookSelect").addEventListener("change", function (event){
+                        document.getElementById("endorseePublicKeyTextArea").value = event.target.value;
+                    });
+                    document.getElementById("transferPossessionAddressBookSelect").addEventListener("change", function (event){
+                        document.getElementById("transfereePublicKeyTextArea").value = event.target.value;
+                    });
                 });
             }
             xhrAddressBook.send();
