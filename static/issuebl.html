@@ -14,6 +14,7 @@
         <script src="transferblock.js"></script>
         <script src="testkeys.js"></script>
         <script src="blfields.js"></script>
+        <script src="filladdressbookselect.js"></script>
         <link href="custom.css" rel="stylesheet">
         <title>Title eBL Platform</title>
         <style>
@@ -32,6 +33,7 @@
             .container{border: 1px solid rgba(0,0,0,.125);border-radius: 0.25rem;padding:1rem;}
             .minusMarginTop{margin-top:-25px}
             .transferBtn{color: #fff;background-color: #008f92;border-color: #008f92;}
+            .noPaddingLeft{padding-left:0;}
 
             /* bootstrap CSS overwrite */
             .transferBtn:hover{color:#fff;background-color: #008f92d4;}
@@ -239,14 +241,21 @@
                 <div class="col-2">
                     <div class="position-relative extraHeight specialBox"><textarea class="mediumInput specialBox form-control" required id="placeOfIssue"></textarea><br><label class="mediumLabel">Place of issue</label><br></div>
                 </div>
+                <div class="col-7"></div>
                 <div class="col-7">
+                    <input type="text" class="form-control" id="receivingRegistryPossession"><br>
+                    <label class="form-label noPaddingLeft" for="textAreaExample" style="position:relative;">Select recipient</label>
+                    <div class="form-check noPaddingLeft">
+                        <select id="transferPossessionAddressBookSelect">
+                            <option value='{"publicKey": "", "eblPlatform": ""}' selected>Select...</option>
+                        </select>
+                    </div>
                 </div>
-
+                <div class="col-5"></div>
                 <div class="row">
                     <div class="col-sm-7">
                         <div class="">
                             <div class="">
-                                <div class="position-relative"><input type="text" class="smallInput form-control" required id="receivingPlatform"></input><br><label class="smallLabel">Select receiving eBL Platform</label><br></div>
                                 <h6 class="card-title">Issue to shipper with public key</h6>
                                 <textarea class="form-control" id="shipperPublicKeytextArea" rows="4"></textarea>
                                 <h6 class="card-text">Signing with carrier private key:</h6>
@@ -335,6 +344,13 @@
                     location.href = "transportdocumenttransfer.html?id=" + await issueBlPossessionTransferBlock.blockHash();
                 }
             });
+            var xhrAddressBook = new XMLHttpRequest();
+            xhrAddressBook.open("GET", "/api/v1/address-book-entries/");
+            xhrAddressBook.onload = function() {
+                const addressBook = JSON.parse(xhrAddressBook.response);
+                fillAddressBookSelect("transferPossessionAddressBookSelect", "shipperPublicKeytextArea", "receivingRegistryPossession", addressBook);
+            }
+            xhrAddressBook.send();
         }
     </script>
 </html>
