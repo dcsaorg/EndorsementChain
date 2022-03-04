@@ -28,7 +28,7 @@ public class AddressBookEntryController {
         return new ResponseEntity<AddressBookEntry>(addressBookEntry.get(), HttpStatus.OK);
     }
 
-    @GetMapping("/address-book-entries/")
+    @GetMapping("/address-book-entries")
     @CrossOrigin(origins = "*")
     @ResponseBody
     public ResponseEntity<List<AddressBookEntry>> getAddressBookEntries(@RequestParam(required = false) String thumbprint) {

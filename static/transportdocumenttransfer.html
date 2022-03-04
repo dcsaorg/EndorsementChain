@@ -180,18 +180,23 @@
                 <div class="form-outline">
                     <div class="card">
                         <div class="card-body">
-                            <input type="text" class="form-control" id="receivingRegistryPossession"><br>
-                            <label class="form-label" for="textAreaExample">Select recipient</label>
                             <div class="form-check noPaddingLeft">
-                                <select id="transferPossessionAddressBookSelect">
-                                    <option value='{"publicKey": "", "eblPlatform": ""}' selected>Select...</option>
-                                </select>
-                            </div>
-                            <label class="form-label">Select receiving eBL Platform</label>
-                            <div class="form-check noPaddingLeft">
+                                <label class="form-label">Select receiving eBL Platform</label>
                                 <select id="transferPossessionPlatformSelect">
                                     <option value="" selected>Select...</option>
                                 </select>
+                                <div><label class="form-label">Or type it</label></div>
+                                <input type="text" class="form-control" id="receivingRegistryPossession"><br>
+                            </div>
+                            <div class="form-check noPaddingLeft">
+                                <label class="form-label" for="textAreaExample">Select recipient</label>
+                                <select id="transferPossessionAddressBookSelect">
+                                    <option value='{"publicKey": "", "eblPlatform": ""}' selected>Select...</option>
+                                </select>
+                                <input type="text" class="form-control" id="recipientId">
+                                <button type="button" id="fetchRecipientButton" class="btn-xs btn-primary"">
+                                    Fetch
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -368,7 +373,6 @@
             xhrAddressBook.send();
 
             testPlatforms.forEach(function(platform) {
-                console.log(platform);
                 let newOption = document.createElement("option");
                 newOption.value = platform;
                 newOption.innerHTML= platform;
@@ -378,6 +382,19 @@
                     document.getElementById("receivingRegistryPossession").value  = event.target.value;
                 });
             });
+
+            let fetchRecipientButton = document.getElementById("fetchRecipientButton");
+            fetchRecipientButton.addEventListener('click', async _ => {
+                const targetPlatform = document.getElementById("receivingRegistryPossession").value;
+                const recipientId = document.getElementById("recipientId").value;
+                const response = await fetch("https://" + targetPlatform + "/api/v1/address-book-entries?thumbprint=" + recipientId);
+                if (response.status == "200") {
+                    const contact = JSON.parse(await response.text())[0];
+                    document.getElementById("transfereePublicKeyTextArea").value = contact.publicKey;
+                }
+
+            });
+
         }
         document.getElementById("loadTitlePrivateKey").onchange = function(){
             loadPrivateKeyFromFile("loadTitlePrivateKey", "endorserPrivateKeyTextArea");
