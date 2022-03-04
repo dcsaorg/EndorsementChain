@@ -125,7 +125,11 @@
                     <div class="card">
                         <div class="card-body">
                             <label class="form-label" for="transferTypeTextAreaExample">Select receiving eBL Platform</label>
-                            <input type="text" class="form-control" id="receivingRegistryTitle"><br>
+                            <select id="selectReceivingRegistryTitle">
+                                <option value="" disabled selected>Select...</option>
+                            </select>
+                            <br>
+                            <input type="text" class="form-control" id="receivingRegistryTitleInput"><br>
                             <label class="form-label" for="textAreaExample">Address Book</label>
                             <div class="form-check noPaddingLeft">
                                 <select id="transferTitleAddressBookSelect">
@@ -179,7 +183,10 @@
                     <div class="card">
                         <div class="card-body">
                             <label class="form-label">Select receiving eBL Platform</label>
-                            <input type="text" class="form-control" id="receivingRegistryPossession"><br>
+                            <select id="selectReceivingRegistryPossession">
+                                <option value="" disabled selected>Select...</option>
+                            </select>
+                            <input type="text" class="form-control" id="receivingRegistryPossessionInput"><br>
                             <label class="form-label" for="textAreaExample">Address Book</label>
                             <div class="form-check noPaddingLeft">
                                 <select id="transferPossessionAddressBookSelect">
@@ -272,7 +279,7 @@
                 transferorPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("transferorPrivateKeyTextArea").value);
                 const transferorPublicKey = possessionBlock.transferee();
                 let nextRegistryJWK = null;
-                const nextRegistry = document.getElementById("receivingRegistryPossession").value;
+                const nextRegistry = document.getElementById("receivingRegistryPossessionInput").value;
                 if (nextRegistry.length > 0) {
                     nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
                     let platformExportTransferBlock = new PlatformExportTransferBlock();
@@ -364,12 +371,35 @@
                     newOptionPossession.id = entry.id;
                     newOptionPossession.innerText = entry.name + " (" + entry.id + ")";
                     selectTransferPossession.appendChild(newOptionPossession);
-                    document.getElementById("transferTitleAddressBookSelect").addEventListener("change", function (event){
-                        document.getElementById("endorseePublicKeyTextArea").value = event.target.value;
                     });
-                    document.getElementById("transferPossessionAddressBookSelect").addEventListener("change", function (event){
-                        document.getElementById("transfereePublicKeyTextArea").value = event.target.value;
-                    });
+                document.getElementById("transferTitleAddressBookSelect").addEventListener("change", function (event){
+                    document.getElementById("endorseePublicKeyTextArea").value = event.target.value;
+                });
+                document.getElementById("transferPossessionAddressBookSelect").addEventListener("change", function (event){
+                    document.getElementById("transfereePublicKeyTextArea").value = event.target.value;
+                });
+                const selectReceivingRegistryTitle = document.getElementById("selectReceivingRegistryTitle");
+                const selectReceivingRegistryPossession = document.getElementById("selectReceivingRegistryPossession")
+                const selectedPlatform = [
+                    {name:'Localhost', value:"localhost:8443"},
+                    {name:'Ecolefrancodanoise', value:"ebl.ecolefrancodanoise.dk:8443"},
+                    {name:'Grus Ange', value:"grus.ange.dk:8443"}
+                ];
+                selectedPlatform.forEach(function(platform){
+                    const newPlatformTitle = document.createElement("option");
+                    newPlatformTitle.value = platform.value;
+                    newPlatformTitle.innerText = platform.name;
+                    selectReceivingRegistryTitle.appendChild(newPlatformTitle);
+                    const newPlatformPossession = document.createElement("option");
+                    newPlatformPossession.value = platform.value;
+                    newPlatformPossession.innerText = platform.name;
+                    selectReceivingRegistryPossession.appendChild(newPlatformPossession);
+                })
+                document.getElementById("selectReceivingRegistryTitle").addEventListener("change", function (event){
+                    document.getElementById("receivingRegistryTitleInput").value = event.target.value;
+                });
+                document.getElementById("selectReceivingRegistryPossession").addEventListener("change", function (event){
+                    document.getElementById("receivingRegistryPossessionInput").value = event.target.value;
                 });
             }
             xhrAddressBook.send();
