@@ -17,6 +17,7 @@
         <script src="chaincrawler.js"></script>
         <script src="loadprivatekey.js"></script>
         <script src="filladdressbookselect.js"></script>
+        <script src="testplatforms.js"></script>
         <script src="blfields.js"></script>
         <link href="custom.css" rel="stylesheet">
         <title>Title eBL Platform</title>
@@ -179,12 +180,17 @@
                 <div class="form-outline">
                     <div class="card">
                         <div class="card-body">
-                            <label class="form-label">Select receiving eBL Platform</label>
                             <input type="text" class="form-control" id="receivingRegistryPossession"><br>
-                            <label class="form-label" for="textAreaExample">Address Book</label>
+                            <label class="form-label" for="textAreaExample">Select recipient</label>
                             <div class="form-check noPaddingLeft">
                                 <select id="transferPossessionAddressBookSelect">
-                                    <option value="" disabled selected>Select...</option>
+                                    <option value='{"publicKey": "", "eblPlatform": ""}' selected>Select...</option>
+                                </select>
+                            </div>
+                            <label class="form-label">Select receiving eBL Platform</label>
+                            <div class="form-check noPaddingLeft">
+                                <select id="transferPossessionPlatformSelect">
+                                    <option value="" selected>Select...</option>
                                 </select>
                             </div>
                         </div>
@@ -360,6 +366,18 @@
                 fillAddressBookSelect("transferTitleAddressBookSelect", "transfereePublicKeyTextArea", "receivingRegistryTitle", addressBook);
             }
             xhrAddressBook.send();
+
+            testPlatforms.forEach(function(platform) {
+                console.log(platform);
+                let newOption = document.createElement("option");
+                newOption.value = platform;
+                newOption.innerHTML= platform;
+                let transferPossessionPlatformSelect = document.getElementById("transferPossessionPlatformSelect");
+                transferPossessionPlatformSelect.appendChild(newOption);
+                transferPossessionPlatformSelect.addEventListener("change", function (event){
+                    document.getElementById("receivingRegistryPossession").value  = event.target.value;
+                });
+            });
         }
         document.getElementById("loadTitlePrivateKey").onchange = function(){
             loadPrivateKeyFromFile("loadTitlePrivateKey", "endorserPrivateKeyTextArea");
@@ -367,5 +385,6 @@
         document.getElementById("loadPossessionPrivateKey").onchange = function(){
             loadPrivateKeyFromFile("loadPossessionPrivateKey", "transferorPrivateKeyTextArea");
         };
+
     </script>
 </html>

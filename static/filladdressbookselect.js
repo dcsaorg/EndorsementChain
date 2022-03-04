@@ -7,7 +7,6 @@ function fillAddressBookSelect(addressBookSelectDiv, transfereePublicKeyTextArea
     addressBookEntries.forEach(function(entry){
         let newOption = document.createElement("option");
         newOption.value = JSON.stringify({publicKey: entry.publicKey, eblPlatform: entry.eblPlatform});
-        newOption.thumbprint = entry.thumbprint;
         newOption.innerText = entry.name + " (" + entry.thumbprint + ")";
         selectTransferTitle.appendChild(newOption);
         document.getElementById(addressBookSelectDiv).addEventListener("change", function (event){
