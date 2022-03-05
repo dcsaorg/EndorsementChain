@@ -262,8 +262,16 @@
             document.getElementById("endorsementChainViewer").href = "endorsementchainviewer.html?chainstart=https://" + url.host + possessionTdtUrl;
             const holderThumbprint = (await titleBlock.transfereeThumbprint()).slice(0,20);
             const possessorThumbprint = (await possessionBlock.transfereeThumbprint()).slice(0,20);
-            document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint;
-            document.getElementById("holderThumbprint").innerHTML = holderThumbprint;
+            let chainCrawler = new ChainCrawler();
+            const chains = await chainCrawler.crawlPossessionChain("https://" + url.host + possessionTdtUrl);
+            const possessorChain = await chainCrawler.chainToThumbprints(chains.possessionChain);
+            const titleHolderChain = await chainCrawler.chainToThumbprints(chains.titleHolderChain);
+            const getPossesorNameResponse = await fetch ("https://" + chains.platformChain[0] + "/api/v1/address-book-entries?thumbprint=" + possessorChain[0]);
+            const possessorName = JSON.parse(await getPossesorNameResponse.text())[0]["name"];
+            const getTitleHolderNameResponse = await fetch ("https://" + chains.platformChain[0] + "/api/v1/address-book-entries?thumbprint=" + titleHolderChain[0]);
+            const titleHolderName = JSON.parse(await getTitleHolderNameResponse.text())[0]["name"];
+            document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint + "<br>" + possessorName + "<br>" + chains.platformChain[0];
+            document.getElementById("holderThumbprint").innerHTML = holderThumbprint + "<br>" + titleHolderName + "<br>" + chains.titlePlatformChain[0];
             if (!(holderThumbprint === possessorThumbprint)) {
                 document.getElementById('transferTitleButton').disabled = "true";
                 document.getElementById('preTransferTitleButton').disabled = "true";

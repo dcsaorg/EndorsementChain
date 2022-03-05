@@ -40,4 +40,14 @@ class ChainCrawler {
         return {"possessionChain": possessionChain, "platformChain": platformChain,
                 "titleHolderChain": titleHolderChain, "titlePlatformChain": titlePlatformChain};
     }
+
+    async chainToThumbprints(promiseChain) {
+        const awaitedChain = await Promise.all(
+            promiseChain.map(function(jws) {
+                const transferBlock = new PossessionTransferBlock(JSON.parse(jws));
+                return transferBlock.transfereeThumbprint();
+            })
+        );
+        return awaitedChain;
+    }
 }

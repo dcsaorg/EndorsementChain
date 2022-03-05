@@ -32,8 +32,8 @@ describe("TDT", function() {
     });
 
     it("should have expected thumbprints", async function() {
-        expect(await possessionBlock.transfereeThumbprint()).toEqual("6c0a3fce271760042dbb6f2fe83b901dc187a47fd69edb6275475f696c1d7038");
-        expect(await titleBlock.transfereeThumbprint()).toEqual("6c0a3fce271760042dbb6f2fe83b901dc187a47fd69edb6275475f696c1d7038");
+        expect(await possessionBlock.transfereeThumbprint()).toEqual("6c0a3fce271760042dbb");
+        expect(await titleBlock.transfereeThumbprint()).toEqual("6c0a3fce271760042dbb");
     });
 
     it("should have proper holder and possessor thumbprint, document hash and (previous) tdt hash after transfer", async function() {
@@ -44,7 +44,7 @@ describe("TDT", function() {
         const receivedTitleBlock = new TitleTransferBlock(transferredTitleBlock.JWS);
         const receivedPossessionBlock = new PossessionTransferBlock(transferredPossessionBlock.JWS);
         expect(await transferredPossessionBlock.transfereeThumbprint()).toEqual(await receivedPossessionBlock.transfereeThumbprint());
-        expect(await receivedTitleBlock.transfereeThumbprint()).toEqual("a162bc5f6402209fa797e86b6861fd1af68656688833809144063c27a9ccfef9");
+        expect(await receivedTitleBlock.transfereeThumbprint()).toEqual("a162bc5f6402209fa797");
         expect(await receivedTitleBlock.documentHash()).toEqual(documentHash);
         expect(await receivedPossessionBlock.blockHash()).toEqual(await transferredPossessionBlock.blockHash());
     });
