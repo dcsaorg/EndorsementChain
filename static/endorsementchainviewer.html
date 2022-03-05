@@ -10,7 +10,7 @@
         const chainStart = url.searchParams.get("chainstart").replace(/"/g,"") ;
         let chainCrawler = new ChainCrawler();
         const chains = await chainCrawler.crawlPossessionChain(chainStart);
-        const possessorChain = await chainCrawler.chainToThumbprints(chains.possessionchain);
+        const possessorChain = await chainCrawler.chainToThumbprints(chains.possessionChain);
         const titleHolderChain = await chainCrawler.chainToThumbprints(chains.titleHolderChain);
         let chainTable = document.getElementById("endorsementChainTable");
         for (let i = 0; i < possessorChain.length; ++i) {
