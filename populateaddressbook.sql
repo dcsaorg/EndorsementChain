@@ -1,4 +1,4 @@
-INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('6c0a3fce271760042dbb', 'Ocean Carrier A/S',
+INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('19315844aec2782bb18b', 'Ocean Carrier A/S',
 '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxpFsixidx12u3sB6ZpQY
 n8IcuIYjBfGM0Rlu3TooZHOkA5HbpvRvsaj/HTVKCCQdw1PqJ0S+caZDDjCWyGOX

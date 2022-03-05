@@ -52,7 +52,8 @@ class TransferBlock {
     }
 
     async transfereeThumbprint() {
-        return ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(this.transferee()))));
+        const longThumbprint = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(this.transferee()))));
+        return longThumbprint.slice(0,20);
     }
 
     verifyNth(idx, key, acceptAlgs) {

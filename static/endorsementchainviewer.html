@@ -2,7 +2,7 @@
 <script src="transferblock.js"></script>
 <script src="jsrsasign-latest-all-min.js"></script>
 <table id="endorsementChainTable" border="1">
-<tr><th>Possessor</th><th>Title Holder</th><th>Platform</th></tr>
+<tr><th>Possessor</th><th>Platform</th><th>Title Holder</th><th>Title Platform</th></tr>
 </table>
 <script>
     window.onload = async function() {
@@ -24,11 +24,16 @@
         );
         let chainTable = document.getElementById("endorsementChainTable");
         for (let i = 0; i < possessorChain.length; ++i) {
+            const getPossesorNameResponse = await fetch ("https://" + chains.platformChain[i] + "/api/v1/address-book-entries?thumbprint=" + possessorChain[i]);
+            const possessorName = JSON.parse(await getPossesorNameResponse.text())[0]["name"];
+            const getTitleHolderNameResponse = await fetch ("https://" + chains.platformChain[i] + "/api/v1/address-book-entries?thumbprint=" + titleHolderChain[i]);
+            const titleHolderName = JSON.parse(await getTitleHolderNameResponse.text())[0]["name"];
             chainTable.innerHTML +=
                 "<tr>" +
-                "<td>" + possessorChain[i] + "</td>" +
-                "<td>" + titleHolderChain[i]+ "</td>" +
+                "<td>" + possessorChain[i] + "<br>" + possessorName + "</td>" +
                 "<td>" + chains.platformChain[i] + "</td>" +
+                "<td>" + titleHolderChain[i]+ "<br>" + titleHolderName + "</td>" +
+                "<td>" + chains.titlePlatformChain[i] + "</td>" +
                 "</tr>";
         }
     }

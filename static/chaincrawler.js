@@ -26,6 +26,18 @@ class ChainCrawler {
             let currentTitleTdt= await (await fetch(currentTitleUrl)).json();
             titleHolderChain.push(currentTitleTdt.transferBlock);
         } while (currentTdt.previousTransferBlockHash != null);
-        return {"possessionChain": possessionChain, "platformChain": platformChain, "titleHolderChain": titleHolderChain};
+        const nbBlocks = platformChain.length;
+        let currentTitleHolder = titleHolderChain[nbBlocks-1]; //first title holder and platform (last items of their resp. arrays)
+        let currentTitlePlatform = platformChain[nbBlocks-1];
+        let titlePlatformChain = [currentTitlePlatform];
+        for (let i = nbBlocks-2; i >=0; --i) {
+            if(currentTitleHolder != titleHolderChain[i]) {
+                currentTitleHolder = titleHolderChain[i];
+                currentTitlePlatform = platformChain[i];
+            }
+            titlePlatformChain.splice(0, 0, currentTitlePlatform);
+        }
+        return {"possessionChain": possessionChain, "platformChain": platformChain,
+                "titleHolderChain": titleHolderChain, "titlePlatformChain": titlePlatformChain};
     }
 }
