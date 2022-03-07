@@ -42,3 +42,27 @@ eZHsVxeMHhkaCY4BZMF/hZ0yGbDNMBMXpVagznoQe6PRzQp50iNJQ+uZBSz9yc4H
 bRJfkgfO6KjxTqMj6gPwFlbDPefnjmDl8mG24X///eLhNpwXUDaWF2gqZ3/DaoAw
 VQIDAQAB
 -----END PUBLIC KEY-----', 'grus.ange.dk:8443');
+
+
+
+INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('43f0ba1c5b64d97f5392', 'The Iron Bank',
+'-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxSCiG1iVVNIeyZMoHEXn
+xjUIiVkkBQQQ7Z08T/H1m8cEc0PqbT2aVu/hGtChoGI9VBn/BVTiM3HVrRaIUrhA
+9nXmvVkrNixIkHiuclACY1fvqOcaO2erclHoX+YqaCUT6sICCPehzaXckihdqeQn
+PinMg/ythffECZGpcBgcQ9KqBzuEFVW2J/+anI46GY+Dacg2xnn9w3Vz5YCYNffJ
+4UmijBzL8fCiCSf+zeZzXO9Z+1ls3T/3LuzaqF43KnnP3If5lcgr+0tflI3VdsKI
+wnKNOHINJadpSCncbpPTa3ITZ8qDW6aZSAKHdTITiW+v4Y0/qX3NgvECMLmraz7H
+HwIDAQAB
+-----END PUBLIC KEY-----', '');
+
+INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('fecd835ade692dee6bd4', 'Another Bank',
+'-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6OBMyKQ2hzvw0r+va/KL
+YNx5WDjSwFRoSVbqcxcCsn3n88JPM6/BqteuScuzXz1x1MnYEYNudk43+ZIRa8TV
+E9cmDEkceZAAdvRM0wVOglsP9Gg53jIuirsJM8bWv5UJx9pXJPZYFtXhnintb4nH
+7mBM0q5AJI6Q0OYV5S0r7CNcMGC9XrVNFdVhuAaaJCJgaqVcjpxo5Z+FXUgZbL1o
+zKZmknW1Kn0FJh5ATaFhC6iITv2AlWcKwy1O7Iwf1aRGDgJo7L7/XPsQ+ym4fbNB
+l2jXktELnbins1Z1BDerHjqyTF3AioPspHihido+2NjDpjgsYrZtjxXagkRhx6to
+8QIDAQAB
+-----END PUBLIC KEY-----', '');
