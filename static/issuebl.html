@@ -246,25 +246,25 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-sm-7">
+                    <div class="col-sm-4">
                         <div class="">
                             <div class="">
-                                <select id="targetPlatformSelect">
+                                <select class="form-select form-control" id="targetPlatformSelect">
                                     <option value="" selected>Select shipper's platform</option>
                                 </select>
-                                <input type="text" class="form-control" id="receivingRegistry"><br>
-                                <select id="issueBlAddressBookSelect">
+                                <input type="text" class="form-control" id="receivingPlatform"><br>
+                                <select class="form-select form-control" id="issueBlAddressBookSelect">
                                     <option value='{"publicKey": "", "eblPlatform": ""}' selected>Select shipper</option>
                                 </select>
                                 <input type="text" class="form-control" id="recipientId">
-                                <button type="button" id="fetchRecipientButton" class="btn-xs btn-primary"">
-                                    Fetch
+                                <button type="button" id="fetchRecipientButton" class="btn transferBtn">
+                                    Get recipient information
                                 </button>
                                 <br><br>
                                 <h6 class="card-title">Issue to shipper with public key</h6>
-                                <textarea class="form-control" id="shipperPublicKeytextArea" rows="4"></textarea>
+                                <textarea class="form-control" id="shipperPublicKeytextArea" rows="2"></textarea>
                                 <h6 class="card-text">Signing with carrier private key:</h6>
-                                <textarea class="form-control" id="carrierPrivateKeytextArea" rows="4"></textarea>
+                                <textarea class="form-control" id="carrierPrivateKeytextArea" rows="2"></textarea>
                                 <input type="file" id="loadTitlePrivateKey" style="margin:5px 5px 5px 0px;padding-left:0;"><br>
                                 <br>
                                 <button type="button" class="btn transferBtn" id="post-btn">
@@ -358,7 +358,7 @@
             xhrAddressBook.open("GET", "/api/v1/address-book-entries/");
             xhrAddressBook.onload = function() {
                 const addressBook = JSON.parse(xhrAddressBook.response);
-                fillAddressBookSelect("issueBlAddressBookSelect", "shipperPublicKeytextArea", "receivingRegistry", addressBook);
+                fillAddressBookSelect("issueBlAddressBookSelect", "shipperPublicKeytextArea", "receivingPlatform", addressBook);
             }
             xhrAddressBook.send();
 
@@ -369,13 +369,13 @@
                 let targetPlatformSelect = document.getElementById("targetPlatformSelect");
                 targetPlatformSelect.appendChild(newOption);
                 targetPlatformSelect.addEventListener("change", function (event){
-                    document.getElementById("receivingRegistry").value  = event.target.value;
+                    document.getElementById("receivingPlatform").value  = event.target.value;
                 });
             });
 
             let fetchRecipientButton = document.getElementById("fetchRecipientButton");
             fetchRecipientButton.addEventListener('click', async _ => {
-                const targetPlatform = document.getElementById("receivingRegistry").value;
+                const targetPlatform = document.getElementById("receivingPlatform").value;
                 const recipientId = document.getElementById("recipientId").value;
                 const response = await fetch("https://" + targetPlatform + "/api/v1/address-book-entries?thumbprint=" + recipientId);
                 if (response.status == "200") {

@@ -254,16 +254,6 @@
                 document.getElementById('preTransferTitleButton').disabled = "true";
             }
 
-            var xhrTD = new XMLHttpRequest();
-            xhrTD.open("GET", "/api/v1/transport-documents/" + titleBlock.documentHash());
-            xhrTD.onload = function() {
-                const receivedTD = JSON.parse(JSON.parse(xhrTD.response)["transportDocumentJson"]);
-                blFields.forEach(function(field) {
-                    document.getElementById('blFields').innerHTML += field + ": <span>" + receivedTD[field] + "</span><br>" ;
-                });
-                document.getElementById('blno').innerHTML = receivedTD.blno;
-            }
-            xhrTD.send();
             document.getElementById("pdfDownloadLink").href = "/api/v1/transport-documents/" + titleBlock.documentHash() + "/pdf"
             let button = document.getElementById('transferPossessionButton');
             button.addEventListener('click', async _ => {
