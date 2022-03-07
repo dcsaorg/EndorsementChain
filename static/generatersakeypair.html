@@ -14,12 +14,14 @@
                     <textarea class="form-control" id="privateKeyTextArea" rows="4"></textarea>
                     <h5>Public key</h5>
                     <textarea class="form-control" id="publicKeyTextArea" rows="4"></textarea>
+                    <h5>Public key thumbprint</h5>
+                    <textarea class="form-control" id="publicKeyThumbprintTextArea" rows="4"></textarea>
                 </div>
             </div>
         </div>
     </body>
     <script>
-        window.onload = function(){
+        window.onload = async function(){
             const rsaKey = KEYUTIL.generateKeypair('RSA', 2048);
             document.getElementById("privateKeyTextArea").value = KEYUTIL.getPEM(rsaKey.prvKeyObj, "PKCS1PRV");
             document.getElementById("publicKeyTextArea").value = KEYUTIL.getPEM(rsaKey.pubKeyObj);
@@ -29,6 +31,11 @@
             const testJWT = KJUR.jws.JWS.sign(null, {alg: "RS256"}, JSON.stringify({test: "payload"}), rsaPrivateKeyFromPem);
             const isValid = KJUR.jws.JWS.verifyJWT(testJWT, rsaPublicKeyFromPem, {alg: ['RS256']});
             console.log("valid JWT?: ", isValid);
+            const publicKeyJWK = KEYUTIL.getJWKFromKey(rsaPublicKeyFromPem);
+            const longThumbprint = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(publicKeyJWK))));
+            console.log(longThumbprint);
+            document.getElementById("publicKeyThumbprintTextArea").value = longThumbprint.slice(0,20);
+
         }
     </script>
 </html>
