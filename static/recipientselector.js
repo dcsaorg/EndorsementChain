@@ -39,8 +39,18 @@ var recipientSelector = async function(recipientSelectorDiv, transfereePublicKey
     var xhrAddressBook = new XMLHttpRequest();
     xhrAddressBook.open("GET", "/api/v1/address-book-entries/");
     xhrAddressBook.onload = function() {
-        const addressBook = JSON.parse(xhrAddressBook.response);
-        fillAddressBookSelect(addressBookSelectHtmlId, transfereePublicKeyTextArea, receivingRegistryHtmlId, addressBook);
+        const addressBookEntries = JSON.parse(xhrAddressBook.response);
+        let selectTransferTitle = document.getElementById(addressBookSelectHtmlId);
+        addressBookEntries.forEach(function(entry){
+            let newOption = document.createElement("option");
+            newOption.value = JSON.stringify({publicKey: entry.publicKey, eblPlatform: entry.eblPlatform});
+            newOption.innerText = entry.name + " (" + entry.thumbprint + ")";
+            selectTransferTitle.appendChild(newOption);
+            document.getElementById(addressBookSelectHtmlId).addEventListener("change", function (event){
+                document.getElementById(transfereePublicKeyTextArea).value = JSON.parse(event.target.value)["publicKey"];
+                document.getElementById(receivingRegistryHtmlId).value = JSON.parse(event.target.value)["eblPlatform"];
+            });
+        });
     }
     xhrAddressBook.send();
 
