@@ -14,6 +14,7 @@
         <script src="transferblock.js"></script>
         <script src="testkeys.js"></script>
         <script src="blfields.js"></script>
+        <script src="loadprivatekey.js"></script>
         <link href="custom.css" rel="stylesheet">
         <title>The Other eBL Platform</title>
         <style>
@@ -43,6 +44,8 @@
                         <p class="card-text" id="blFields">
                             Paste importer's private key:
                             <textarea class="form-control" id="importerPrivateKeyTextArea" rows="4"></textarea>
+                            <input type="file" id="loadImporterPrivateKey" style="margin:5px 5px 5px 0px;padding-left:0;"><br>
+                            <br>
                             Paste your source registry URL and BL identifier: <input type="text" class="form-control" id="registryurl"><br>
                             <button type="button" class="btn btn-primary" id="importBolButton">
                                 Import
@@ -101,6 +104,9 @@
                     alert("Invalid signature. Mismatch between signature and private key.");
                 }
             });
+            document.getElementById("loadImporterPrivateKey").onchange = function(){
+                loadPrivateKeyFromFile("loadImporterPrivateKey", "importerPrivateKeyTextArea");
+            }
         }
     </script>
 </html>
