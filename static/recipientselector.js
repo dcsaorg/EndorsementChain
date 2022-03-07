@@ -44,7 +44,7 @@ var recipientSelector = async function(recipientSelectorDiv, transfereePublicKey
         addressBookEntries.forEach(function(entry){
             let newOption = document.createElement("option");
             newOption.value = JSON.stringify({publicKey: entry.publicKey, eblPlatform: entry.eblPlatform});
-            newOption.innerText = entry.name + " (" + entry.thumbprint + ")";
+            newOption.innerText = entry.name + " (" + entry.thumbprint + ")" + (entry.eblPlatform == ""?  " (local)" : " on " + entry.eblPlatform);
             selectTransferTitle.appendChild(newOption);
             document.getElementById(addressBookSelectHtmlId).addEventListener("change", function (event){
                 document.getElementById(transfereePublicKeyTextArea).value = JSON.parse(event.target.value)["publicKey"];
