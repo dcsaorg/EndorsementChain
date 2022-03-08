@@ -29,6 +29,8 @@ describe("TDT", function() {
     it("should have valid signature", function() {
         expect(possessionBlock.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']})).toEqual(true);
         expect(titleBlock.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']})).toEqual(true);
+        expect(possessionBlock.verifyNth(0, KEYUTIL.getKey(carrierPublicKeyJWK), {alg: ['RS256']})).toEqual(true);
+        expect(titleBlock.verifyNth(0, KEYUTIL.getKey(carrierPublicKeyJWK), {alg: ['RS256']})).toEqual(true);
     });
 
     it("should have expected thumbprints", async function() {

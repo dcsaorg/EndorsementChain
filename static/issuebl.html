@@ -316,28 +316,37 @@
                     platformExportTransferBlock.init(shipperPublicKeyJWK,
                                                     {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash(), "nextRegistryJWK" : nextRegistryJWK},
                                                     carrierPrivateKeyFromPem);
-                    console.log("chain link is valid?: ", platformExportTransferBlock.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']}));
-                    await fetch('/api/v1/transport-document-transfers', {
+                    const chainLinkIsValid = platformExportTransferBlock.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']});
+                    if (chainLinkIsValid) {
+                        await fetch('/api/v1/transport-document-transfers', {
+                            method: 'post',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({
+                                transferBlockHash : await platformExportTransferBlock.blockHash(),
+                                transferBlock: JSON.stringify(platformExportTransferBlock.JWS),
+                                previousTransferBlockHash: null
+                            })
+                        });
+                        location .href = "blexported.html?id=" + await platformExportTransferBlock.blockHash();
+                    } else {
+                        alert("Private key doesn't match previous transferrer.");
+                    }
+                } else {
+                    const chainLinkIsValid = issueBlPossessionTransferBlock.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']});
+                    if (chainLinkIsValid) {
+                        await fetch('/api/v1/transport-document-transfers', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
-                            transferBlockHash : await platformExportTransferBlock.blockHash(),
-                            transferBlock: JSON.stringify(platformExportTransferBlock.JWS),
+                            transferBlockHash : await issueBlPossessionTransferBlock.blockHash(),
+                            transferBlock: JSON.stringify(issueBlPossessionTransferBlock.JWS),
                             previousTransferBlockHash: null
-                        })
-                    });
-                    location .href = "blexported.html?id=" + await platformExportTransferBlock.blockHash();
-                } else {
-                    await fetch('/api/v1/transport-document-transfers', {
-                    method: 'post',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        transferBlockHash : await issueBlPossessionTransferBlock.blockHash(),
-                        transferBlock: JSON.stringify(issueBlPossessionTransferBlock.JWS),
-                        previousTransferBlockHash: null
-                        })
-                    });
-                    location.href = "transportdocumenttransfer.html?id=" + await issueBlPossessionTransferBlock.blockHash();
+                            })
+                        });
+                        location.href = "transportdocumenttransfer.html?id=" + await issueBlPossessionTransferBlock.blockHash();
+                    } else {
+                        alert("Private key doesn't match previous transferrer.");
+                    }
                 }
             });
             document.getElementById("loadTitlePrivateKey").onchange = function(){

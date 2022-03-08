@@ -69,7 +69,6 @@
                 importBlock.init(exportBlock.transferee(),
                                  {"titleTransferBlockHash" : exportBlock.titleTransferBlockHash(), "previousRegistryURL" : bolSource},
                                  importerPrivateKey);
-                                 console.log(exportBlock.titleTransferBlockHash());
                 const importedTitleBlock= new TitleTransferBlock(JSON.parse((await (await fetch('https://' + bolSourceDomain + '/api/v1/transport-document-transfers/' +
                                                                                                 exportBlock.titleTransferBlockHash())).json())["transferBlock"]));
                 const fetchBLString = 'https://'+bolSourceDomain +'/api/v1/transport-documents/' + importedTitleBlock.documentHash();
