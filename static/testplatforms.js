@@ -3,6 +3,6 @@
  */
 
 var testPlatforms = [
-    "grus.ange.dk:8443",
-    "ebl.ecolefrancodanoise.dk:8443"
+    {name: "Platform A", url: "grus.ange.dk:8443"},
+    {name: "Platform B", url: "ebl.ecolefrancodanoise.dk:8443"}
 ];
