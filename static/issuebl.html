@@ -293,13 +293,10 @@
                 const shipperPublicKeyJWK = KEYUTIL.getJWKFromKey(shipperPublicKeyFromPem);
                 var carrierPrivateKeyFromPem = new RSAKey();
                 carrierPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("carrierPrivateKeyTextArea").value);
-                const carrierPublicKeyFromPem = KEYUTIL.getKey(carrierPublicKey);
                 const issueBlTitleTransferBlock = new TitleTransferBlock();
                 issueBlTitleTransferBlock.init(shipperPublicKeyJWK, {"documentHash": documentHash, "isToOrder": true}, carrierPrivateKeyFromPem);
                 const issueBlPossessionTransferBlock = new PossessionTransferBlock();
                 issueBlPossessionTransferBlock.init(shipperPublicKeyJWK, {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash()}, carrierPrivateKeyFromPem);
-                console.log("valid?" + issueBlTitleTransferBlock.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']}) + ", "
-                                     + issueBlPossessionTransferBlock.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']}));
                 await fetch('/api/v1/transport-document-transfers', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
@@ -316,37 +313,27 @@
                     platformExportTransferBlock.init(shipperPublicKeyJWK,
                                                     {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash(), "nextRegistryJWK" : nextRegistryJWK},
                                                     carrierPrivateKeyFromPem);
-                    const chainLinkIsValid = platformExportTransferBlock.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']});
-                    if (chainLinkIsValid) {
-                        await fetch('/api/v1/transport-document-transfers', {
-                            method: 'post',
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({
-                                transferBlockHash : await platformExportTransferBlock.blockHash(),
-                                transferBlock: JSON.stringify(platformExportTransferBlock.JWS),
-                                previousTransferBlockHash: null
-                            })
-                        });
-                        location .href = "blexported.html?id=" + await platformExportTransferBlock.blockHash();
-                    } else {
-                        alert("Private key doesn't match previous transferrer.");
-                    }
-                } else {
-                    const chainLinkIsValid = issueBlPossessionTransferBlock.verifyNth(0, carrierPublicKeyFromPem, {alg: ['RS256']});
-                    if (chainLinkIsValid) {
-                        await fetch('/api/v1/transport-document-transfers', {
+                    await fetch('/api/v1/transport-document-transfers', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
-                            transferBlockHash : await issueBlPossessionTransferBlock.blockHash(),
-                            transferBlock: JSON.stringify(issueBlPossessionTransferBlock.JWS),
+                            transferBlockHash : await platformExportTransferBlock.blockHash(),
+                            transferBlock: JSON.stringify(platformExportTransferBlock.JWS),
                             previousTransferBlockHash: null
-                            })
-                        });
-                        location.href = "transportdocumenttransfer.html?id=" + await issueBlPossessionTransferBlock.blockHash();
-                    } else {
-                        alert("Private key doesn't match previous transferrer.");
-                    }
+                        })
+                    });
+                    location .href = "blexported.html?id=" + await platformExportTransferBlock.blockHash();
+                } else {
+                    await fetch('/api/v1/transport-document-transfers', {
+                    method: 'post',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        transferBlockHash : await issueBlPossessionTransferBlock.blockHash(),
+                        transferBlock: JSON.stringify(issueBlPossessionTransferBlock.JWS),
+                        previousTransferBlockHash: null
+                        })
+                    });
+                    location.href = "transportdocumenttransfer.html?id=" + await issueBlPossessionTransferBlock.blockHash();
                 }
             });
             document.getElementById("loadTitlePrivateKey").onchange = function(){
