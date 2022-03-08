@@ -56,12 +56,12 @@ var recipientSelector = async function(recipientSelectorDiv, transfereePublicKey
 
     testPlatforms.forEach(function(platform) {
         let newOption = document.createElement("option");
-        newOption.value = platform;
-        newOption.innerHTML= platform;
+        newOption.value = JSON.stringify(platform);
+        newOption.innerHTML= platform.name;
         let transferPossessionPlatformSelect = document.getElementById(receivingRegistrySelectHtmlId);
         transferPossessionPlatformSelect.appendChild(newOption);
         transferPossessionPlatformSelect.addEventListener("change", function (event){
-            document.getElementById(receivingRegistryHtmlId).value  = event.target.value;
+            document.getElementById(receivingRegistryHtmlId).value  = JSON.parse(event.target.value)["url"];
         });
     });
 
