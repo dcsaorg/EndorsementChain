@@ -124,7 +124,7 @@
                             <textarea class="form-control" id="endorseePublicKeyTextArea" rows="4"></textarea>
                             Paste endorser's private key:
                             <textarea class="form-control" id="endorserPrivateKeyTextArea" rows="4"></textarea>
-                            <input type="file" id="loadTitlePrivateKey" style="margin:5px;"><br>
+                            <input type="file" id="loadTitlePrivateKey" style="margin:5px;"><span id="titlePrivateKeyOkCheckMark"></span><br>
                         </div>
                     </div>
                 </div>
@@ -174,7 +174,7 @@
                             <textarea class="form-control" id="transfereePublicKeyTextArea" rows="4"></textarea>
                             Paste transferor's private key:
                             <textarea class="form-control" id="transferorPrivateKeyTextArea" rows="4"></textarea>
-                            <input type="file" id="loadPossessionPrivateKey" style="margin:5px;"><br>
+                            <input type="file" id="loadPossessionPrivateKey" style="margin:5px;"><span id="possessionPrivateKeyOkCheckMark"></span><br>
                         </div>
                     </div>
                 </div>
@@ -332,10 +332,10 @@
             recipientSelector("titleRecipientSelector", "endorseePublicKeyTextArea", testPlatforms);
 
             document.getElementById("loadTitlePrivateKey").onchange = function(){
-                loadPrivateKeyFromFile("loadTitlePrivateKey", "endorserPrivateKeyTextArea");
+                loadPrivateKeyFromFile("loadTitlePrivateKey", "endorserPrivateKeyTextArea", titleBlock.transferee(), "titlePrivateKeyOkCheckMark");
             };
             document.getElementById("loadPossessionPrivateKey").onchange = function(){
-                loadPrivateKeyFromFile("loadPossessionPrivateKey", "transferorPrivateKeyTextArea", possessionBlock.transferee());
+                loadPrivateKeyFromFile("loadPossessionPrivateKey", "transferorPrivateKeyTextArea", possessionBlock.transferee(), "possessionPrivateKeyOkCheckMark");
             };
         }
     </script>
