@@ -107,6 +107,11 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
+                            <span style="display:none;">Paste endorsee's public key or choose from address book.</span>
+                            <textarea class="form-control" id="endorseePublicKeyTextArea" rows="4" style="display:none;"></textarea>
+                            Endorser's private key:
+                            <textarea class="form-control" id="endorserPrivateKeyTextArea" rows="4" style="display:none;"></textarea>
+                            <input type="file" id="loadTitlePrivateKey" style="margin:5px;"><span id="titlePrivateKeyOkCheckMark"></span><br>
                             <label class="form-label" for="textAreaExample">Endorsement Type</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" disabled="true">
@@ -120,11 +125,6 @@
                                 <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3" disabled="true">
                                 <label class="form-check-label" for="flexRadioDefault3">To named endorsee</label>
                             </div>
-                            Paste endorsee's public key or choose from address book.
-                            <textarea class="form-control" id="endorseePublicKeyTextArea" rows="4"></textarea>
-                            Endorser's private key:
-                            <textarea class="form-control" id="endorserPrivateKeyTextArea" rows="4" style="display:none;"></textarea>
-                            <input type="file" id="loadTitlePrivateKey" style="margin:5px;"><span id="titlePrivateKeyOkCheckMark"></span><br>
                         </div>
                     </div>
                 </div>
@@ -153,6 +153,11 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
+                            <span style="display:none;">Paste transferee's public key or choose from address book.</span>
+                            <textarea class="form-control" id="transfereePublicKeyTextArea" rows="4" style="display:none;"></textarea>
+                            <span>Transferor's private key:</span>
+                            <textarea class="form-control" id="transferorPrivateKeyTextArea" rows="4" style="display:none;"></textarea>
+                            <input type="file" id="loadPossessionPrivateKey" style="margin:5px;"><span id="possessionPrivateKeyOkCheckMark"></span><br>
                             <label class="form-label" for="transferTypeTextAreaExample">Transfer Type</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="possessionflexRadioDefault1" id="flexRadioDefault1" checked>
@@ -170,11 +175,6 @@
                                 <input class="form-check-input" type="radio" name="possessionflexRadioDefault4" id="flexRadioDefault4" disabled="true">
                                 <label class="form-check-label" for="flexRadioDefault4">Switch to paper</label>
                             </div>
-                            Paste transferee's public key or choose from address book.
-                            <textarea class="form-control" id="transfereePublicKeyTextArea" rows="4"></textarea>
-                            Transferor's private key:
-                            <textarea class="form-control" id="transferorPrivateKeyTextArea" rows="4" style="display:none;"></textarea>
-                            <input type="file" id="loadPossessionPrivateKey" style="margin:5px;"><span id="possessionPrivateKeyOkCheckMark"></span><br>
                         </div>
                     </div>
                 </div>
@@ -222,7 +222,7 @@
             const getTitleHolderNameResponse = await fetch ("https://" + chains.platformChain[0] + "/api/v1/address-book-entries?thumbprint=" + titleHolderChain[0]);
             const titleHolderName = JSON.parse(await getTitleHolderNameResponse.text())[0]["name"];
             document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint + "<br>" + possessorName + "<br>" + chains.platformChain[0];
-            document.getElementById("holderThumbprint").innerHTML = holderThumbprint + "<br>" + titleHolderName + "<br>" + chains.titlePlatformChain[0];
+            document.getElementById("holderThumbprint").innerHTML = holderThumbprint + "<br>" + titleHolderName + "<br><br>";
             if (!(holderThumbprint === possessorThumbprint)) {
                 document.getElementById('transferTitleButton').disabled = "true";
                 document.getElementById('preTransferTitleButton').disabled = "true";

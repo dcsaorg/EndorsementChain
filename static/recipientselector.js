@@ -31,8 +31,8 @@ var recipientSelector = async function(recipientSelectorDiv, transfereePublicKey
                 <option value='{"publicKey": "", "eblPlatform": ""}' selected>Select...</option>
             </select>
             <input type="text" class="form-control" id="${recipientIdHtmlId}">
-            <button type="button" id="${fetchRecipientButtonHtmlId}" class="btn-xs btn-primary"">
-                Fetch
+            <button type="button" id="${fetchRecipientButtonHtmlId}" class="btn transferBtn">
+                Fetch recipient data from platform
             </button>
         </div>`;
 
