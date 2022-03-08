@@ -17,16 +17,16 @@ var recipientSelector = async function(recipientSelectorDiv, transfereePublicKey
     const recipientIdHtmlId = recipientSelectorDiv + "RecipientId";
     const fetchRecipientButtonHtmlId = recipientSelectorDiv + "FetchRecipientButton";
     document.getElementById(recipientSelectorDiv).innerHTML = `
-        <div class="form-check noPaddingLeft">
-            <label class="form-label">Select receiving eBL Platform</label>
+        <div class="form-check" style="padding-left:0;">
+            <label class="form-label" style="position:relative;padding-left:0;">Select receiving eBL Platform</label>
             <select id="${receivingRegistrySelectHtmlId}" class="form-select form-control">
                 <option value="" selected>Select...</option>
             </select>
-            <div><label class="form-label">Or type it</label></div>
+            <div><label class="form-label" style="position:relative;padding-left:0;">Or type it</label></div>
             <input type="text" class="form-control" id="${receivingRegistryHtmlId}"><br>
         </div>
-        <div class="form-check noPaddingLeft">
-            <label class="form-label" for="textAreaExample">Select recipient</label>
+        <div class="form-check" style="padding-left:0;">
+            <label class="form-label" for="textAreaExample" style="position:relative;padding-left:0;">Select recipient</label>
             <select id="${addressBookSelectHtmlId}" class="form-select form-control">
                 <option value='{"publicKey": "", "eblPlatform": ""}' selected>Select...</option>
             </select>
