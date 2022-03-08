@@ -221,7 +221,8 @@
             const possessorName = JSON.parse(await getPossesorNameResponse.text())[0]["name"];
             const getTitleHolderNameResponse = await fetch ("https://" + chains.platformChain[0] + "/api/v1/address-book-entries?thumbprint=" + titleHolderChain[0]);
             const titleHolderName = JSON.parse(await getTitleHolderNameResponse.text())[0]["name"];
-            document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint + "<br>" + possessorName + "<br>" + chains.platformChain[0];
+            const currentPlatform = testPlatforms.find(platform => platform.url == chains.platformChain[0]);
+            document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint + "<br>" + possessorName + "<br>" + (currentPlatform? currentPlatform.name: "<br>");
             document.getElementById("holderThumbprint").innerHTML = holderThumbprint + "<br>" + titleHolderName + "<br><br>";
             if (!(holderThumbprint === possessorThumbprint)) {
                 document.getElementById('transferTitleButton').disabled = "true";
