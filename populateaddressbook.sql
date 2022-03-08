@@ -1,4 +1,4 @@
-INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('19315844aec2782bb18b', 'Ocean Carrier A/S',
+INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('19315844aec2782bb18b', 'Ocean Carrier DCSA',
 '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxpFsixidx12u3sB6ZpQY
 n8IcuIYjBfGM0Rlu3TooZHOkA5HbpvRvsaj/HTVKCCQdw1PqJ0S+caZDDjCWyGOX
@@ -10,7 +10,7 @@ wQIDAQAB
 -----END PUBLIC KEY-----', '');
 
 
-INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('6c0a3fce271760042dbb', 'Blue Shippers Inc.',
+INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('6c0a3fce271760042dbb', 'ExxonMobil',
 '------BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAi71OOBsnD8kQpjDD3J/V
 IBhxdz53/4y3y54rWNsOCJR2ji+gZ3872L5D9yOHqp3BFdh0exeXzV/sFRLy3iWS
@@ -21,7 +21,7 @@ uIX/P74BGRg0SIe/i2tFP0cM0EyaqCqgBTGPa6x7gqs6miiGkIExO4vUbtofBPpm
 yQIDAQAB
 -----END PUBLIC KEY-----', '');
 
-INSERT INTO addressbookentry(thumbprint,name, public_key, ebl_platform) VALUES('a162bc5f6402209fa797', 'The Great Customer Ltd.',
+INSERT INTO addressbookentry(thumbprint,name, public_key, ebl_platform) VALUES('a162bc5f6402209fa797', 'The Oil Company',
 '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp2LIVPuw1/vUghIoODZG
 CMe8UYptAAXq7bpO5lDKMISR/TgMZh+H65NAOnMBe8EYnWpB+ratILu8XeNETxgR
@@ -32,7 +32,7 @@ noF2Ws1h0mT+34va6hQSROyzv1lgday0+wvr+7Mq+RxlL3Eq63Ti4C+TJ1FMoRt9
 rQIDAQAB
 -----END PUBLIC KEY-----', '');
 
-INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('ff7e3fc1073378437df0', 'Another Customer Ltd.',
+INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('ff7e3fc1073378437df0', 'The Other Oil Company',
 '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3pmFDMKBHrvIj1gdw/wV
 FzdwzVZJqke63QxZsGVuGGItCrkCxtPE6vywIiIYZqr75+zPRP/5J0Jz1m2Up7do
@@ -45,7 +45,7 @@ VQIDAQAB
 
 
 
-INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('43f0ba1c5b64d97f5392', 'The Iron Bank',
+INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('43f0ba1c5b64d97f5392', 'Bank of Africa',
 '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxSCiG1iVVNIeyZMoHEXn
 xjUIiVkkBQQQ7Z08T/H1m8cEc0PqbT2aVu/hGtChoGI9VBn/BVTiM3HVrRaIUrhA
@@ -56,7 +56,7 @@ wnKNOHINJadpSCncbpPTa3ITZ8qDW6aZSAKHdTITiW+v4Y0/qX3NgvECMLmraz7H
 HwIDAQAB
 -----END PUBLIC KEY-----', '');
 
-INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('fecd835ade692dee6bd4', 'Another Bank',
+INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('fecd835ade692dee6bd4', 'HSBD',
 '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6OBMyKQ2hzvw0r+va/KL
 YNx5WDjSwFRoSVbqcxcCsn3n88JPM6/BqteuScuzXz1x1MnYEYNudk43+ZIRa8TV
