@@ -19,8 +19,10 @@
         <script src="testplatforms.js"></script>
         <script src="recipientselector.js"></script>
         <script src="blfields.js"></script>
+        <script src="config.js"></script>
         <link href="custom.css" rel="stylesheet">
-        <title>Title eBL Platform</title>
+        <link href="navbar.css" rel="stylesheet">
+        <title id="tabTitle"></title>
         <style>
             #menuList {margin-left: auto; margin-right: 20px !important;}
             .navbar {margin-bottom: 25px;}
@@ -28,9 +30,9 @@
         </style>
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-default navbar-dark shadow">
+        <nav class="navbar navbar-expand-lg navbar-default navbar-dark shadow" id="navbarcolor">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/">The eBL Platform</a>
+                <a class="navbar-brand" href="/" id="pageTitle"></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -328,7 +330,6 @@
                     alert("Invalid signature. Mismatch between signature and private key.");
                 }
             });
-
             recipientSelector("possessionRecipientSelector", "transfereePublicKeyTextArea", testPlatforms);
             recipientSelector("titleRecipientSelector", "endorseePublicKeyTextArea", testPlatforms);
 
@@ -338,6 +339,8 @@
             document.getElementById("loadPossessionPrivateKey").onchange = function(){
                 loadPrivateKeyFromFile("loadPossessionPrivateKey", "transferorPrivateKeyTextArea", possessionBlock.transferee(), "possessionPrivateKeyOkCheckMark");
             };
+            stylePage();
+            generateMenu("menuList");
         }
     </script>
 </html>

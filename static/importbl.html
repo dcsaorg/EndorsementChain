@@ -15,17 +15,19 @@
         <script src="testkeys.js"></script>
         <script src="blfields.js"></script>
         <script src="loadprivatekey.js"></script>
+        <script src="config.js"></script>
         <link href="custom.css" rel="stylesheet">
-        <title>The Other eBL Platform</title>
+        <link href="navbar.css" rel="stylesheet">
+        <title id="tabTitle"></title>
         <style>
             #menuList {margin-left: auto; margin-right: 20px !important;}
             .navbar {margin-bottom: 25px;}
         </style>
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-light shadow">
+        <nav class="navbar navbar-expand-lg navbar-light shadow navbar-default">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/">The Other Registry</a>
+                <a class="navbar-brand" href="/" id="pageTitle"></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -106,6 +108,8 @@
             document.getElementById("loadImporterPrivateKey").onchange = function(){
                 loadPrivateKeyFromFile("loadImporterPrivateKey", "importerPrivateKeyTextArea");
             }
+            stylePage();
+            generateMenu("menuList");
         }
     </script>
 </html>
