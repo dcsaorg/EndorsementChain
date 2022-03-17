@@ -37,4 +37,13 @@ public class AddressBookEntryController {
                                                           addressBookEntryRepo.findByThumbprint(thumbprint);
         return new ResponseEntity<List<AddressBookEntry>>(addressBookEntries, HttpStatus.OK);
     }
+
+    @PostMapping(value = "/address-book-entries",consumes = {"application/json"},produces = {"application/json"})
+    @ResponseBody
+    public ResponseEntity<AddressBookEntry> addAddressBookEntry(@RequestBody AddressBookEntry addressBookEntry, UriComponentsBuilder builder) throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException, com.nimbusds.jose.JOSEException {
+        addressBookEntryRepo.save(addressBookEntry);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(builder.path("/address-book-entries/{id}").buildAndExpand(addressBookEntry.getId()).toUri());
+        return new ResponseEntity<AddressBookEntry>(headers, HttpStatus.CREATED);
+    }
 }
