@@ -332,15 +332,21 @@
             });
             recipientSelector("possessionRecipientSelector", "transfereePublicKeyTextArea", testPlatforms);
             recipientSelector("titleRecipientSelector", "endorseePublicKeyTextArea", testPlatforms);
-
+            console.log(titleBlock.transferee());
             document.getElementById("loadTitlePrivateKey").onchange = function(){
-                loadPrivateKeyFromFile("loadTitlePrivateKey", "endorserPrivateKeyTextArea", titleBlock.transferee(), "titlePrivateKeyOkCheckMark");
-            };
+                loadPrivateKeyFromFile("loadTitlePrivateKey", "endorserPrivateKeyTextArea", titleBlock.transferee(), function(isValid){
+                        document.getElementById("titlePrivateKeyOkCheckMark").innerHTML = isValid? "✅":"❌";
+                    }
+                );
+            }
             document.getElementById("loadPossessionPrivateKey").onchange = function(){
-                loadPrivateKeyFromFile("loadPossessionPrivateKey", "transferorPrivateKeyTextArea", possessionBlock.transferee(), "possessionPrivateKeyOkCheckMark");
-            };
-            stylePage();
-            generateMenu("menuList");
+                loadPrivateKeyFromFile("loadPossessionPrivateKey", "transferorPrivateKeyTextArea", possessionBlock.transferee(), function(isValid){
+                        document.getElementById("possessionPrivateKeyOkCheckMark").innerHTML = isValid? "✅":"❌";
+                    }
+                );
+            }
         }
+        stylePage();
+        generateMenu("menuList");
     </script>
 </html>

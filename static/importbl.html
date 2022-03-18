@@ -16,6 +16,7 @@
         <script src="blfields.js"></script>
         <script src="loadprivatekey.js"></script>
         <script src="config.js"></script>
+        <script src="loadprivatekey.js"></script>
         <link href="custom.css" rel="stylesheet">
         <link href="navbar.css" rel="stylesheet">
         <title id="tabTitle"></title>
@@ -44,12 +45,15 @@
                     <div class="card-body">
                         <h5 class="card-title">Import Bill of Lading to platform</h5>
                         <p class="card-text" id="blFields">
-                            Select private key:
+                            Paste your source registry URL and BL identifier:
+                            <div>
+                                <input type="text" class="form-control" id="registryurl"><span id="validRegistryURLOkCheckMark"></span><br>
+                            </div>
+                            Select private key:<br>
                             <textarea class="form-control" id="importerPrivateKeyTextArea" rows="4" style="display:none;"></textarea>
-                            <input type="file" id="loadImporterPrivateKey" style="margin:5px 5px 5px 0px;padding-left:0;"><br>
+                            <input type="file" id="loadImporterPrivateKey" style="margin:5px 5px 5px 0px;padding-left:0;" disabled><span id="validPrivateKeyOkCheckMark"></span><br>
                             <br>
-                            Paste your source registry URL and BL identifier: <input type="text" class="form-control" id="registryurl"><br>
-                            <button type="button" class="btn btn-primary" id="importBolButton">
+                            <button type="button" class="btn btn-primary" id="importBolButton" disabled>
                                 Import
                             </button>
                         </p>
@@ -60,13 +64,11 @@
         </div>
     </body>
     <script>
+        let exportBlock;
         window.onload = async function(){
             let importBolButton = document.getElementById("importBolButton");
             importBolButton.addEventListener('click', async _ => {
                 const importerPrivateKey = document.getElementById("importerPrivateKeyTextArea").value;
-                const bolSource = document.getElementById("registryurl").value;
-                const bolSourceDomain = bolSource.split('/')[0];
-                const exportBlock= new PlatformExportTransferBlock(JSON.parse((await (await fetch('https://' + bolSource)).json())["transferBlock"]));
                 let importBlock= new PlatformImportTransferBlock();
                 importBlock.init(exportBlock.transferee(),
                                  {"titleTransferBlockHash" : exportBlock.titleTransferBlockHash(), "previousRegistryURL" : bolSource},
@@ -105,8 +107,23 @@
                     alert("Invalid signature. Mismatch between signature and private key.");
                 }
             });
+            document.getElementById("registryurl").onchange = async function(){
+                const bolSource = document.getElementById("registryurl").value;
+                const bolSourceDomain = bolSource.split('/')[0];
+                exportBlock= new PlatformExportTransferBlock(JSON.parse((await (await fetch('https://' + bolSource)).json())["transferBlock"]));
+                if(exportBlock){
+                    document.getElementById("validRegistryURLOkCheckMark").innerHTML = "✅";
+                    document.getElementById("loadImporterPrivateKey").disabled = false;
+                }else{
+                    document.getElementById("validRegistryURLOkCheckMark").innerHTML = "❌";
+                }
+            }
             document.getElementById("loadImporterPrivateKey").onchange = function(){
-                loadPrivateKeyFromFile("loadImporterPrivateKey", "importerPrivateKeyTextArea");
+                loadPrivateKeyFromFile("loadImporterPrivateKey", "importerPrivateKeyTextArea", exportBlock.transferee(), function(isValid){
+                        document.getElementById("validPrivateKeyOkCheckMark").innerHTML = isValid? "✅":"❌";
+                        document.getElementById("importBolButton").disabled = !isValid;
+                    }
+                );
             }
             stylePage();
             generateMenu("menuList");

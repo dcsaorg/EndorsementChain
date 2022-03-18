@@ -6,7 +6,6 @@ function stylePage(){
 var generateMenu = function(targetDiv) {
     fetch("menu.json").then(fileData => {
         fileData.text().then(data => {
-            console.log(data);
             const menu = JSON.parse(data);
             var topBar = document.getElementById(targetDiv);
             Object.keys(menu).forEach(function(mainMenuItemName,i) {
