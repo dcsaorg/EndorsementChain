@@ -2,5 +2,8 @@
 "Actions" :      [
                         {"Import BL" : "importbl.html"},
                         {"Issue BL" : "issuebl.html"}
+                    ],
+"Admin" :      [
+                        {"Add user" : "adduser.html"}
                     ]
 }
