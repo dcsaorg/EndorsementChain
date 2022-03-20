@@ -16,3 +16,8 @@ To populate the database with test data run:
 ```
 cat populateaddressbook.sql | sudo -u postgres psql tdt_registry
 ```
+
+To use an existing SSL certificate (convert from .pem):
+```
+openssl pkcs12 -export -name "springboot-https" -out springboot-https.p12 -in fullchain.pem -inkey privkey.pem
+```
