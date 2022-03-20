@@ -93,7 +93,6 @@ class PossessionTransferBlock extends TransferBlock {
  *   isToOrder: indicates if the the bill of lading is to order
  * }
  */
-
 class TitleTransferBlock extends TransferBlock {
     documentHash() {
          return this.blockPayloadAsJson()["documentHash"];
