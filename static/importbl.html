@@ -64,11 +64,13 @@
         </div>
     </body>
     <script>
-        let exportBlock;
+        var exportBlock;
         window.onload = async function(){
             let importBolButton = document.getElementById("importBolButton");
+            let bolSource;
             importBolButton.addEventListener('click', async _ => {
                 const importerPrivateKey = document.getElementById("importerPrivateKeyTextArea").value;
+                const bolSourceDomain = bolSource.split('/')[0];
                 let importBlock= new PlatformImportTransferBlock();
                 importBlock.init(exportBlock.transferee(),
                                  {"titleTransferBlockHash" : exportBlock.titleTransferBlockHash(), "previousRegistryURL" : bolSource},
@@ -108,8 +110,7 @@
                 }
             });
             document.getElementById("registryurl").onchange = async function(){
-                const bolSource = document.getElementById("registryurl").value;
-                const bolSourceDomain = bolSource.split('/')[0];
+                bolSource = document.getElementById("registryurl").value;
                 exportBlock= new PlatformExportTransferBlock(JSON.parse((await (await fetch('https://' + bolSource)).json())["transferBlock"]));
                 if(exportBlock){
                     document.getElementById("validRegistryURLOkCheckMark").innerHTML = "✅";
