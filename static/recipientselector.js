@@ -3,10 +3,10 @@
  * Used in issuebl and twice in transportdocumenttransfer (for title and possession)
  * Generates :
  *  * a dropdown to select the target platform
- *  * a text input to type in the selected platform
- *  * a dropdown to select the transferee from the local address book
+ *  * a text input to type in the selected platform (removed)
  *  * a text input to allow fetching the transferee's information from the target platform
  *  * a button to activate the fetching
+ *  * a dropdown to select the transferee from the local address book
  */
 
 var recipientSelector = async function(recipientSelectorDiv, transfereePublicKeyTextArea, testPlatforms) {
@@ -15,25 +15,24 @@ var recipientSelector = async function(recipientSelectorDiv, transfereePublicKey
     const receivingRegistrySelectHtmlId = recipientSelectorDiv + "ReceivingRegistrySelect";
     const addressBookSelectHtmlId = recipientSelectorDiv + "AddressBookSelect";
     const recipientIdHtmlId = recipientSelectorDiv + "RecipientId";
-    const fetchRecipientButtonHtmlId = recipientSelectorDiv + "FetchRecipientButton";
+    const fetchRecipientCheckmark = recipientSelectorDiv + "Checkmark";
     document.getElementById(recipientSelectorDiv).innerHTML = `
         <div class="form-check" style="padding-left:0;">
-            <label class="form-label" style="position:relative;padding-left:0;">Select receiving eBL Platform</label>
-            <select id="${receivingRegistrySelectHtmlId}" class="form-select form-control">
-                <option value="" selected>Select...</option>
-            </select>
-            <div><label class="form-label" style="position:relative;padding-left:0;">Or type it</label></div>
-            <input type="text" class="form-control" id="${receivingRegistryHtmlId}"><br>
+            <label class="form-label" style="position:relative;padding-left:0;">Select recipient from receiving eBL Platform</label>
+            <div style="display:flex;">
+                <select id="${receivingRegistrySelectHtmlId}" class="form-select form-control">
+                    <option value="" selected>Select...</option>
+                </select>
+                <input type="text" class="form-control" id="${receivingRegistryHtmlId}" style="display:none;"><br>
+                <input type="text" class="form-control" id="${recipientIdHtmlId}" placeholder="Enter identifier">
+                <div id="${fetchRecipientCheckmark}"></div>
+            </div>
         </div>
         <div class="form-check" style="padding-left:0;">
-            <label class="form-label" for="textAreaExample" style="position:relative;padding-left:0;">Select recipient</label>
+            <label class="form-label" for="textAreaExample" style="position:relative;padding-left:0;">Or select from local address book</label>
             <select id="${addressBookSelectHtmlId}" class="form-select form-control">
                 <option value='{"publicKey": "", "eblPlatform": ""}' selected>Select...</option>
             </select>
-            <input type="text" class="form-control" id="${recipientIdHtmlId}">
-            <button type="button" id="${fetchRecipientButtonHtmlId}" class="btn transferBtn">
-                Fetch recipient data from platform
-            </button>
         </div>`;
 
     var xhrAddressBook = new XMLHttpRequest();
@@ -61,18 +60,28 @@ var recipientSelector = async function(recipientSelectorDiv, transfereePublicKey
         let transferPossessionPlatformSelect = document.getElementById(receivingRegistrySelectHtmlId);
         transferPossessionPlatformSelect.appendChild(newOption);
         transferPossessionPlatformSelect.addEventListener("change", function (event){
-            document.getElementById(receivingRegistryHtmlId).value  = JSON.parse(event.target.value)["url"];
+            document.getElementById(receivingRegistryHtmlId).value  = event.target.value == ""? "" : JSON.parse(event.target.value)["url"];
         });
     });
 
-    let fetchRecipientButton = document.getElementById(fetchRecipientButtonHtmlId);
-    fetchRecipientButton.addEventListener('click', async _ => {
-        const targetPlatform = document.getElementById(receivingRegistryHtmlId).value;
-        const recipientId = document.getElementById(recipientIdHtmlId).value;
-        const response = await fetch("https://" + targetPlatform + "/api/v1/address-book-entries?thumbprint=" + recipientId);
-        if (response.status == "200") {
-            const contact = JSON.parse(await response.text())[0];
-            document.getElementById(transfereePublicKeyTextArea).value = contact.publicKey;
+    let fetchRecipientInput = document.getElementById(recipientIdHtmlId);
+    fetchRecipientInput.onchange= async _ => {
+        try {
+            let targetPlatform = document.getElementById(receivingRegistryHtmlId).value;
+            if (targetPlatform == "") {
+                targetPlatform = "localhost:8443";
+            }
+            const recipientId = document.getElementById(recipientIdHtmlId).value;
+            const response = await fetch("https://" + targetPlatform + "/api/v1/address-book-entries?thumbprint=" + recipientId);
+            if (response.status == "200") {
+                const contact = JSON.parse(await response.text())[0];
+                document.getElementById(transfereePublicKeyTextArea).value = contact.publicKey;
+                document.getElementById(fetchRecipientCheckmark).innerHTML  = "✅";
+            } else {
+                document.getElementById(fetchRecipientCheckmark).innerHTML = "❌";
+            }
+        } catch(error) {
+            document.getElementById(fetchRecipientCheckmark).innerHTML = "❌";
         }
-    });
+    }
 }
