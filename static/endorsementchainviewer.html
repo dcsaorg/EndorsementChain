@@ -1,8 +1,9 @@
 <script src="chaincrawler.js"></script>
 <script src="transferblock.js"></script>
 <script src="jsrsasign-latest-all-min.js"></script>
+<script src="testplatforms.js"></script>
 <table id="endorsementChainTable" border="1">
-<tr><th>Possessor</th><th>Platform</th><th>Title Holder</th><th>Title Platform</th></tr>
+<tr><th>Possessor</th><th>Platform</th><th>Title Holder</th></tr>
 </table>
 <script>
     window.onload = async function() {
@@ -18,12 +19,13 @@
             const possessorName = JSON.parse(await getPossesorNameResponse.text())[0]["name"];
             const getTitleHolderNameResponse = await fetch ("https://" + chains.platformChain[i] + "/api/v1/address-book-entries?thumbprint=" + titleHolderChain[i]);
             const titleHolderName = JSON.parse(await getTitleHolderNameResponse.text())[0]["name"];
+            const possessorPlatform = testPlatforms.find(platform => platform.url == chains.possessorPlatformChain[i]);
+            if (chains.possessionChain[i].blockPayloadAsJson()["nextRegistryHost"]) continue; //don't display export blocks, as this might confuse the users
             chainTable.innerHTML +=
                 "<tr>" +
                 "<td>" + possessorChain[i] + "<br>" + possessorName + "</td>" +
-                "<td>" + chains.possessorPlatformChain[i] + "</td>" +
-                "<td>" + titleHolderChain[i]+ "<br>" + titleHolderName + "</td>" +
-                "<td>" + chains.titlePlatformChain[i] + "</td>" +
+                "<td>" + possessorPlatform.name + "</td>" +
+                "<td>" + titleHolderChain[i]+ "<br>" + titleHolderName + "</td>"
                 "</tr>";
         }
     }
