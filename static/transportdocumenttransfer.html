@@ -219,8 +219,8 @@
             const chains = await chainCrawler.crawlPossessionChain("https://" + url.host + possessionTdtUrl);
             const possessorChain = await chainCrawler.chainToThumbprints(chains.possessionChain);
             const titleHolderChain = await chainCrawler.chainToThumbprints(chains.titleHolderChain);
-            const getPossesorNameResponse = await fetch ("https://" + chains.platformChain[0] + "/api/v1/address-book-entries?thumbprint=" + possessorChain[0]);
-            const possessorName = JSON.parse(await getPossesorNameResponse.text())[0]["name"];
+            const getPossessorNameResponse = await fetch ("https://" + chains.platformChain[0] + "/api/v1/address-book-entries?thumbprint=" + possessorChain[0]);
+            const possessorName = JSON.parse(await getPossessorNameResponse.text())[0]["name"];
             const getTitleHolderNameResponse = await fetch ("https://" + chains.platformChain[0] + "/api/v1/address-book-entries?thumbprint=" + titleHolderChain[0]);
             const titleHolderName = JSON.parse(await getTitleHolderNameResponse.text())[0]["name"];
             const currentPlatform = testPlatforms.find(platform => platform.url == chains.platformChain[0]);
@@ -253,7 +253,8 @@
                     nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
                     let platformExportTransferBlock = new PlatformExportTransferBlock();
                     platformExportTransferBlock.init(transfereePublicKeyJWK,
-                                                    {"titleTransferBlockHash": await titleBlock.blockHash(), "nextRegistryJWK" : nextRegistryJWK},
+                                                    {"titleTransferBlockHash": await titleBlock.blockHash(), "nextRegistryJWK" : nextRegistryJWK,
+                                                     "nextRegistryHost": nextRegistry},
                                                     transferorPrivateKeyFromPem);
                     const chainLinkIsValid = platformExportTransferBlock.verifyNth(0, KEYUTIL.getKey(transferorPublicKey), {alg: ['RS256']});
                     if (chainLinkIsValid) {

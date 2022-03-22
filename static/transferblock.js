@@ -110,11 +110,16 @@ class TitleTransferBlock extends TransferBlock {
  * {
  *   titleTransferBlockHash: inherited from PossessionTransferBlock
  *   nextRegistryJWK: the key of the importing platform
+ *   nextRegistryURL: URL of the importing platform. Should ideally not be necessary, but would require it to be
+ *                    findable based on the platform's public key, say in a public registry
  * }
  */
 class PlatformExportTransferBlock extends PossessionTransferBlock {
     nextRegistryJWK() {
         return this.blockPayloadAsJson()["nextRegistryJWK"];
+    }
+    nextRegistryURL() {
+        return this.blockPayloadAsJson()["nextRegistryHost"];
     }
 }
 

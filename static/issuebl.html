@@ -313,7 +313,8 @@
                     nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
                     let platformExportTransferBlock = new PlatformExportTransferBlock();
                     platformExportTransferBlock.init(shipperPublicKeyJWK,
-                                                    {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash(), "nextRegistryJWK" : nextRegistryJWK},
+                                                    {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash(),
+                                                    "nextRegistryJWK" : nextRegistryJWK, "nextRegistryHost": nextRegistry},
                                                     carrierPrivateKeyFromPem);
                     await fetch('/api/v1/transport-document-transfers', {
                         method: 'post',
