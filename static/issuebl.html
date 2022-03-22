@@ -296,7 +296,10 @@
                 var carrierPrivateKeyFromPem = new RSAKey();
                 carrierPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("carrierPrivateKeyTextArea").value);
                 const issueBlTitleTransferBlock = new TitleTransferBlock();
-                issueBlTitleTransferBlock.init(shipperPublicKeyJWK, {"documentHash": documentHash, "isToOrder": true}, carrierPrivateKeyFromPem);
+                const nextRegistry = document.getElementById("shipperSelectorReceivingRegistry").value;
+                const titleHolderPlatform = nextRegistry.length > 0? nextRegistry : (new URL(location.href)).host;
+                issueBlTitleTransferBlock.init(shipperPublicKeyJWK, {"documentHash": documentHash, "isToOrder": true,
+                                                                     "titleHolderPlatform": titleHolderPlatform}, carrierPrivateKeyFromPem);
                 const issueBlPossessionTransferBlock = new PossessionTransferBlock();
                 issueBlPossessionTransferBlock.init(shipperPublicKeyJWK, {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash()}, carrierPrivateKeyFromPem);
                 await fetch('/api/v1/transport-document-transfers', {
@@ -308,7 +311,6 @@
                     previousTransferBlockHash: null
                     })
                 });
-                const nextRegistry = document.getElementById("shipperSelectorReceivingRegistry").value;
                 if (nextRegistry.length > 0) {
                     nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
                     let platformExportTransferBlock = new PlatformExportTransferBlock();

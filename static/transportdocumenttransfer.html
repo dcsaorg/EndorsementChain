@@ -221,7 +221,7 @@
             const titleHolderChain = await chainCrawler.chainToThumbprints(chains.titleHolderChain);
             const getPossessorNameResponse = await fetch ("https://" + chains.platformChain[0] + "/api/v1/address-book-entries?thumbprint=" + possessorChain[0]);
             const possessorName = JSON.parse(await getPossessorNameResponse.text())[0]["name"];
-            const getTitleHolderNameResponse = await fetch ("https://" + chains.platformChain[0] + "/api/v1/address-book-entries?thumbprint=" + titleHolderChain[0]);
+            const getTitleHolderNameResponse = await fetch ("https://" + chains.titleHolderPlatformChain[0] + "/api/v1/address-book-entries?thumbprint=" + titleHolderChain[0]);
             const titleHolderName = JSON.parse(await getTitleHolderNameResponse.text())[0]["name"];
             const currentPlatform = testPlatforms.find(platform => platform.url == chains.platformChain[0]);
             document.getElementById("possessorThumbprint").innerHTML = possessorThumbprint + "<br>" + possessorName + "<br>" + (currentPlatform? currentPlatform.name: "<br>");
@@ -299,8 +299,9 @@
                 let endorserPrivateKeyFromPem = new RSAKey();
                 endorserPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("endorserPrivateKeyTextArea").value);
                 const endorserPublicKey = KEYUTIL.getKey(possessionBlock.transferee());
+                const titleHolderPlatform = document.getElementById("titleRecipientSelectorReceivingRegistry").value;
                 const newTitleBlock = new TitleTransferBlock();
-                newTitleBlock.init(endorseePublicKeyJWK, {"documentHash": titleBlock.documentHash()}, endorserPrivateKeyFromPem);
+                newTitleBlock.init(endorseePublicKeyJWK, {"documentHash": titleBlock.documentHash(), "titleHolderPlatform": titleHolderPlatform}, endorserPrivateKeyFromPem);
 
                 //transfer possession to self, but pointing to the new titleBlock
                 const newPossessionBlock = new PossessionTransferBlock();

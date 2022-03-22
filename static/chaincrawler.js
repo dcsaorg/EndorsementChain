@@ -8,6 +8,7 @@ class ChainCrawler {
         let platformChain = [];
         let titleHolderChain = [];
         let possessorPlatformChain = [];
+        let titleHolderPlatformChain = [];
         const url = new URL(initPossessionTdtUrl);
         let serverName = url.host;
         const apiPath = (url.pathname).match(/.*\//)[0];
@@ -25,7 +26,9 @@ class ChainCrawler {
             currentPossessionUrl = "https://" + serverName + apiPath + currentTdt.previousTransferBlockHash;
             let currentTitleUrl = "https://" + serverName + apiPath + possessionBlock.titleTransferBlockHash();
             let currentTitleTdt= await (await fetch(currentTitleUrl)).json();
-            titleHolderChain.push(new TitleTransferBlock(JSON.parse(currentTitleTdt.transferBlock)));
+            const currentTitleTransferBlock = new TitleTransferBlock(JSON.parse(currentTitleTdt.transferBlock));
+            titleHolderChain.push(currentTitleTransferBlock);
+            titleHolderPlatformChain.push(currentTitleTransferBlock.titleHolderPlatform());
         } while (currentTdt.previousTransferBlockHash != null);
         const nbBlocks = platformChain.length;
         let currentTitleHolder = titleHolderChain[nbBlocks-1]; //first title holder and platform (last items of their resp. arrays)
@@ -48,7 +51,7 @@ class ChainCrawler {
         }
         return {"possessionChain": possessionChain, "platformChain": platformChain,
                 "titleHolderChain": titleHolderChain, "titlePlatformChain": titlePlatformChain,
-                "possessorPlatformChain": possessorPlatformChain};
+                "possessorPlatformChain": possessorPlatformChain, "titleHolderPlatformChain": titleHolderPlatformChain};
     }
 
     async chainToThumbprints(promiseChain) {
