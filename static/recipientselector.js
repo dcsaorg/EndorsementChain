@@ -69,7 +69,7 @@ var recipientSelector = async function(recipientSelectorDiv, transfereePublicKey
         try {
             let targetPlatform = document.getElementById(receivingRegistryHtmlId).value;
             if (targetPlatform == "") {
-                targetPlatform = "localhost:8443";
+                targetPlatform = new URL(location.href).host;
             }
             const recipientId = document.getElementById(recipientIdHtmlId).value;
             const response = await fetch("https://" + targetPlatform + "/api/v1/address-book-entries?thumbprint=" + recipientId);
