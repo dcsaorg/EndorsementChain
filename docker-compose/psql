@@ -1,0 +1,2 @@
+#!/bin/bash
+docker exec -it endorsementchain_postgresql_1 psql "$@"

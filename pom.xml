@@ -5,9 +5,8 @@
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
-     
     <groupId>dk.ange.jwtexperiment</groupId>
-    <artifactId>my-app</artifactId>
+    <artifactId>dcsa-endorsement-chain</artifactId>
     <version>1</version>
     <dependencies>
         <dependency>
@@ -103,6 +102,30 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>
+                                        dk.ange.jwtexperiment.Application
+                                    </mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

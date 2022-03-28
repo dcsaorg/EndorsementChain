@@ -1,0 +1,25 @@
+---
+version: '3.5'
+services:
+    titleregistry:
+        build:
+            ../
+        ports:
+            - 8443:8443
+        logging:
+            options:
+                max-file: '10'
+                max-size: 200k
+    postgresql:
+        build:
+            ./postgresql/
+        ports:
+            - 5432:5432
+        volumes:
+            - postgresql-data:/var/lib/postgresql/data
+        logging:
+            options:
+                max-file: '10'
+                max-size: 200k
+volumes:
+    postgresql-data: {}

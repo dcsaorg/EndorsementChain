@@ -2,9 +2,9 @@ spring:
   application:
     name: TDT-registry
   datasource:
-    url: jdbc:postgresql://localhost:5432/tdt_registry
+    url: jdbc:postgresql://${DATABASE_HOSTNAME}:${DATABASE_PORT}/tdt_registry
     username: tdt_db_owner
-    password: Voo0voVo
+    password: ${DATABASE_PASSWORD}
   jpa:
     show-sql: true
     properties:
