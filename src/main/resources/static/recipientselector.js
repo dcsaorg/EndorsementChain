@@ -66,6 +66,15 @@ var recipientSelector = async function(recipientSelectorDiv, transfereePublicKey
 
     let fetchRecipientInput = document.getElementById(recipientIdHtmlId);
     fetchRecipientInput.onchange= async _ => {
+        getAndCheckRecipient();
+    }
+
+    let fetchRecipientSelect = document.getElementById(receivingRegistrySelectHtmlId);
+    fetchRecipientSelect.addEventListener("change", async function (event){
+        getAndCheckRecipient();
+    });
+
+    async function getAndCheckRecipient() {
         try {
             let targetPlatform = document.getElementById(receivingRegistryHtmlId).value;
             if (targetPlatform == "") {
