@@ -297,7 +297,9 @@
                 let endorserPrivateKeyFromPem = new RSAKey();
                 endorserPrivateKeyFromPem.readPrivateKeyFromPEMString(document.getElementById("endorserPrivateKeyTextArea").value);
                 const endorserPublicKey = KEYUTIL.getKey(possessionBlock.transferee());
-                const titleHolderPlatform = document.getElementById("titleRecipientSelectorReceivingRegistry").value;
+                const titleHolderPlatform = document.getElementById("titleRecipientSelectorReceivingRegistry").value != "" ?
+                                                document.getElementById("titleRecipientSelectorReceivingRegistry").value :
+                                                url.host;
                 const newTitleBlock = new TitleTransferBlock();
                 newTitleBlock.init(endorseePublicKeyJWK, {"documentHash": titleBlock.documentHash(), "titleHolderPlatform": titleHolderPlatform}, endorserPrivateKeyFromPem);
 
