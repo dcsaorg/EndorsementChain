@@ -2,7 +2,7 @@ spring:
   application:
     name: TDT-registry
   datasource:
-    url: jdbc:postgresql://${DATABASE_HOSTNAME}:${DATABASE_PORT}/tdt_registry
+    url: jdbc:postgresql://${DATABASE_HOSTNAME}:5432/tdt_registry
     username: tdt_db_owner
     password: ${DATABASE_PASSWORD}
   jpa:
@@ -14,7 +14,7 @@ spring:
 
 server:
   ssl:
-    key-store: classpath:springboot-https.p12
+    key-store: classpath:certificates/springboot-https.p12
     key-store-password: your_key-store_password
     key-store-type: pkcs12
     key-alias: springboot-https

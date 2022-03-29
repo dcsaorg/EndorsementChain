@@ -31,7 +31,7 @@ public class Application {
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public KeyPair platformKeyPair() {
-        ClassPathResource ksFile = new ClassPathResource("dcsa-jwk.jks");
+        ClassPathResource ksFile = new ClassPathResource("certificates/dcsa-jwk.jks");
         KeyStoreKeyFactory ksFactory = new KeyStoreKeyFactory(ksFile, "dcsa-pass".toCharArray());
         return ksFactory.getKeyPair("dcsa-kid");
     }
