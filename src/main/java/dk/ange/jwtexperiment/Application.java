@@ -8,15 +8,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 //See README.md regarding the key store generation
 
-@SpringBootApplication(exclude={SecurityAutoConfiguration.class})
+@SpringBootApplication
 public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
-    }
-
-    protected void configure(HttpSecurity http)  throws Exception {
-         http.authorizeRequests().anyRequest().permitAll();
     }
 
 }
