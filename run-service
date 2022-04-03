@@ -1,4 +1,4 @@
 #!/bin/bash
 cd "$(dirname $0)"
-source dbconfiguration.env
+source dbconfiguration.docker.env
 java -jar dcsa-endorsement-chain-1.jar

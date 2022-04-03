@@ -3,6 +3,7 @@ Installation instructions
 
 
 ```
+cp dbconfiguration.env.in dbconfiguration.env #edit the file to your needs
 source dbconfiguration.env
 cat initdb.sql |sudo -u postgres psql -v DATABASE_PASSWORD=$DATABASE_PASSWORD # initialize / reset the DB
 keytool -genkeypair -alias dcsa-kid -keyalg RSA -keystore dcsa-jwk.jks -storepass dcsa-pass # key pair for cross-platform transfers
@@ -25,6 +26,7 @@ openssl pkcs12 -export -name "springboot-https" -out springboot-https.p12 -in fu
 
 Deploying using Docker
 ```
+cp dbconfiguration.docker.env.in dbconfiguration.docker.env #edit the file to your needs
 cd docker-compose
 ./build
 docker-compose up

@@ -20,6 +20,6 @@ One of the purposes of the POC is to determine if this signing scheme is impleme
 
 To build and run it, see [INSTALL.md](INSTALL.md).
 
-Then point your browser to https://localhost:8443/static/issuebl.html
+Then point your browser to https://localhost:8443/issuebl.html
 
-Test keys can be generated at https://localhost:8443/static/generatersakeypair.html
+Test keys can be generated at https://localhost:8443/generatersakeypair.html
