@@ -3,7 +3,7 @@ Installation instructions
 
 
 ```
-cp dbconfiguration.env.in dbconfiguration.env #edit the file to your needs
+cp dbconfiguration.env.in dbconfiguration.env #edit the file to your needs (set password)
 source dbconfiguration.env
 cat initdb.sql |sudo -u postgres psql -v DATABASE_PASSWORD=$DATABASE_PASSWORD # initialize / reset the DB
 keytool -genkeypair -alias dcsa-kid -keyalg RSA -keystore dcsa-jwk.jks -storepass dcsa-pass # key pair for cross-platform transfers
@@ -12,7 +12,7 @@ mv dcsa-jwk.jks springboot-https.p12 src/main/resources/certificates
 mvn spring-boot:run
 ```
 
-Run the front-end tests at https://localhost:8443/static/SpecRunner.html
+Run the front-end tests at https://localhost:8443/SpecRunner.html
 
 To populate the database with test data run:
 ```
@@ -26,8 +26,9 @@ openssl pkcs12 -export -name "springboot-https" -out springboot-https.p12 -in fu
 
 Deploying using Docker
 ```
-cp dbconfiguration.docker.env.in dbconfiguration.docker.env #edit the file to your needs
-cd docker-compose
+cd docker-compose/postgresql
+cp dbconfiguration.docker.env.in dbconfiguration.docker.env #edit the file to your needs (set password)
+cd ..
 ./build
 docker-compose up
 ```

@@ -14,5 +14,5 @@ WORKDIR /app
 
 COPY target/dcsa-endorsement-chain-1.jar .
 COPY run-service .
-COPY dbconfiguration.docker.env .
+COPY docker-compose/postgresql/dbconfiguration.docker.env .
 CMD ["./run-service"]
