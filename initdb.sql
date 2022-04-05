@@ -1,1 +1,1 @@
-docker-compose/postgresql/initdb.d/initdb.sql
+docker-compose/postgresql/initdb.sql
