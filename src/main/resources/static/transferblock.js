@@ -44,7 +44,7 @@ class TransferBlock {
     };
 
     async blockHash() {
-        return ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(this.JWS))));
+        return ArrayBuffertohex(await crypto.subtle.digest("SHA-256", new TextEncoder("utf-8").encode(JSON.stringify(this.JWS))));
     }
 
     transferee() {

@@ -307,10 +307,7 @@
                 await fetch('/api/v1/transferblocks', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    transferBlockHash : await issueBlTitleTransferBlock.blockHash(),
-                    transferBlock: JSON.stringify(issueBlTitleTransferBlock.JWS),
-                    })
+                body: JSON.stringify(issueBlTitleTransferBlock.JWS)
                 });
                 if (nextRegistry.length > 0) {
                     nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
@@ -322,21 +319,14 @@
                     await fetch('/api/v1/transferblocks', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            transferBlockHash : await platformExportTransferBlock.blockHash(),
-                            transferBlock: JSON.stringify(platformExportTransferBlock.JWS),
-                        })
+                        body: JSON.stringify(platformExportTransferBlock.JWS)
                     });
                     location .href = "blexported.html?id=" + await platformExportTransferBlock.blockHash();
                 } else {
                     await fetch('/api/v1/transferblocks', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        transferBlockHash : await issueBlPossessionTransferBlock.blockHash(),
-                        transferBlock: JSON.stringify(issueBlPossessionTransferBlock.JWS),
-                        previousTransferBlockHash: null
-                        })
+                    body: JSON.stringify(issueBlPossessionTransferBlock.JWS)
                     });
                     location.href = "transportdocumenttransfer.html?id=" + await issueBlPossessionTransferBlock.blockHash();
                 }
