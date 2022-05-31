@@ -1,3 +1,6 @@
 dbconfiguration.env
 docker-compose/postgresql/dbconfiguration.docker.env
 src/main/resources/certificates
+.idea
+target
+billoflading.pdf

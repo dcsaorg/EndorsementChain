@@ -1,33 +1,28 @@
-import java.io.File;
-import java.io.IOException;
+package dk.ange.jwtexperiment;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
-import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
-import java.io.FileReader;
-import java.util.*;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import org.junit.jupiter.api.Test;
-import dk.ange.jwtexperiment.BillOfLading;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.lang.reflect.Field;
 import org.junit.jupiter.api.Assertions;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 
-public final class PdfBoxTest {
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.file.Files;
+
+final class PdfBoxTest {
     @Test
-    void pdfBoxTest() throws IOException, FileNotFoundException, IllegalAccessException {
-        BillOfLading bol = new BillOfLading(Files.readString(Paths.get(Thread.currentThread().getContextClassLoader().getResource("bol-example.json").getPath())));
+    void pdfBoxTest() throws IOException, IllegalAccessException {
+        BillOfLading bol = new BillOfLading(Files.readString(new ClassPathResource("bol-example.json").getFile().toPath()));
         PDDocument pdfDocument = bol.toPdf();
         PDAcroForm acroForm = pdfDocument.getDocumentCatalog().getAcroForm();
         Field[] fields = BillOfLading.class.getFields();
         System.out.println("Nb of fields:" + fields.length);
-        for (int i = 0; i < fields.length; ++i) {
-            String k = fields[i].toString().split("\\.")[6];
+        for (Field field : fields) {
+            String k = field.toString().split("\\.")[6];
             Assertions.assertNotNull(acroForm.getField(k));
             System.out.println(k);
-            System.out.println(((PDTextField)acroForm.getField(k)).getValueAsString());
+            System.out.println(acroForm.getField(k).getValueAsString());
         }
         pdfDocument.save("billoflading.pdf");
         pdfDocument.close();
