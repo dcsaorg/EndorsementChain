@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.util.StringUtils;
@@ -30,7 +31,7 @@ public class AddressBookEntryController {
     @CrossOrigin(origins = "*")
     @ResponseBody
     public ResponseEntity<List<AddressBookEntry>> getAddressBookEntries(@RequestParam(required = false) String thumbprint) {
-        final List<AddressBookEntry> addressBookEntries = StringUtils.isEmpty(thumbprint)?
+        final List<AddressBookEntry> addressBookEntries = ObjectUtils.isEmpty(thumbprint)?
                                                           addressBookEntryRepo.findAll() :
                                                           addressBookEntryRepo.findByThumbprint(thumbprint);
         return new ResponseEntity<List<AddressBookEntry>>(addressBookEntries, HttpStatus.OK);
