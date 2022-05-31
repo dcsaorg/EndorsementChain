@@ -259,10 +259,7 @@
                         await fetch('/api/v1/transferblocks', {
                             method: 'post',
                             headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({
-                                transferBlockHash : await platformExportTransferBlock.blockHash(),
-                                transferBlock: JSON.stringify(platformExportTransferBlock.JWS),
-                            })
+                            body:  JSON.stringify(newPossessionBlock.JWS)
                         });
                         location.href = "blexported.html?id=" + await platformExportTransferBlock.blockHash();
                     } else {
@@ -277,10 +274,7 @@
                         await fetch('/api/v1/transferblocks', {
                             method: 'post',
                             headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({
-                                transferBlockHash : await newPossessionBlock.blockHash(),
-                                transferBlock: JSON.stringify(newPossessionBlock.JWS)
-                            })
+                            body:  JSON.stringify(newPossessionBlock.JWS)
                         });
                         location .href = "transportdocumenttransfer.html?id=" + await newPossessionBlock.blockHash();
                     } else {
@@ -313,20 +307,13 @@
                     await fetch('/api/v1/transferblocks', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            transferBlockHash : await newTitleBlock.blockHash(),
-                            transferBlock: JSON.stringify(newTitleBlock.JWS),
-                            previousTransferBlockHash: null
-                        })
+                        body:  JSON.stringify(newPossessionBlock.JWS)
                     });
                     await fetch('/api/v1/transferblocks', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            transferBlockHash : await newPossessionBlock.blockHash(),
-                            transferBlock: JSON.stringify(newPossessionBlock.JWS),
-                            previousTransferBlockHash: await possessionBlock.blockHash()
-                        })
+                        body:  JSON.stringify(newPossessionBlock.JWS)
+                        
                     });
                     location.href = "transportdocumenttransfer.html?id=" + await newPossessionBlock.blockHash();
                 } else {
