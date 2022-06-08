@@ -10,12 +10,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 
 /*
  * The Transport Document Transfer object
@@ -48,6 +50,11 @@ public class TransferBlock {
   @Column(columnDefinition = "varchar(255) default 'current'")
   private String transferStatus;
 
+  public static TransferBlock of(String rawTransferBlockRequest) throws NoSuchAlgorithmException {
+    String transferBlockHash = DigestUtils.sha256Hex(rawTransferBlockRequest);
+    return new TransferBlock(transferBlockHash, rawTransferBlockRequest, "current");
+  }
+
   private JsonNode transferBlockAsJsonNode()
       throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
     JWSObjectJSON transferBlockAsJson = JWSObjectJSON.parse(transferBlock);
@@ -79,9 +86,10 @@ public class TransferBlock {
   /*
    * Extract the pointer to the previous transfer block
    */
-  final public String previousTransferBlockHash () throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
+  public final String previousTransferBlockHash()
+      throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
       JsonNode transferBlockJson = transferBlockAsJsonNode();
-    return transferBlockJson.get("previousBlockHash").toString();
+    return transferBlockJson.get("previousBlockHash").asText();
   }
 
 }

@@ -19,7 +19,7 @@ public class PartyController {
   @GetMapping("/parties/{partyReference}")
   @CrossOrigin(origins = "*")
   @ResponseBody
-  public ResponseEntity<Party> getAddressBookEntry(@PathVariable String partyReference) {
+  public ResponseEntity<Party> getParty(@PathVariable String partyReference) {
     return partyRepository
         .findByPartyReference(partyReference)
         .map(party -> ResponseEntity.ok().body(party))
@@ -29,7 +29,7 @@ public class PartyController {
   @GetMapping("/parties")
   @CrossOrigin(origins = "*")
   @ResponseBody
-  public ResponseEntity<List<Party>> getAddressBookEntries(
+  public ResponseEntity<List<Party>> getParties(
       @RequestParam(required = false) String thumbprint) {
     final List<Party> addressBookEntries =
         ObjectUtils.isEmpty(thumbprint)
@@ -43,7 +43,7 @@ public class PartyController {
       consumes = {"application/json"},
       produces = {"application/json"})
   @ResponseBody
-  public ResponseEntity<Party> addAddressBookEntry(
+  public ResponseEntity<Party> createParty(
       @RequestBody Party party, UriComponentsBuilder builder) {
     party.setPartyReference(UUID.randomUUID().toString());
     partyRepository.save(party);

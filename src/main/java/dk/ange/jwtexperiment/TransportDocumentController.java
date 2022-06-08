@@ -1,27 +1,31 @@
 package dk.ange.jwtexperiment;
 
-import dk.ange.jwtexperiment.TransportDocument;
-import dk.ange.jwtexperiment.TransportDocumentRepository;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
-import java.util.Optional;
 import java.io.ByteArrayOutputStream;
-import org.apache.pdfbox.pdmodel.PDDocument;
+import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("${spring.application.api-path}")
 public class TransportDocumentController {
+
+    public static final String API_PATH = "/transport-documents";
+
+    @Value("${spring.application.api-path}")
+    private String contextPath;
+
     @Autowired
     TransportDocumentRepository transportDocumentRepo;
 
-    @GetMapping(value = "/transport-documents/{transportDocumentId}", produces = {"application/json"})
+    @GetMapping(value = API_PATH + "/{transportDocumentId}", produces = {"application/json"})
     @ResponseBody
     @CrossOrigin(origins = "*")
     public ResponseEntity<TransportDocument> getTransportDocument(@PathVariable String transportDocumentId){
@@ -29,7 +33,7 @@ public class TransportDocumentController {
         return new ResponseEntity<TransportDocument>(transportDocument.get(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/transport-documents/{transportDocumentId}/pdf", produces = {"application/pdf"})
+    @GetMapping(value = API_PATH + "/{transportDocumentId}/pdf", produces = {"application/pdf"})
     @ResponseBody
     public byte[] getTransportDocumentAsPdf(@PathVariable String transportDocumentId) throws java.io.IOException, java.lang.IllegalAccessException {
         Optional<TransportDocument> transportDocument = transportDocumentRepo.findById(transportDocumentId);
@@ -41,16 +45,16 @@ public class TransportDocumentController {
         return baos.toByteArray();
     }
 
-    @PostMapping(value = "/transport-documents", consumes = {"application/json"}, produces = {"application/json"})
+    @PostMapping(value = API_PATH, consumes = {"application/json"}, produces = {"application/json"})
     @ResponseBody
     public ResponseEntity<TransportDocument> addTransportDocument(@RequestBody TransportDocument transportDocument, UriComponentsBuilder builder){
         transportDocumentRepo.save(transportDocument);
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("/transport-document/{id}").buildAndExpand(transportDocument.getDocumentHash()).toUri());
+        headers.setLocation(builder.path(contextPath + API_PATH + "/{id}").buildAndExpand(transportDocument.getDocumentHash()).toUri());
         return new ResponseEntity<TransportDocument>(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/transport-documents")
+    @PutMapping(API_PATH)
     @ResponseBody
     public ResponseEntity<TransportDocument> updateTransportDocument(@RequestBody TransportDocument transportDocument){
         if(transportDocument != null){
@@ -59,7 +63,7 @@ public class TransportDocumentController {
         return new ResponseEntity<TransportDocument>(transportDocument, HttpStatus.OK);
     }
 
-    @DeleteMapping("/transport-documents/{transportDocumentId}")
+    @DeleteMapping(API_PATH + "/{transportDocumentId}")
     @ResponseBody
     public ResponseEntity<Void> deleteTransportDocument(@PathVariable String transportDocumentId){
         Optional<TransportDocument> transportDocument = transportDocumentRepo.findById(transportDocumentId);

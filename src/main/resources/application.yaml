@@ -1,6 +1,7 @@
 spring:
   application:
     name: TDT-registry
+    api-path: /api/v1
   datasource:
     url: jdbc:postgresql://${DATABASE_HOSTNAME}:5432/tdt_registry
     username: tdt_db_owner
@@ -19,3 +20,4 @@ server:
     key-store-type: pkcs12
     key-alias: springboot-https
   port: 8443
+
