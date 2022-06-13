@@ -1,4 +1,4 @@
-INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('19315844aec2782bb18b', 'Ocean Carrier DCSA',
+INSERT INTO party(id, party_reference, thumbprint, name, public_key, ebl_platform) VALUES('9b654d2e-5101-4ef8-a3f5-504d76459fc0', 'be6839b3-566b-42fa-903c-fa99ba445bca', '19315844aec2782bb18b', 'Ocean Carrier DCSA',
 '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxpFsixidx12u3sB6ZpQY
 n8IcuIYjBfGM0Rlu3TooZHOkA5HbpvRvsaj/HTVKCCQdw1PqJ0S+caZDDjCWyGOX
@@ -10,7 +10,7 @@ wQIDAQAB
 -----END PUBLIC KEY-----', '');
 
 
-INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('6c0a3fce271760042dbb', 'ExxonMobil',
+INSERT INTO party(id, party_reference, thumbprint, name, public_key, ebl_platform) VALUES('93c91df8-cc6b-46c3-b4fc-d269aa3b4d2a', '77082e42-8e82-47e9-b023-b8546cff3bb8','6c0a3fce271760042dbb', 'ExxonMobil',
 '------BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAi71OOBsnD8kQpjDD3J/V
 IBhxdz53/4y3y54rWNsOCJR2ji+gZ3872L5D9yOHqp3BFdh0exeXzV/sFRLy3iWS
@@ -21,7 +21,7 @@ uIX/P74BGRg0SIe/i2tFP0cM0EyaqCqgBTGPa6x7gqs6miiGkIExO4vUbtofBPpm
 yQIDAQAB
 -----END PUBLIC KEY-----', '');
 
-INSERT INTO addressbookentry(thumbprint,name, public_key, ebl_platform) VALUES('a162bc5f6402209fa797', 'The Oil Company',
+INSERT INTO party(id, party_reference, thumbprint,name, public_key, ebl_platform) VALUES('594f374a-4675-432e-a16b-0bd0c10ffb42', '6575dca8-daa9-4616-824a-daafd7245f30','a162bc5f6402209fa797', 'The Oil Company',
 '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp2LIVPuw1/vUghIoODZG
 CMe8UYptAAXq7bpO5lDKMISR/TgMZh+H65NAOnMBe8EYnWpB+ratILu8XeNETxgR
@@ -32,7 +32,7 @@ noF2Ws1h0mT+34va6hQSROyzv1lgday0+wvr+7Mq+RxlL3Eq63Ti4C+TJ1FMoRt9
 rQIDAQAB
 -----END PUBLIC KEY-----', '');
 
-INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('ff7e3fc1073378437df0', 'The Other Oil Company',
+INSERT INTO party(id, party_reference, thumbprint, name, public_key, ebl_platform) VALUES('8d8e76f3-befd-4fca-87e3-3c1b82b34ffa','9f4f5802-2bbe-4642-ae1e-1ef37226d65e', 'ff7e3fc1073378437df0', 'The Other Oil Company',
 '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3pmFDMKBHrvIj1gdw/wV
 FzdwzVZJqke63QxZsGVuGGItCrkCxtPE6vywIiIYZqr75+zPRP/5J0Jz1m2Up7do
@@ -45,7 +45,7 @@ VQIDAQAB
 
 
 
-INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('43f0ba1c5b64d97f5392', 'Bank of Africa',
+INSERT INTO party(id, party_reference, thumbprint, name, public_key, ebl_platform) VALUES('7aa3b7a1-8cbe-4691-96b1-36581c079950', 'b074a188-4e97-4fe7-8292-645be042e2cd', '43f0ba1c5b64d97f5392', 'Bank of Africa',
 '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxSCiG1iVVNIeyZMoHEXn
 xjUIiVkkBQQQ7Z08T/H1m8cEc0PqbT2aVu/hGtChoGI9VBn/BVTiM3HVrRaIUrhA
@@ -56,7 +56,7 @@ wnKNOHINJadpSCncbpPTa3ITZ8qDW6aZSAKHdTITiW+v4Y0/qX3NgvECMLmraz7H
 HwIDAQAB
 -----END PUBLIC KEY-----', '');
 
-INSERT INTO addressbookentry(thumbprint, name, public_key, ebl_platform) VALUES('fecd835ade692dee6bd4', 'HSBD',
+INSERT INTO party(id, party_reference, thumbprint, name, public_key, ebl_platform) VALUES('4c849b24-c3a0-4027-954a-12a99df6519a', '4dee5a52-05fe-4134-95cd-04e9195e0284', 'fecd835ade692dee6bd4', 'HSBD',
 '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6OBMyKQ2hzvw0r+va/KL
 YNx5WDjSwFRoSVbqcxcCsn3n88JPM6/BqteuScuzXz1x1MnYEYNudk43+ZIRa8TV

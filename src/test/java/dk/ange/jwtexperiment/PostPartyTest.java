@@ -11,18 +11,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-@WebMvcTest(AddressBookEntryController.class)
-@ContextConfiguration(classes = {SecurityConfig.class, AddressBookEntryController.class, AddressBookEntryRepository.class})
-public class PostAddressBookEntryTest {
+@WebMvcTest(PartyController.class)
+@ContextConfiguration(classes = {SecurityConfig.class, PartyController.class, PartyRepository.class})
+public class PostPartyTest {
 
     @MockBean
-    private AddressBookEntryRepository addressBookEntryRepository;
+    private PartyRepository partyRepository;
 
     @Autowired
     private MockMvc mvc;
 
     @Autowired
-    private AddressBookEntryController addressBookEntryController;
+    private PartyController partyController;
 
     @Test
     public void postAddressBookEntry() throws Exception {
