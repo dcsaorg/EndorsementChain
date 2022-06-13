@@ -49,7 +49,7 @@ public class PartyController {
     partyRepository.save(party);
     HttpHeaders headers = new HttpHeaders();
     headers.setLocation(
-        builder.path("/api/v1/address-book-entries/{id}").buildAndExpand(party.getId()).toUri());
+        builder.path("/api/v1/parties/{id}").buildAndExpand(party.getId()).toUri());
     return new ResponseEntity<>(headers, HttpStatus.CREATED);
   }
 }
