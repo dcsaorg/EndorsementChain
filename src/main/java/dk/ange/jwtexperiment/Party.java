@@ -6,15 +6,20 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import java.util.UUID;
 
 @Entity
-@Table(name = "addressbookentry")
+@Table(name = "party")
 @Getter @Setter @RequiredArgsConstructor @NoArgsConstructor
-public class AddressBookEntry {
+public class Party {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
-    private Integer id;
+    private UUID id;
+
+    @Column(unique = true)
+    @NonNull
+    private String partyReference;
 
     @Column
     @NonNull

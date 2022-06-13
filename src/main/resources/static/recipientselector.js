@@ -36,7 +36,7 @@ var recipientSelector = async function(recipientSelectorDiv, transfereePublicKey
         </div>`;
 
     var xhrAddressBook = new XMLHttpRequest();
-    xhrAddressBook.open("GET", "/api/v1/address-book-entries/");
+    xhrAddressBook.open("GET", "/api/v1/parties/");
     xhrAddressBook.onload = function() {
         const addressBookEntries = JSON.parse(xhrAddressBook.response);
         let selectTransferTitle = document.getElementById(addressBookSelectHtmlId);
@@ -81,7 +81,7 @@ var recipientSelector = async function(recipientSelectorDiv, transfereePublicKey
                 targetPlatform = new URL(location.href).host;
             }
             const recipientId = document.getElementById(recipientIdHtmlId).value;
-            const response = await fetch("https://" + targetPlatform + "/api/v1/address-book-entries?thumbprint=" + recipientId);
+            const response = await fetch("https://" + targetPlatform + "/api/v1/parties?thumbprint=" + recipientId);
             if (response.status == "200") {
                 const contact = JSON.parse(await response.text())[0];
                 document.getElementById(transfereePublicKeyTextArea).value = contact.publicKey;

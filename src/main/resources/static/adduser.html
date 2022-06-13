@@ -46,7 +46,7 @@
             document.getElementById("publicKeyThumbprintTextArea").value = longThumbprint.slice(0,20);
         }
         document.getElementById("saveButton").onclick = async function(){
-            await fetch('/api/v1/address-book-entries', {
+            await fetch('/api/v1/parties', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
