@@ -12,8 +12,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 @WebMvcTest(PartyController.class)
-@ContextConfiguration(classes = {SecurityConfig.class, PartyController.class, PartyRepository.class})
-public class PostPartyTest {
+@ContextConfiguration(
+    classes = {SecurityConfig.class, PartyController.class, PartyRepository.class})
+class PostPartyTest {
 
     @MockBean
     private PartyRepository partyRepository;
@@ -24,9 +25,9 @@ public class PostPartyTest {
     @Autowired
     private PartyController partyController;
 
-    @Test
-    public void postAddressBookEntry() throws Exception {
-        String uri = "/api/v1/address-book-entries";
+  @Test
+  void postAddressBookEntry() throws Exception {
+        String uri = "/api/v1/parties";
         String json = "{\"thumbprint\":\"\", \"name\":\"\", \"publicKey\":\"\", \"eblPlatform\":\"\"}";
         MvcResult mvcResult =
         mvc.perform(MockMvcRequestBuilders.post(uri)
