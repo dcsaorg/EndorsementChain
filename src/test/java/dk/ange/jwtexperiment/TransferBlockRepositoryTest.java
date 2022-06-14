@@ -18,16 +18,16 @@ public class TransferBlockRepositoryTest {
 
     @Test
     public void testSaveTDT() throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
-        repository.save(new TransferBlock(blockHash, null, transferBlock, "current"));
+        repository.save(new TransferBlock(blockHash, transferBlock, "current"));
         Optional<TransferBlock> tdt = repository.findById(blockHash);
         Assertions.assertEquals(tdt.get().getTransferBlockHash(),blockHash);
         Assertions.assertEquals(tdt.get().getTransferStatus(),"current");
-        Assertions.assertEquals(tdt.get().getPreviousTransferBlockHash(), null);
+//         Assertions.assertEquals(tdt.get().previousTransferBlockHash(), null);
     }
 
     @Test
     public void testAddingPlatformSignature() throws java.text.ParseException, com.nimbusds.jose.JOSEException, java.security.NoSuchAlgorithmException {
-        TransferBlock tdt = new TransferBlock(blockHash, null, transferBlock, "current");
+        TransferBlock tdt = new TransferBlock(blockHash, transferBlock, "current");
         final int initialLength = tdt.getTransferBlock().length();
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
         kpg.initialize(2048);

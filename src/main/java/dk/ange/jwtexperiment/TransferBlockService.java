@@ -19,7 +19,7 @@ public class TransferBlockService {
     }
 
     public void save(TransferBlock transferBlock) throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException, com.nimbusds.jose.JOSEException {
-        String previousTDThash = transferBlock.getPreviousTransferBlockHash();
+        String previousTDThash = transferBlock.previousTransferBlockHash();
         if (previousTDThash != null ) {
             Optional<TransferBlock> previousTDT = transferBlockRepository.findById(previousTDThash);
             if(previousTDT.isPresent()) { //TODO: if there is no previous TDT, getting here should only be possible as a result of a
