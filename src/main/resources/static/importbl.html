@@ -75,13 +75,13 @@
                 importBlock.init(exportBlock.transferee(),
                                  {"titleTransferBlockHash" : exportBlock.titleTransferBlockHash(), "previousRegistryURL" : bolSource},
                                  importerPrivateKey);
-                const importedTitleBlock= new TitleTransferBlock(JSON.parse((await (await fetch('https://' + bolSourceDomain + '/api/v1/transport-document-transfers/' +
+                const importedTitleBlock= new TitleTransferBlock(JSON.parse((await (await fetch('https://' + bolSourceDomain + '/api/v1/transferblocks/' +
                                                                                                 exportBlock.titleTransferBlockHash())).json())["transferBlock"]));
                 const fetchBLString = 'https://'+bolSourceDomain +'/api/v1/transport-documents/' + importedTitleBlock.documentHash();
                 const fetchedBL = await (await fetch(fetchBLString)).json();
                 const signaturesAreValid = true; //TODO: fetch relevant public keys from exporting platform and check signatures
                 if (signaturesAreValid) {
-                    await fetch('/api/v1/transport-document-transfers', {
+                    await fetch('/api/v1/transferblocks', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -90,7 +90,7 @@
                         previousTransferBlockHash: await exportBlock.blockHash()
                         })
                     });
-                    await fetch('/api/v1/transport-document-transfers', {
+                    await fetch('/api/v1/transferblocks', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({

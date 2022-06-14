@@ -302,7 +302,7 @@
                                                                      "titleHolderPlatform": titleHolderPlatform}, carrierPrivateKeyFromPem);
                 const issueBlPossessionTransferBlock = new PossessionTransferBlock();
                 issueBlPossessionTransferBlock.init(shipperPublicKeyJWK, {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash()}, carrierPrivateKeyFromPem);
-                await fetch('/api/v1/transport-document-transfers', {
+                await fetch('/api/v1/transferblocks', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -318,7 +318,7 @@
                                                     {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash(),
                                                     "nextRegistryJWK" : nextRegistryJWK, "nextRegistryHost": nextRegistry},
                                                     carrierPrivateKeyFromPem);
-                    await fetch('/api/v1/transport-document-transfers', {
+                    await fetch('/api/v1/transferblocks', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
@@ -329,7 +329,7 @@
                     });
                     location .href = "blexported.html?id=" + await platformExportTransferBlock.blockHash();
                 } else {
-                    await fetch('/api/v1/transport-document-transfers', {
+                    await fetch('/api/v1/transferblocks', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({

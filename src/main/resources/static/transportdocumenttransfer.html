@@ -191,10 +191,10 @@
         window.onload = async function(){
             const url = new URL(location.href);
             const possessionHashId = url.searchParams.get('id');
-            const possessionTdtUrl = "/api/v1/transport-document-transfers/" + possessionHashId; ;
+            const possessionTdtUrl = "/api/v1/transferblocks/" + possessionHashId; ;
             const possessionTdt= await (await fetch(possessionTdtUrl)).json();
             const possessionBlock = new PossessionTransferBlock(JSON.parse(possessionTdt["transferBlock"]));
-            const titleTdt= await (await fetch("/api/v1/transport-document-transfers/" + possessionBlock.titleTransferBlockHash())).json();
+            const titleTdt= await (await fetch("/api/v1/transferblocks/" + possessionBlock.titleTransferBlockHash())).json();
             const titleBlock = new TitleTransferBlock(JSON.parse(titleTdt["transferBlock"]));
             new QRCode(document.getElementById("qrcode"), {
                 text: "https://" + url.host + possessionTdtUrl,
@@ -256,7 +256,7 @@
                                                     transferorPrivateKeyFromPem);
                     const chainLinkIsValid = platformExportTransferBlock.verifyNth(0, KEYUTIL.getKey(transferorPublicKey), {alg: ['RS256']});
                     if (chainLinkIsValid) {
-                        await fetch('/api/v1/transport-document-transfers', {
+                        await fetch('/api/v1/transferblocks', {
                             method: 'post',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify({
@@ -274,7 +274,7 @@
                     newPossessionBlock.init(transfereePublicKeyJWK, {"titleTransferBlockHash": await titleBlock.blockHash()}, transferorPrivateKeyFromPem);
                     const chainLinkIsValid = newPossessionBlock.verifyNth(0, KEYUTIL.getKey(transferorPublicKey), {alg: ['RS256']});
                     if(chainLinkIsValid) {
-                        await fetch('/api/v1/transport-document-transfers', {
+                        await fetch('/api/v1/transferblocks', {
                             method: 'post',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify({
@@ -309,7 +309,7 @@
                 let signaturesAreValid = newTitleBlock.verifyNth(0, endorserPublicKey, {alg: ['RS256']})
                                       && newPossessionBlock.verifyNth(0, endorserPublicKey, {alg: ['RS256']});
                 if (signaturesAreValid) {
-                    await fetch('/api/v1/transport-document-transfers', {
+                    await fetch('/api/v1/transferblocks', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
@@ -318,7 +318,7 @@
                             previousTransferBlockHash: null
                         })
                     });
-                    await fetch('/api/v1/transport-document-transfers', {
+                    await fetch('/api/v1/transferblocks', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
