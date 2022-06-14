@@ -298,23 +298,24 @@
                 const issueBlTitleTransferBlock = new TitleTransferBlock();
                 const nextRegistry = document.getElementById("shipperSelectorReceivingRegistry").value;
                 const titleHolderPlatform = nextRegistry.length > 0? nextRegistry : (new URL(location.href)).host;
-                issueBlTitleTransferBlock.init(shipperPublicKeyJWK, {"documentHash": documentHash, "isToOrder": true,
-                                                                     "titleHolderPlatform": titleHolderPlatform}, carrierPrivateKeyFromPem);
+                issueBlTitleTransferBlock.init(shipperPublicKeyJWK, null,
+                                            {"documentHash": documentHash, "isToOrder": true,
+                                            "titleHolderPlatform": titleHolderPlatform}, carrierPrivateKeyFromPem);
                 const issueBlPossessionTransferBlock = new PossessionTransferBlock();
-                issueBlPossessionTransferBlock.init(shipperPublicKeyJWK, {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash()}, carrierPrivateKeyFromPem);
+                issueBlPossessionTransferBlock.init(shipperPublicKeyJWK, null,
+                                            {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash()}, carrierPrivateKeyFromPem);
                 await fetch('/api/v1/transferblocks', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     transferBlockHash : await issueBlTitleTransferBlock.blockHash(),
                     transferBlock: JSON.stringify(issueBlTitleTransferBlock.JWS),
-                    previousTransferBlockHash: null
                     })
                 });
                 if (nextRegistry.length > 0) {
                     nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
                     let platformExportTransferBlock = new PlatformExportTransferBlock();
-                    platformExportTransferBlock.init(shipperPublicKeyJWK,
+                    platformExportTransferBlock.init(shipperPublicKeyJWK, null,
                                                     {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash(),
                                                     "nextRegistryJWK" : nextRegistryJWK, "nextRegistryHost": nextRegistry},
                                                     carrierPrivateKeyFromPem);
@@ -324,7 +325,6 @@
                         body: JSON.stringify({
                             transferBlockHash : await platformExportTransferBlock.blockHash(),
                             transferBlock: JSON.stringify(platformExportTransferBlock.JWS),
-                            previousTransferBlockHash: null
                         })
                     });
                     location .href = "blexported.html?id=" + await platformExportTransferBlock.blockHash();

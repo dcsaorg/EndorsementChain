@@ -13,23 +13,23 @@ class ChainCrawler {
         let serverName = url.host;
         const apiPath = (url.pathname).match(/.*\//)[0];
         let currentPossessionUrl = initPossessionTdtUrl;
-        let currentTdt;
+        let possessionBlock;
         do {
-            currentTdt= await (await fetch(currentPossessionUrl)).json();
+            const currentTdt= await (await fetch(currentPossessionUrl)).json();
             platformChain.push(serverName);
-            const possessionBlock = (new PossessionTransferBlock(JSON.parse(currentTdt.transferBlock)))
+            possessionBlock = (new PossessionTransferBlock(JSON.parse(currentTdt.transferBlock)))
             possessionChain.push(possessionBlock);
             const previousRegistryURL = possessionBlock.blockPayloadAsJson()["previousRegistryURL"]; //note: only non-null if block is an import block
             if (previousRegistryURL) {
                 serverName = (new URL("https://"+previousRegistryURL)).host;
             }
-            currentPossessionUrl = "https://" + serverName + apiPath + currentTdt.previousTransferBlockHash;
+            currentPossessionUrl = "https://" + serverName + apiPath + possessionBlock.previousBlockHash();
             let currentTitleUrl = "https://" + serverName + apiPath + possessionBlock.titleTransferBlockHash();
             let currentTitleTdt= await (await fetch(currentTitleUrl)).json();
             const currentTitleTransferBlock = new TitleTransferBlock(JSON.parse(currentTitleTdt.transferBlock));
             titleHolderChain.push(currentTitleTransferBlock);
             titleHolderPlatformChain.push(currentTitleTransferBlock.titleHolderPlatform());
-        } while (currentTdt.previousTransferBlockHash != null);
+        } while (possessionBlock.previousBlockHash() != null);
         const nbBlocks = platformChain.length;
         let currentTitleHolder = titleHolderChain[nbBlocks-1]; //first title holder and platform (last items of their resp. arrays)
         let currentTitlePlatform = platformChain[nbBlocks-1];

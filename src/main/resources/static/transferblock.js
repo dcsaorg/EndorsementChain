@@ -10,9 +10,9 @@ class TransferBlock {
         this.JWS = jws;
     }
 
-    init(transferee, blockPayload, transferrerPrivateKey) {
+    init(transferee, previousBlockHash, blockPayload, transferrerPrivateKey) {
         let tmpJWS =  KJUR.jws.JWS.sign(null, {alg: "RS256"},
-                                     JSON.stringify({transferee: transferee, blockPayload: blockPayload}),
+                                     JSON.stringify({transferee: transferee, previousBlockHash: previousBlockHash, blockPayload: blockPayload}),
                                      transferrerPrivateKey);
         this.JWS = new KJUR.jws.JWSJS();
         this.JWS.initWithJWS(tmpJWS);
@@ -54,6 +54,10 @@ class TransferBlock {
     async transfereeThumbprint() {
         const longThumbprint = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(this.transferee()))));
         return longThumbprint.slice(0,20);
+    }
+
+    previousBlockHash() {
+        return JSON.parse(b64utos(this.JWS.payload))["previousBlockHash"];
     }
 
     verifyNth(idx, key, acceptAlgs) {

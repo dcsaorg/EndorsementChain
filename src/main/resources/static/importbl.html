@@ -72,7 +72,7 @@
                 const importerPrivateKey = document.getElementById("importerPrivateKeyTextArea").value;
                 const bolSourceDomain = bolSource.split('/')[0];
                 let importBlock= new PlatformImportTransferBlock();
-                importBlock.init(exportBlock.transferee(),
+                importBlock.init(exportBlock.transferee(), await exportBlock.blockHash(),
                                  {"titleTransferBlockHash" : exportBlock.titleTransferBlockHash(), "previousRegistryURL" : bolSource},
                                  importerPrivateKey);
                 const importedTitleBlock= new TitleTransferBlock(JSON.parse((await (await fetch('https://' + bolSourceDomain + '/api/v1/transferblocks/' +
@@ -87,7 +87,6 @@
                     body: JSON.stringify({
                         transferBlockHash : await importBlock.blockHash(),
                         transferBlock: JSON.stringify(importBlock.JWS),
-                        previousTransferBlockHash: await exportBlock.blockHash()
                         })
                     });
                     await fetch('/api/v1/transferblocks', {
@@ -96,7 +95,6 @@
                     body: JSON.stringify({
                         transferBlockHash : await importedTitleBlock.blockHash(),
                         transferBlock: JSON.stringify(importedTitleBlock.JWS),
-                        previousTransferBlockHash: null
                         })
                     });
                     await fetch('/api/v1/transport-documents', {

@@ -250,7 +250,7 @@
                 if (nextRegistry.length > 0) {
                     nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
                     let platformExportTransferBlock = new PlatformExportTransferBlock();
-                    platformExportTransferBlock.init(transfereePublicKeyJWK,
+                    platformExportTransferBlock.init(transfereePublicKeyJWK, await possessionBlock.blockHash(),
                                                     {"titleTransferBlockHash": await titleBlock.blockHash(), "nextRegistryJWK" : nextRegistryJWK,
                                                      "nextRegistryHost": nextRegistry},
                                                     transferorPrivateKeyFromPem);
@@ -262,7 +262,6 @@
                             body: JSON.stringify({
                                 transferBlockHash : await platformExportTransferBlock.blockHash(),
                                 transferBlock: JSON.stringify(platformExportTransferBlock.JWS),
-                                previousTransferBlockHash: await possessionBlock.blockHash()
                             })
                         });
                         location.href = "blexported.html?id=" + await platformExportTransferBlock.blockHash();
@@ -271,7 +270,8 @@
                     }
                 } else {
                     const newPossessionBlock = new PossessionTransferBlock();
-                    newPossessionBlock.init(transfereePublicKeyJWK, {"titleTransferBlockHash": await titleBlock.blockHash()}, transferorPrivateKeyFromPem);
+                    newPossessionBlock.init(transfereePublicKeyJWK, await possessionBlock.blockHash(),
+                                            {"titleTransferBlockHash": await titleBlock.blockHash()}, transferorPrivateKeyFromPem);
                     const chainLinkIsValid = newPossessionBlock.verifyNth(0, KEYUTIL.getKey(transferorPublicKey), {alg: ['RS256']});
                     if(chainLinkIsValid) {
                         await fetch('/api/v1/transferblocks', {
@@ -279,8 +279,7 @@
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify({
                                 transferBlockHash : await newPossessionBlock.blockHash(),
-                                transferBlock: JSON.stringify(newPossessionBlock.JWS),
-                                previousTransferBlockHash: await possessionBlock.blockHash()
+                                transferBlock: JSON.stringify(newPossessionBlock.JWS)
                             })
                         });
                         location .href = "transportdocumenttransfer.html?id=" + await newPossessionBlock.blockHash();
@@ -301,11 +300,13 @@
                                                 document.getElementById("titleRecipientSelectorReceivingRegistry").value :
                                                 url.host;
                 const newTitleBlock = new TitleTransferBlock();
-                newTitleBlock.init(endorseePublicKeyJWK, {"documentHash": titleBlock.documentHash(), "titleHolderPlatform": titleHolderPlatform}, endorserPrivateKeyFromPem);
+                newTitleBlock.init(endorseePublicKeyJWK, await titleBlock.blockHash(),
+                            {"documentHash": titleBlock.documentHash(), "titleHolderPlatform": titleHolderPlatform}, endorserPrivateKeyFromPem);
 
                 //transfer possession to self, but pointing to the new titleBlock
                 const newPossessionBlock = new PossessionTransferBlock();
-                newPossessionBlock.init(possessionBlock.transferee(), {"titleTransferBlockHash": await newTitleBlock.blockHash()}, endorserPrivateKeyFromPem);
+                newPossessionBlock.init(possessionBlock.transferee(), await possessionBlock.blockHash(),
+                                        {"titleTransferBlockHash": await newTitleBlock.blockHash()}, endorserPrivateKeyFromPem);
                 let signaturesAreValid = newTitleBlock.verifyNth(0, endorserPublicKey, {alg: ['RS256']})
                                       && newPossessionBlock.verifyNth(0, endorserPublicKey, {alg: ['RS256']});
                 if (signaturesAreValid) {
@@ -334,7 +335,6 @@
             });
             recipientSelector("possessionRecipientSelector", "transfereePublicKeyTextArea", testPlatforms);
             recipientSelector("titleRecipientSelector", "endorseePublicKeyTextArea", testPlatforms);
-            console.log(titleBlock.transferee());
             document.getElementById("loadTitlePrivateKey").onchange = function(){
                 loadPrivateKeyFromFile("loadTitlePrivateKey", "endorserPrivateKeyTextArea", titleBlock.transferee(), function(isValid){
                         document.getElementById("titlePrivateKeyOkCheckMark").innerHTML = isValid? "✅":"❌";

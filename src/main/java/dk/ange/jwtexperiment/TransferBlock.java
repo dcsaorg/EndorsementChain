@@ -37,14 +37,6 @@ public class TransferBlock {
   @Id @Column private String transferBlockHash;
 
   /*
-   * The hash of the previous transferBlock in the chain (they are supposed to come in chains).
-   * Included for convenience, the order of the blocks could in theory be deduced from the tranferee / transferrer
-   * pairs of the set of transfer blocks
-   */
-  @Column(columnDefinition = "text")
-  private String previousTransferBlockHash;
-
-  /*
    * The transfer block as such. Type (possession, title) depends on the json itself
    */
   @Column(columnDefinition = "text")
@@ -72,6 +64,9 @@ public class TransferBlock {
     return transferBlockJson.hasNonNull("nextRegistryJWK");
   }
 
+  /*
+   * Appends a second (the platform's) signature
+   */
   public void addPlatformSignature(KeyPair hostPlatformKeyPair)
       throws java.text.ParseException, com.nimbusds.jose.JOSEException {
     JWSObjectJSON transferBlockAsJson = JWSObjectJSON.parse(transferBlock);
@@ -80,4 +75,13 @@ public class TransferBlock {
         new RSASSASigner(hostPlatformKeyPair.getPrivate()));
     transferBlock = transferBlockAsJson.serializeGeneral();
   }
+
+  /*
+   * Extract the pointer to the previous transfer block
+   */
+  final public String previousTransferBlockHash () throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
+      JsonNode transferBlockJson = transferBlockAsJsonNode();
+    return transferBlockJson.get("previousBlockHash").toString();
+  }
+
 }
