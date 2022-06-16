@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TransportDocumentTransferTest {
+class TransferBlockTest {
 
 	@Test
 	void testTransportDocumentCreation() throws Exception{
@@ -18,8 +18,8 @@ class TransportDocumentTransferTest {
 			"    ]\n" +
 			"  }";
 
-		TransportDocumentTransfer transportDocumentTransfer = TransportDocumentTransfer.of("previousBlockHash", transferBlockRequest);
-		assertEquals("0efb9cc5ce2e1681d86e90625f35122711767fffc856eb1a95516b4f37c0aee0", transportDocumentTransfer.getTransferBlockHash());
-		assertEquals(transferBlockRequest, transportDocumentTransfer.getTransferBlock());
+		TransferBlock transferBlock = TransferBlock.of(transferBlockRequest);
+		assertEquals("0efb9cc5ce2e1681d86e90625f35122711767fffc856eb1a95516b4f37c0aee0", transferBlock.getTransferBlockHash());
+		assertEquals(transferBlockRequest, transferBlock.getTransferBlock());
 	}
 }
