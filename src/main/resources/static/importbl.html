@@ -84,18 +84,12 @@
                     await fetch('/api/v1/transferblocks', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        transferBlockHash : await importBlock.blockHash(),
-                        transferBlock: JSON.stringify(importBlock.JWS),
-                        })
+                    body: JSON.stringify(importBlock.JWS)
                     });
                     await fetch('/api/v1/transferblocks', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        transferBlockHash : await importedTitleBlock.blockHash(),
-                        transferBlock: JSON.stringify(importedTitleBlock.JWS),
-                        })
+                    body: JSON.stringify(importedTitleBlock.JWS)
                     });
                     await fetch('/api/v1/transport-documents', {
                         method: 'post',
