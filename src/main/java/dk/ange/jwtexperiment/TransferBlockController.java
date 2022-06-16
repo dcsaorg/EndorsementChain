@@ -42,7 +42,7 @@ public class TransferBlockController {
       consumes = {"application/json"},
       produces = {"application/json"})
   @ResponseBody
-  public ResponseEntity<TransportDocumentTransfer> addTransferBlock(
+  public ResponseEntity<TransferBlock> addTransferBlock(
       @RequestBody TransferBlockRequest transferBlockRequest, UriComponentsBuilder builder)
       throws java.text.ParseException, IOException, com.nimbusds.jose.JOSEException,
           NoSuchAlgorithmException {

@@ -23,9 +23,9 @@ describe("TDT", function() {
     });
 
     it("should return proper SHA256 hash", async function() {
-        expect(await titleBlock.blockHash()).toEqual("001ea6d8df1bea4b2fd5ccb9f9fd8a6dfb3f1903b8337ddf3e708dcc9a1dd906");
+        expect(await titleBlock.blockHash()).toEqual("ad293575f439d84be407d854658131d51f7d3ce93dfa2e81c4cba694ed83d655");
         expect(await titleBlock.blockHash()).not.toEqual("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"); //hash of null
-        expect(await possessionBlock.blockHash()).toEqual("204fe28f31a39f86d5ac5f2deaf05b0985e1d0e3a45225029f2bd026d66e562f");
+        expect(await possessionBlock.blockHash()).toEqual("45ad2a392e55f7ddf2a1fa8b60e7aa03575fab6c4ae42899bdabbd8a4b586d00");
     });
 
     it("should have valid signature", function() {
