@@ -17,7 +17,7 @@ class ChainCrawler {
         do {
             const currentTdt= await (await fetch(currentPossessionUrl)).json();
             platformChain.push(serverName);
-            possessionBlock = (new PossessionTransferBlock(JSON.parse(currentTdt.transferBlock)))
+            possessionBlock = (new PossessionTransferBlock(currentTdt.transferBlock));
             possessionChain.push(possessionBlock);
             const previousRegistryURL = possessionBlock.blockPayloadAsJson()["previousRegistryURL"]; //note: only non-null if block is an import block
             if (previousRegistryURL) {
@@ -26,7 +26,7 @@ class ChainCrawler {
             currentPossessionUrl = "https://" + serverName + apiPath + possessionBlock.previousBlockHash();
             let currentTitleUrl = "https://" + serverName + apiPath + possessionBlock.titleTransferBlockHash();
             let currentTitleTdt= await (await fetch(currentTitleUrl)).json();
-            const currentTitleTransferBlock = new TitleTransferBlock(JSON.parse(currentTitleTdt.transferBlock));
+            const currentTitleTransferBlock = new TitleTransferBlock(currentTitleTdt.transferBlock);
             titleHolderChain.push(currentTitleTransferBlock);
             titleHolderPlatformChain.push(currentTitleTransferBlock.titleHolderPlatform());
         } while (possessionBlock.previousBlockHash() != null);

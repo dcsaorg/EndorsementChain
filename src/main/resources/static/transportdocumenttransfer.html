@@ -193,9 +193,9 @@
             const possessionHashId = url.searchParams.get('id');
             const possessionTdtUrl = "/api/v1/transferblocks/" + possessionHashId; ;
             const possessionTdt= await (await fetch(possessionTdtUrl)).json();
-            const possessionBlock = new PossessionTransferBlock(JSON.parse(possessionTdt["transferBlock"]));
+            const possessionBlock = new PossessionTransferBlock(possessionTdt["transferBlock"]);
             const titleTdt= await (await fetch("/api/v1/transferblocks/" + possessionBlock.titleTransferBlockHash())).json();
-            const titleBlock = new TitleTransferBlock(JSON.parse(titleTdt["transferBlock"]));
+            const titleBlock = new TitleTransferBlock(titleTdt["transferBlock"]);
             new QRCode(document.getElementById("qrcode"), {
                 text: "https://" + url.host + possessionTdtUrl,
                 width: 192,
