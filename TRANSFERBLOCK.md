@@ -1,4 +1,4 @@
-#Tranferblock
+# Tranferblock
 
 The basic tranfer block is a JWS consisting of a transferee field and a payload field. It is signed by one or more tranferrers
 
@@ -13,7 +13,9 @@ Each block is consisting of:
     - a reference to the platform to which the document is being exported
     - a reference to the platform from which the document is being imported
 
-The block (a JWS) is signed by the transferrer, i.e. the previous transferee. This in effect creates a cryptographically linked list, functionally equivalent to the list of signatures on the paper bill of lading. For cross-platform transfers, the exporting platform's signature is added in addition to the transferrer's.
+The block (a JWS) is signed by the transferrer, i.e. the previous transferee. This in effect creates a cryptographically linked list, functionally equivalent to the list of signatures on the paper bill of lading. For cross-platform transfers, the exporting platform's signature is added in addition to the transferrer's. 
+This is depicted in the following diagram:
+![Chain of transferblocks](transferblock-endorcementchain.png)
 
 ## Transferblock identification
 Transfer blocks are identified by the hash of the transferblock. Since transferblocks are exchanged by multiple parties it is important to align on the specifics of creating the hash so all parties involved can (re)generate the same ID's referring to a particular transferblock.
