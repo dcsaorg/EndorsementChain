@@ -1,5 +1,6 @@
 package dk.ange.jwtexperiment;
 
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -41,6 +42,7 @@ public class TransferBlock {
   /*
    * The transfer block as such. Type (possession, title) depends on the json itself
    */
+  @JsonRawValue
   @Column(columnDefinition = "text")
   private String transferBlock;
 

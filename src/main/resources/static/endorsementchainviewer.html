@@ -15,11 +15,11 @@
         const titleHolderChain = await chainCrawler.chainToThumbprints(chains.titleHolderChain);
         let chainTable = document.getElementById("endorsementChainTable");
         for (let i = 0; i < possessorChain.length; ++i) {
-            const getPossesorNameResponse = await fetch ("https://" + chains.possessorPlatformChain[i] + "/api/v1/parties?thumbprint=" + possessorChain[i]);
-            const possessorName = JSON.parse(await getPossesorNameResponse.text())[0]["name"];
-            const getTitleHolderNameResponse = await fetch ("https://" + chains.titleHolderPlatformChain[i] + "/api/v1/parties?thumbprint=" + titleHolderChain[i]);
-            const titleHolderName = JSON.parse(await getTitleHolderNameResponse.text())[0]["name"];
-            const possessorPlatform = testPlatforms.find(platform => platform.url == chains.possessorPlatformChain[i]);
+            const getPossesorNameResponse = await (await fetch ("https://" + chains.possessorPlatformChain[i] + "/api/v1/parties?thumbprint=" + possessorChain[i])).json();
+            const possessorName = await getPossesorNameResponse[0]["name"];
+            const getTitleHolderNameResponse = await (await fetch ("https://" + chains.titleHolderPlatformChain[i] + "/api/v1/parties?thumbprint=" + titleHolderChain[i])).json();
+            const titleHolderName = await getTitleHolderNameResponse[0]["name"];
+            const possessorPlatform = testPlatforms.find(platform => platform == chains.possessorPlatformChain[i]);
             if (chains.possessionChain[i].blockPayloadAsJson()["nextRegistryHost"]) continue; //don't display export blocks, as this might confuse the users
             chainTable.innerHTML +=
                 "<tr>" +
