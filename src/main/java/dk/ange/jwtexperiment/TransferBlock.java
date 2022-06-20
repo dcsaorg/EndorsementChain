@@ -1,6 +1,7 @@
 package dk.ange.jwtexperiment;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -42,9 +43,17 @@ public class TransferBlock {
   /*
    * The transfer block as such. Type (possession, title) depends on the json itself
    */
-  @JsonRawValue
   @Column(columnDefinition = "text")
   private String transferBlock;
+
+  @JsonRawValue
+  public String getTransferBlock() {
+    return transferBlock;
+  }
+
+  public void setTransferBlock(JsonNode node) {
+    this.transferBlock = node.toString();
+  }
 
   /*
    * The transfer status ("current", "transferred", "surrendered"), used for bookkeeping
@@ -59,7 +68,7 @@ public class TransferBlock {
 
   private JsonNode transferBlockAsJsonNode()
       throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
-    JWSObjectJSON transferBlockAsJson = JWSObjectJSON.parse(transferBlock);
+    JWSObjectJSON transferBlockAsJson = JWSObjectJSON.parse(this.getTransferBlock());
     ObjectMapper mapper = new ObjectMapper();
     return mapper.readTree(transferBlockAsJson.getPayload().toString());
   }
@@ -78,7 +87,7 @@ public class TransferBlock {
    */
   public void addPlatformSignature(KeyPair hostPlatformKeyPair)
       throws java.text.ParseException, com.nimbusds.jose.JOSEException {
-    JWSObjectJSON transferBlockAsJson = JWSObjectJSON.parse(transferBlock);
+    JWSObjectJSON transferBlockAsJson = JWSObjectJSON.parse(this.getTransferBlock());
     transferBlockAsJson.sign(
         new JWSHeader.Builder(JWSAlgorithm.RS256).build(),
         new RSASSASigner(hostPlatformKeyPair.getPrivate()));
@@ -91,7 +100,11 @@ public class TransferBlock {
   public final String previousTransferBlockHash()
       throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
       JsonNode transferBlockJson = transferBlockAsJsonNode();
-    return transferBlockJson.get("previousBlockHash").asText();
+      String previousBlockHash = transferBlockJson.get("previousBlockHash").asText();
+      if (previousBlockHash == "null") {
+        return null;
+      }
+    return previousBlockHash;
   }
 
 }

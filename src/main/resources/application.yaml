@@ -20,4 +20,6 @@ server:
     key-store-type: pkcs12
     key-alias: springboot-https
   port: 8443
+  error:
+    include-message: always
 

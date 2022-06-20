@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.Optional;
 import java.util.List;
 
@@ -12,6 +15,7 @@ class PartyTest {
     
     @Autowired
     private PartyRepository repository;
+    @MockBean RestTemplate restTemplate;
 
     @Test
     void saveEntry() {
