@@ -1,15 +1,20 @@
 package dk.ange.jwtexperiment;
 
+import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 
 // test with curl -v -k -X POST -H "Content-Type: application/json" -d
 // '{"payload":"eyJ0ZXN0IjoidGVzdFBheWxvYWQifQ","signatures":[{"protected": "eyJhbGciOiJSUzI1NiJ9",
@@ -29,8 +34,7 @@ public class TransferBlockController {
   @GetMapping(API_PATH + "/{transferBlockId}")
   @CrossOrigin(origins = "*")
   @ResponseBody
-  public ResponseEntity<TransferBlock> getTransferBlock(
-      @PathVariable String transferBlockId) {
+  public ResponseEntity<TransferBlock> getTransferBlock(@PathVariable String transferBlockId) {
     return transferBlockService
         .findById(transferBlockId)
         .map(transferBlock -> ResponseEntity.ok().body(transferBlock))
@@ -51,5 +55,34 @@ public class TransferBlockController {
     headers.setLocation(
         builder.path(contextPath + API_PATH + "/{id}").buildAndExpand(hash).toUri());
     return new ResponseEntity<>(headers, HttpStatus.CREATED);
+  }
+
+  @PostMapping(
+      value = API_PATH + "/notifications",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public ResponseEntity<TransferBlockNotification> receiveTransferBlockNotification(
+      @RequestBody TransferBlockNotification transferBlockNotification,
+      UriComponentsBuilder builder)
+      throws IOException, URISyntaxException, ParseException, NoSuchAlgorithmException,
+          JOSEException {
+    return transferBlockService
+        .fetchTransferBlockByNotification(transferBlockNotification)
+        .map(
+            transferBlockHash ->
+                builder.path(contextPath + API_PATH + "/" + transferBlockHash).build().toUri())
+        .map(
+            transferBlockUri ->
+                ResponseEntity.created(transferBlockUri)
+                    .body(
+                        TransferBlockNotification.builder()
+                            .transferBlockURL(transferBlockUri.toString())
+                            .build()))
+        .orElseThrow(
+            () ->
+                new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "TransferBlockUrl in notification is not a known party."));
   }
 }
