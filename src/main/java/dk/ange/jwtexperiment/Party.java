@@ -36,4 +36,10 @@ public class Party {
     @Column
     @NonNull
     private String eblPlatform;
+
+    @Column
+    private String lei;
+
+    @Column
+    private String did;
 }
