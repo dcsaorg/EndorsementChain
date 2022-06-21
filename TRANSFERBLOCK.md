@@ -17,6 +17,10 @@ The block (a JWS) is signed by the transferrer, i.e. the previous transferee. Th
 This is depicted in the following diagram:
 ![Chain of transferblocks](transferblock-endorcementchain.png)
 
+Transferblocks can also be transferred accross platforms. This import and export of different transferblocks requires sending the 
+specific export- and importtransferblocks. 
+This is depicted in the following diagram:
+![Import and export of transferblocks](transferblock-import-export-endorcementchain.png)
 ## Transferblock identification
 Transfer blocks are identified by the hash of the transferblock. Since transferblocks are exchanged by multiple parties it is important to align on the specifics of creating the hash so all parties involved can (re)generate the same ID's referring to a particular transferblock.
 
