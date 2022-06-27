@@ -41,6 +41,7 @@ public class TransferBlockController {
         .orElse(ResponseEntity.notFound().build());
   }
 
+  @CrossOrigin
   @PostMapping(
       value = API_PATH,
       consumes = {"application/json"},
@@ -57,6 +58,7 @@ public class TransferBlockController {
     return new ResponseEntity<>(headers, HttpStatus.CREATED);
   }
 
+  @CrossOrigin
   @PostMapping(
       value = API_PATH + "/notifications",
       consumes = MediaType.APPLICATION_JSON_VALUE,
