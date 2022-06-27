@@ -6,7 +6,7 @@ It is based on the JSON Serialization JWS, see https://datatracker.ietf.org/doc/
 
 Each block is consisting of:
 
-* the transferee, identified by its public key
+* the transferee, identified by its public key or its thumbprint (a truncated SHA256 hash of the Party object)
 * a payload containing attributes such as:
     - a hash of the document whose ownership is managed
     - boolean indicating whether the eBL is to order
