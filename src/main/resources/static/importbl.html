@@ -75,8 +75,8 @@
                 importBlock.init(exportBlock.transferee(), await exportBlock.blockHash(),
                                  {"titleTransferBlockHash" : exportBlock.titleTransferBlockHash(), "previousRegistryURL" : bolSource},
                                  importerPrivateKey);
-                const importedTitleBlock= new TitleTransferBlock(JSON.parse((await (await fetch('https://' + bolSourceDomain + '/api/v1/transferblocks/' +
-                                                                                                exportBlock.titleTransferBlockHash())).json())["transferBlock"]));
+                const importedTitleBlock= new TitleTransferBlock((await (await fetch('https://' + bolSourceDomain + '/api/v1/transferblocks/' +
+                                                                                                exportBlock.titleTransferBlockHash())).json())["transferBlock"]);
                 const fetchBLString = 'https://'+bolSourceDomain +'/api/v1/transport-documents/' + importedTitleBlock.documentHash();
                 const fetchedBL = await (await fetch(fetchBLString)).json();
                 const signaturesAreValid = true; //TODO: fetch relevant public keys from exporting platform and check signatures
@@ -103,7 +103,7 @@
             });
             document.getElementById("registryurl").onchange = async function(){
                 bolSource = document.getElementById("registryurl").value;
-                exportBlock= new PlatformExportTransferBlock(JSON.parse((await (await fetch('https://' + bolSource)).json())["transferBlock"]));
+                exportBlock= new PlatformExportTransferBlock((await (await fetch('https://' + bolSource)).json())tmp["transferBlock"]);
                 if(exportBlock){
                     document.getElementById("validRegistryURLOkCheckMark").innerHTML = "✅";
                     document.getElementById("loadImporterPrivateKey").disabled = false;
