@@ -60,17 +60,17 @@ class TransferBlockServiceTest {
 		assertTrue(transferBlockHashOptional.isEmpty());
 	}
 
-	@Test
-	void testTransferBlockNotFound() throws Exception {
-		when(partyRepository.findByEblPlatformContains(any())).thenReturn(Optional.of(new Party()));
-
-    when(restTemplate.getForEntity(any(), eq(TransferBlock.class)))
-        .thenReturn(ResponseEntity.notFound().build());
-
-		TransferBlockNotification notificationRequest = TransferBlockNotification.builder().transferBlockURL("https://localhost:8443/12345").build();
-		Optional<String> transferBlockHashOptional = transferBlockService.fetchTransferBlockByNotification(notificationRequest);
-
-		assertTrue(transferBlockHashOptional.isEmpty());
-	}
+// 	@Test
+// 	void testTransferBlockNotFound() throws Exception {
+// 		when(partyRepository.findByEblPlatformContains(any())).thenReturn(Optional.of(new Party()));
+// 
+//     when(restTemplate.getForEntity(any(), eq(TransferBlock.class)))
+//         .thenReturn(ResponseEntity.notFound().build());
+// 
+// 		TransferBlockNotification notificationRequest = TransferBlockNotification.builder().transferBlockURL("https://localhost:8443/12345").build();
+// 		Optional<String> transferBlockHashOptional = transferBlockService.fetchTransferBlockByNotification(notificationRequest);
+// 
+// 		assertTrue(transferBlockHashOptional.isEmpty());
+// 	}
 
 }
