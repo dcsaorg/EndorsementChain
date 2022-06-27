@@ -19,6 +19,9 @@ server:
     key-store-password: your_key-store_password
     key-store-type: pkcs12
     key-alias: springboot-https
+    trust-store: classpath:certificates/newkeystore.jks
+    trust-store-password: your_key-store_password
+    #trust-store-type: pkcs12
   port: 8443
   error:
     include-message: always

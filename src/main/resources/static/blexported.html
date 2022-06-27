@@ -1,12 +1,33 @@
-<div id="importURL"></div><br>
-<a id="previousPossessionBlock" href="">Previous possessor</div>
-<script>
-window.onload = async function() {
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <script src="jsrsasign-latest-all-min.js"></script>
+    <script src="transferblock.js"></script>
+  </head>
+  <body>
+    <div id="importURL"></div><br>
+    <a id="previousPossessionBlock" href="">Previous possessor</div>
+  </body>
+  <script>
+  window.onload = async function() {
     const url = new URL(location.href);
-    const crossPlatformTdtHashId = url.searchParams.get('id');
-    const crossPlatformTdt= await (await fetch("/api/v1/transferblocks/" + crossPlatformTdtHashId)).json();
+    const exportTdtHashId = url.searchParams.get('id');
+    const exportTdt= await (await fetch("/api/v1/transferblocks/" + exportTdtHashId)).json();
+    const exportBlock = new PlatformExportTransferBlock(exportTdt.transferBlock);
+    const exportBlockUrl = "https://" + window.location.host + "/api/v1/transferblocks/" + exportTdtHashId;
+    document.getElementById("importURL").innerHTML = "This document has been exported to another platform. Paste in the following link to import and activate it on the other platform:<br><br>" + exportBlockUrl;
+    document.getElementById("previousPossessionBlock").href = "/static/transportdocumenttransfer.html?id=" + exportTdt.previousTransferBlockHash;
+    const postNotificationUrl = "https://" + exportBlock.nextRegistryHost() + "/api/v1/transferblocks/notifications";
+    const notification= await fetch(
+        postNotificationUrl,
+        {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"transferBlockURL": exportBlockUrl})
+        });
+        console.log(notification);
 
-    document.getElementById("importURL").innerHTML = "This document has been exported to another platform. Paste in the following link to import and activate it on the other platform:<br><br>" + window.location.host + "/api/v1/transferblocks/" + crossPlatformTdtHashId;
-    document.getElementById("previousPossessionBlock").href = "/static/transportdocumenttransfer.html?id=" + crossPlatformTdt.previousTransferBlockHash;
-};
+  };
 </script>
+</html>
