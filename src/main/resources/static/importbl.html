@@ -103,7 +103,7 @@
             });
             document.getElementById("registryurl").onchange = async function(){
                 bolSource = document.getElementById("registryurl").value;
-                exportBlock= new PlatformExportTransferBlock((await (await fetch('https://' + bolSource)).json())tmp["transferBlock"]);
+                exportBlock= new PlatformExportTransferBlock((await (await fetch('https://' + bolSource)).json())["transferBlock"]);
                 if(exportBlock){
                     document.getElementById("validRegistryURLOkCheckMark").innerHTML = "✅";
                     document.getElementById("loadImporterPrivateKey").disabled = false;
