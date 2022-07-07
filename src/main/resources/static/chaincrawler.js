@@ -62,4 +62,13 @@ class ChainCrawler {
         );
         return awaitedChain;
     }
+
+    async chainToTimestamps(promiseChain) {
+        const awaitedChain = await Promise.all(
+            promiseChain.map(function(transferBlock) {
+                return transferBlock.timestamp();
+            })
+        );
+        return awaitedChain;
+    }
 }
