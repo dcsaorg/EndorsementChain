@@ -3,7 +3,7 @@
 <script src="jsrsasign-latest-all-min.js"></script>
 <script src="testplatforms.js"></script>
 <table id="endorsementChainTable" border="1">
-<tr><th>Possessor</th><th>Platform</th><th>Title Holder</th></tr>
+<tr><th>Possessor</th><th>Platform</th><th>Title Holder</th><th>Timestamp</th></tr>
 </table>
 <script>
     window.onload = async function() {
@@ -13,19 +13,21 @@
         const chains = await chainCrawler.crawlPossessionChain(chainStart);
         const possessorChain = await chainCrawler.chainToThumbprints(chains.possessionChain);
         const titleHolderChain = await chainCrawler.chainToThumbprints(chains.titleHolderChain);
+        const timestampChain = await chainCrawler.chainToTimestamps(chains.possessionChain);
         let chainTable = document.getElementById("endorsementChainTable");
         for (let i = 0; i < possessorChain.length; ++i) {
             const getPossesorNameResponse = await (await fetch ("https://" + chains.possessorPlatformChain[i] + "/api/v1/parties?thumbprint=" + possessorChain[i])).json();
             const possessorName = await getPossesorNameResponse[0]["name"];
             const getTitleHolderNameResponse = await (await fetch ("https://" + chains.titleHolderPlatformChain[i] + "/api/v1/parties?thumbprint=" + titleHolderChain[i])).json();
             const titleHolderName = await getTitleHolderNameResponse[0]["name"];
-            const possessorPlatform = testPlatforms.find(platform => platform == chains.possessorPlatformChain[i]);
+            const possessorPlatform = testPlatforms.find(platform => platform.url == chains.possessorPlatformChain[i]);
             if (chains.possessionChain[i].blockPayloadAsJson()["nextRegistryHost"]) continue; //don't display export blocks, as this might confuse the users
             chainTable.innerHTML +=
                 "<tr>" +
                 "<td>" + possessorChain[i] + "<br>" + possessorName + "</td>" +
                 "<td>" + possessorPlatform.name + "</td>" +
-                "<td>" + titleHolderChain[i]+ "<br>" + titleHolderName + "</td>"
+                "<td>" + titleHolderChain[i]+ "<br>" + titleHolderName + "</td>" +
+                "<td>" + Date(timestampChain[i]) + "</td>" +
                 "</tr>";
         }
     }

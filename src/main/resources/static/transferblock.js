@@ -52,6 +52,10 @@ class TransferBlock {
         return JSON.parse(b64utos(this.JWS.payload))["transferee"];
     }
 
+    timestamp() {
+        return JSON.parse(b64utos(this.JWS.payload))["timestamp"];
+    }
+
     async transfereeThumbprint() {
         const longThumbprint = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(this.transferee()))));
         return longThumbprint.slice(0,20);
