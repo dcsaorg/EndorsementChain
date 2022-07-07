@@ -250,7 +250,7 @@
                 if (nextRegistry.length > 0) {
                     nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
                     let platformExportTransferBlock = new PlatformExportTransferBlock();
-                    platformExportTransferBlock.init(transfereePublicKeyJWK, await possessionBlock.blockHash(),
+                    platformExportTransferBlock.init(transfereePublicKeyJWK, Date.now(), await possessionBlock.blockHash(),
                                                     {"titleTransferBlockHash": await titleBlock.blockHash(), "nextRegistryJWK" : nextRegistryJWK,
                                                      "nextRegistryHost": nextRegistry},
                                                     transferorPrivateKeyFromPem);
@@ -267,7 +267,7 @@
                     }
                 } else {
                     const newPossessionBlock = new PossessionTransferBlock();
-                    newPossessionBlock.init(transfereePublicKeyJWK, await possessionBlock.blockHash(),
+                    newPossessionBlock.init(transfereePublicKeyJWK, Date.now(), await possessionBlock.blockHash(),
                                             {"titleTransferBlockHash": await titleBlock.blockHash()}, transferorPrivateKeyFromPem);
                     const chainLinkIsValid = newPossessionBlock.verifyNth(0, KEYUTIL.getKey(transferorPublicKey), {alg: ['RS256']});
                     if(chainLinkIsValid) {
@@ -294,12 +294,12 @@
                                                 document.getElementById("titleRecipientSelectorReceivingRegistry").value :
                                                 url.host;
                 const newTitleBlock = new TitleTransferBlock();
-                newTitleBlock.init(endorseePublicKeyJWK, await titleBlock.blockHash(),
+                newTitleBlock.init(endorseePublicKeyJWK, Date.now(), await titleBlock.blockHash(),
                             {"documentHash": titleBlock.documentHash(), "titleHolderPlatform": titleHolderPlatform}, endorserPrivateKeyFromPem);
 
                 //transfer possession to self, but pointing to the new titleBlock
                 const newPossessionBlock = new PossessionTransferBlock();
-                newPossessionBlock.init(possessionBlock.transferee(), await possessionBlock.blockHash(),
+                newPossessionBlock.init(possessionBlock.transferee(), Date.now(), await possessionBlock.blockHash(),
                                         {"titleTransferBlockHash": await newTitleBlock.blockHash()}, endorserPrivateKeyFromPem);
                 let signaturesAreValid = newTitleBlock.verifyNth(0, endorserPublicKey, {alg: ['RS256']})
                                       && newPossessionBlock.verifyNth(0, endorserPublicKey, {alg: ['RS256']});

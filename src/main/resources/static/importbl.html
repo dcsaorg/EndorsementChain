@@ -72,7 +72,7 @@
                 const importerPrivateKey = document.getElementById("importerPrivateKeyTextArea").value;
                 const bolSourceDomain = bolSource.split('/')[0];
                 let importBlock= new PlatformImportTransferBlock();
-                importBlock.init(exportBlock.transferee(), await exportBlock.blockHash(),
+                importBlock.init(exportBlock.transferee(), Date.now(), await exportBlock.blockHash(),
                                  {"titleTransferBlockHash" : exportBlock.titleTransferBlockHash(), "previousRegistryURL" : bolSource},
                                  importerPrivateKey);
                 const importedTitleBlock= new TitleTransferBlock((await (await fetch('https://' + bolSourceDomain + '/api/v1/transferblocks/' +
