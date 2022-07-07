@@ -13,19 +13,19 @@ describe("TDT", function() {
     var titleBlock;
     var possessionBlock;
     let transferredTitleBlock = new TitleTransferBlock();
-    transferredTitleBlock.init(endorseePublicKeyJWK, null, {"documentHash": documentHash, "isToOrder": true}, shipperPrivateKeyFromPem);
+    transferredTitleBlock.init(endorseePublicKeyJWK, Date.now(), null, {"documentHash": documentHash, "isToOrder": true}, shipperPrivateKeyFromPem);
 
     beforeEach(async function() {
         titleBlock = new TitleTransferBlock();
-        titleBlock.init(shipperPublicKeyJWK, null, {"documentHash": documentHash, "isToOrder": true}, carrierPrivateKeyFromPem);
+        titleBlock.init(shipperPublicKeyJWK, 1657187073323, null, {"documentHash": documentHash, "isToOrder": true}, carrierPrivateKeyFromPem);
         possessionBlock = new PossessionTransferBlock();
-        possessionBlock.init(shipperPublicKeyJWK, null, {"titleTransferBlockHash": await titleBlock.blockHash(), "isToOrder": true}, carrierPrivateKeyFromPem);
+        possessionBlock.init(shipperPublicKeyJWK, 1657187073323, null, {"titleTransferBlockHash": await titleBlock.blockHash(), "isToOrder": true}, carrierPrivateKeyFromPem);
     });
 
     it("should return proper SHA256 hash", async function() {
-        expect(await titleBlock.blockHash()).toEqual("ad293575f439d84be407d854658131d51f7d3ce93dfa2e81c4cba694ed83d655");
+        expect(await titleBlock.blockHash()).toEqual("45a4312cc75e6175e54cfd93ffde5ff43e3a1dce5940f7a67d1ece3ee3bd7f19");
         expect(await titleBlock.blockHash()).not.toEqual("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"); //hash of null
-        expect(await possessionBlock.blockHash()).toEqual("45ad2a392e55f7ddf2a1fa8b60e7aa03575fab6c4ae42899bdabbd8a4b586d00");
+        expect(await possessionBlock.blockHash()).toEqual("efc164e897e6a2226ec155781bd83e79b4d3b5e29b96894f95dad9de3c8916c7");
     });
 
     it("should have valid signature", function() {
@@ -42,7 +42,7 @@ describe("TDT", function() {
 
     it("should have proper holder and possessor thumbprint, document hash and (previous) tdt hash after transfer", async function() {
         let transferredPossessionBlock = new PossessionTransferBlock();
-        transferredPossessionBlock.init(shipperPublicKeyJWK, null, {"titleTransferBlockHash": await transferredTitleBlock.blockHash(), "isToOrder": true}, shipperPrivateKeyFromPem);
+        transferredPossessionBlock.init(shipperPublicKeyJWK, Date.now(), null, {"titleTransferBlockHash": await transferredTitleBlock.blockHash(), "isToOrder": true}, shipperPrivateKeyFromPem);
         const receivedTitleBlock = new TitleTransferBlock(transferredTitleBlock.JWS);
         const receivedPossessionBlock = new PossessionTransferBlock(transferredPossessionBlock.JWS);
         expect(await transferredPossessionBlock.transfereeThumbprint()).toEqual(await receivedPossessionBlock.transfereeThumbprint());
@@ -54,7 +54,7 @@ describe("TDT", function() {
 
     it("should have proper pointer (hash) to sent block", async function() {
         let transferredPossessionBlock = new PossessionTransferBlock();
-        transferredPossessionBlock.init(shipperPublicKeyJWK, null,
+        transferredPossessionBlock.init(shipperPublicKeyJWK, Date.now(), null,
                                         {"titleTransferBlockHash": await transferredTitleBlock.blockHash(), "isToOrder": true}, shipperPrivateKeyFromPem);
         const receivedTitleBlock = new TitleTransferBlock(transferredTitleBlock.JWS);
         const receivedPossessionBlock = new PossessionTransferBlock(transferredPossessionBlock.JWS);

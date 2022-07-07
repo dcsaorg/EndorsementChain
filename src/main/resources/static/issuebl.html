@@ -298,11 +298,11 @@
                 const issueBlTitleTransferBlock = new TitleTransferBlock();
                 const nextRegistry = document.getElementById("shipperSelectorReceivingRegistry").value;
                 const titleHolderPlatform = nextRegistry.length > 0? nextRegistry : (new URL(location.href)).host;
-                issueBlTitleTransferBlock.init(shipperPublicKeyJWK, null,
+                issueBlTitleTransferBlock.init(shipperPublicKeyJWK, Date.now(), null,
                                             {"documentHash": documentHash, "isToOrder": true,
                                             "titleHolderPlatform": titleHolderPlatform}, carrierPrivateKeyFromPem);
                 const issueBlPossessionTransferBlock = new PossessionTransferBlock();
-                issueBlPossessionTransferBlock.init(shipperPublicKeyJWK, null,
+                issueBlPossessionTransferBlock.init(shipperPublicKeyJWK, Date.now(), null,
                                             {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash()}, carrierPrivateKeyFromPem);
                 await fetch('/api/v1/transferblocks', {
                 method: 'post',
@@ -312,7 +312,7 @@
                 if (nextRegistry.length > 0) {
                     nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
                     let platformExportTransferBlock = new PlatformExportTransferBlock();
-                    platformExportTransferBlock.init(shipperPublicKeyJWK, null,
+                    platformExportTransferBlock.init(shipperPublicKeyJWK, Date.now(), null,
                                                     {"titleTransferBlockHash": await issueBlTitleTransferBlock.blockHash(),
                                                     "nextRegistryJWK" : nextRegistryJWK, "nextRegistryHost": nextRegistry},
                                                     carrierPrivateKeyFromPem);

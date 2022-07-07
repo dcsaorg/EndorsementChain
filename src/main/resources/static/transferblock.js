@@ -10,9 +10,9 @@ class TransferBlock {
         this.JWS = jws;
     }
 
-    init(transferee, previousBlockHash, blockPayload, transferrerPrivateKey) {
+    init(transferee, timestamp, previousBlockHash, blockPayload, transferrerPrivateKey) {
         let tmpJWS =  KJUR.jws.JWS.sign(null, {alg: "RS256"},
-                                     JSON.stringify({transferee: transferee, timestamp: Date.now(),
+                                     JSON.stringify({transferee: transferee, timestamp: timestamp,
                                          previousBlockHash: previousBlockHash, blockPayload: blockPayload}),
                                      transferrerPrivateKey);
         this.JWS = new KJUR.jws.JWSJS();

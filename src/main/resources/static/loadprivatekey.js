@@ -11,7 +11,7 @@ function loadPrivateKeyFromFile(loadKey, keyTextArea, publicKeyJWK, whenValidDo)
         document.getElementById(keyTextArea).value = textFromPrivateKey;
         if (publicKeyJWK) {
             let challengeDummyBlock = new TransferBlock();
-            challengeDummyBlock.init(null, null, null, textFromPrivateKey);
+            challengeDummyBlock.init(null, Date.now(), null, null, textFromPrivateKey);
             const isValid = challengeDummyBlock.verifyNth(0, KEYUTIL.getKey(publicKeyJWK), {alg: ['RS256']});
             whenValidDo(isValid);
         }
