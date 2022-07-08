@@ -11,5 +11,5 @@ public interface PartyRepository extends JpaRepository<Party, UUID> {
 
     List<Party> findByThumbprint(String thumbprint);
     Optional<Party> findByPartyReference(String partyReference);
-    Optional<Party> findByEblPlatformContains(String eblPlatform);
+    Optional<List<Party>> findByEblPlatformContains(String eblPlatform);
 }

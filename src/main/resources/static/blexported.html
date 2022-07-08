@@ -6,8 +6,11 @@
     <script src="transferblock.js"></script>
   </head>
   <body>
-    <div id="importURL"></div><br>
-    <a id="previousPossessionBlock" href="">Previous possessor</div>
+    <div id="content">
+      <div id="message"></div><br>
+      <a id="previousPossessionBlock" href="">Previous possessor</a>
+      <a id="nextplatformUrl" target="_blank" href="">Next possessor</a>
+    </div>
   </body>
   <script>
   window.onload = async function() {
@@ -16,8 +19,8 @@
     const exportTdt= await (await fetch("/api/v1/transferblocks/" + exportTdtHashId)).json();
     const exportBlock = new PlatformExportTransferBlock(exportTdt.transferBlock);
     const exportBlockUrl = "https://" + window.location.host + "/api/v1/transferblocks/" + exportTdtHashId;
-    document.getElementById("importURL").innerHTML = "This document has been exported to another platform. Paste in the following link to import and activate it on the other platform:<br><br>" + exportBlockUrl;
-    document.getElementById("previousPossessionBlock").href = "/static/transportdocumenttransfer.html?id=" + exportTdt.previousTransferBlockHash;
+    document.getElementById("message").innerHTML = "<h3>Transfer in progress...</h3>";
+    document.getElementById("previousPossessionBlock").href = "/transportdocumenttransfer.html?id=" + exportTdtHashId;
     const postNotificationUrl = "https://" + exportBlock.nextRegistryHost() + "/api/v1/transferblocks/notifications";
     const notification= await fetch(
         postNotificationUrl,
@@ -26,7 +29,17 @@
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"transferBlockURL": exportBlockUrl})
         });
-        console.log(notification);
+    
+    if(notification.status === 201 ) {
+      const notificationResponse = await notification.json();
+      const transferBlockUrl = new URL(notificationResponse.transferBlockURL);
+      console.log(transferBlockUrl.origin);
+      let possessionUrl = new URL("transportdocumenttransfer.html", transferBlockUrl.origin);
+      possessionUrl.searchParams.set("id", transferBlockUrl.pathname.substring(transferBlockUrl.pathname.lastIndexOf("/")+1, transferBlockUrl.pathname.length))
+      document.getElementById("message").innerHTML = "<h3>Document transferred successfully.</h3>";
+      
+      document.getElementById("nextplatformUrl").href = possessionUrl;
+    }
 
   };
 </script>

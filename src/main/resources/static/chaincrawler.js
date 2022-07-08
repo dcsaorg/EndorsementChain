@@ -21,7 +21,7 @@ class ChainCrawler {
             possessionChain.push(possessionBlock);
             const previousRegistryURL = possessionBlock.blockPayloadAsJson()["previousRegistryURL"]; //note: only non-null if block is an import block
             if (previousRegistryURL) {
-                serverName = (new URL("https://"+previousRegistryURL)).host;
+                serverName = (new URL(previousRegistryURL).host);
             }
             currentPossessionUrl = "https://" + serverName + apiPath + possessionBlock.previousBlockHash();
             let currentTitleUrl = "https://" + serverName + apiPath + possessionBlock.titleTransferBlockHash();

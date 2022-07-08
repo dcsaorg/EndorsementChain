@@ -8,5 +8,8 @@ var testPlatforms = [
     {name: "essDOCS", url: "dcsa.cargodocs.com"},
     {name: "CargoX", url: "dcsa2.cargox.cc"},
     {name: "DCSA Test 1", url: "01.dcsa.ange.dk:8443"},
-    {name: "DCSA Test 2", url: "02.dcsa.ange.dk:8443"}
+    {name: "DCSA Test 2", url: "02.dcsa.ange.dk:8443"},
+    {name: "Local Test 1", url: "localhost:8443"},
+    {name: "Local Test 2", url: "localhost:8444"}
+
 ];

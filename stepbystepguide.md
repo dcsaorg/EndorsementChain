@@ -28,15 +28,22 @@ If you want to transfer the title, aka. *endorsing* the bill of lading, click th
 
 Step 3: Transfer possession to another platform
 -----------------------------------------------
-Note: if you are running a local instance (localhost), this won't work as you won't subsequently be able to import the BL on the target platform. To avoid confusion, we now refer to the exporting server as *server1* and the importing server as *server2*.
+Note: if you are running a single local instance (localhost), this won't work as there is no target platform available for receiving/importing the B/L. 
+In order to test this out locally follow the instructions to setup two nodes as described: [here](MULTI_NODE_SETUP.md)
 
-To transfer possession, click the **Transfer** (Possession). Fill in the name of the receiving platform, fill in the public key of the recipient and your private key. Then press **Transfer**
+To avoid confusion, we now refer to the exporting server as *node1* and the importing server as *node2*.
 
-Your bill of lading has now been exported and you can copy the link that the recipient will need on the importing platform.
+To transfer possession, click the **Transfer** (Possession). Fill in the name of the receiving platform, fill in your private key. Then press **Transfer**
 
+Your bill of lading has now been exported and a notification has been sent to the receiving/importing platform.
+Which concequently automatically imports the B/L if this is successful the message **Document transferred successfully.** 
+appears on the screen. As well as a link to the target platform to view the imported B/L.
 
 Step 4: Import possession on the other platform
 -----------------------------------------------
-You are now acting as the recipient on the other platform.
+The import of the B/L happens automatically. And are here outlined for completeness. So importing does not need any manual actions:
 
-On the importing platform, point your browser to https://server2:8443/importbl.html. Then paste in the link you have received from the exporter on the previous platform and your private key. After clicking **Import**, the bill of lading has now been fully transferred.
+The import is triggered by the receipt of a notification (sent from the exporting platform). 
+In this notification a link to the export B/L is presented. The export transferblock is retrieved from this link.
+The received export block is transformed into an import transferblock and saved on the imported platform. Based on the exportblock the corresponding title block is retrieved and saved.
+Finally the B/L is also retrieved and saved in the importing platform. 

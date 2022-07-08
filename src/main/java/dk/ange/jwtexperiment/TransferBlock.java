@@ -1,17 +1,12 @@
 package dk.ange.jwtexperiment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSObjectJSON;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.RSASSASigner;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.persistence.Column;
@@ -20,6 +15,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /*
  * The Transport Document Transfer object
@@ -79,7 +78,7 @@ public class TransferBlock {
   public boolean isCrossPlatformTransfer()
       throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
     JsonNode transferBlockJson = transferBlockAsJsonNode();
-    return transferBlockJson.hasNonNull("nextRegistryJWK");
+    return transferBlockJson.get("blockPayload").hasNonNull("nextRegistryJWK");
   }
 
   /*
@@ -99,12 +98,76 @@ public class TransferBlock {
    */
   public final String previousTransferBlockHash()
       throws java.text.ParseException, com.fasterxml.jackson.core.JsonProcessingException {
-      JsonNode transferBlockJson = transferBlockAsJsonNode();
-      String previousBlockHash = transferBlockJson.get("previousBlockHash").asText();
-      if (previousBlockHash == "null") {
-        return null;
-      }
+    JsonNode transferBlockJson = transferBlockAsJsonNode();
+    String previousBlockHash = transferBlockJson.get("previousBlockHash").asText();
+    if (previousBlockHash == "null") {
+      return null;
+    }
     return previousBlockHash;
   }
 
+  @SneakyThrows
+  public Map<String, Object> extractPayloadFromTransferBlock() {
+    JWSObjectJSON exportTransferBlockJson = JWSObjectJSON.parse(this.getTransferBlock());
+    return exportTransferBlockJson.getPayload().toJSONObject();
+  }
+
+  @JsonIgnore
+  public String getTitleTransferBlockHash() {
+    return Optional.ofNullable(this.extractBlockPayloadFromTransferBlockPayload())
+        .map(stringObjectMap -> stringObjectMap.get("titleTransferBlockHash"))
+        .map(Object::toString)
+        .orElseThrow(() -> new IllegalStateException("No titleTransferBlockHash available for transfer"));
+  }
+
+  @JsonIgnore
+  public String getDocumentHash() {
+    return Optional.ofNullable(this.extractBlockPayloadFromTransferBlockPayload())
+      .map(stringObjectMap -> stringObjectMap.get("documentHash"))
+      .map(Object::toString)
+      .orElseThrow(() -> new IllegalStateException("No documentHash present in titletransferblock"));
+  }
+
+  private Map<String, Object> extractBlockPayloadFromTransferBlockPayload() {
+    return extractPayloadFromTransferBlock().entrySet().stream()
+      .filter(stringObjectEntry -> stringObjectEntry.getKey().equals("blockPayload"))
+      .map(Map.Entry::getValue)
+      .flatMap(o -> ((Map<String, Object>) o).entrySet().stream())
+      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  }
+
+  public void transformToImportTransportBlock(
+      String previousRegistryUrl, KeyPair hostPlatformKeyPair) throws JOSEException {
+
+    Map<String, Object> tmpTransferBlockPayload = extractPayloadFromTransferBlock();
+    Map<String, String> transferee = correctTransfereeFieldOrder(tmpTransferBlockPayload);
+
+    Map<String, String> tmpTransferBlockInnerPayload =
+        (Map<String, String>) tmpTransferBlockPayload.get("blockPayload");
+
+    tmpTransferBlockInnerPayload.putIfAbsent("previousRegistryURL", previousRegistryUrl);
+    tmpTransferBlockInnerPayload.remove("nextRegistryHost");
+    tmpTransferBlockInnerPayload.remove("nextRegistryJWK");
+    tmpTransferBlockPayload.replace("transferee", transferee);
+    Payload importTransferBlockJWSPayload = new Payload(tmpTransferBlockPayload);
+
+    JWSObjectJSON importTransferBlockJson = new JWSObjectJSON(importTransferBlockJWSPayload);
+    importTransferBlockJson.sign(
+        new JWSHeader.Builder(JWSAlgorithm.RS256).build(),
+        new RSASSASigner(hostPlatformKeyPair.getPrivate()));
+
+    transferBlock = importTransferBlockJson.serializeGeneral();
+  }
+
+  // This is a workaround since the UI calculates the fingerprint on the transferee json object. So
+  // the order of the fields in the JWK need to be fixed.
+  // Ultimately this should be fixed by calculating the fingerprint in a stable manner
+  private Map<String, String> correctTransfereeFieldOrder(
+      Map<String, Object> tmpTransferBlockPayload) {
+    Map<String, String> transferee = new LinkedHashMap<>();
+    transferee.put("kty", ((Map) tmpTransferBlockPayload.get("transferee")).get("kty").toString());
+    transferee.put("n", ((Map) tmpTransferBlockPayload.get("transferee")).get("n").toString());
+    transferee.put("e", ((Map) tmpTransferBlockPayload.get("transferee")).get("e").toString());
+    return transferee;
+  }
 }
