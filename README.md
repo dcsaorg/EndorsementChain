@@ -17,3 +17,5 @@ To build and run it, see [INSTALL.md](INSTALL.md).
 Then point your browser to https://localhost:8443/issuebl.html
 
 Test keys can be obtained at https://localhost:8443/testkeys.js
+
+To run multiple nodes locally and perform cross node transfers, see [MULTI_NODE_SETUP.md](MULTI_NODE_SETUP.md)

@@ -56,6 +56,8 @@ class TransferBlock {
         return JSON.parse(b64utos(this.JWS.payload))["timestamp"];
     }
 
+    //ToDo this.transferee() does not always yield the same response since JSON does not determine the order of parameters inside an object. 
+    //The thumpprint should be calculated in a more stable manner
     async transfereeThumbprint() {
         const longThumbprint = ArrayBuffertohex(await crypto.subtle.digest('SHA-256', Uint8Array.from(JSON.stringify(this.transferee()))));
         return longThumbprint.slice(0,20);

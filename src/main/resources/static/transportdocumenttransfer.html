@@ -248,7 +248,7 @@
                 let nextRegistryJWK = null;
                 const nextRegistry = document.getElementById("possessionRecipientSelectorReceivingRegistry").value;
                 if (nextRegistry.length > 0) {
-                    nextRegistryJWK = await fetch('https://' + nextRegistry + '/.well-known/jwks.json');
+                    nextRegistryJWK = await (await fetch('https://' + nextRegistry + '/.well-known/jwks.json')).json();
                     let platformExportTransferBlock = new PlatformExportTransferBlock();
                     platformExportTransferBlock.init(transfereePublicKeyJWK, Date.now(), await possessionBlock.blockHash(),
                                                     {"titleTransferBlockHash": await titleBlock.blockHash(), "nextRegistryJWK" : nextRegistryJWK,

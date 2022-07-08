@@ -67,8 +67,7 @@ public class TransferBlockController {
   public ResponseEntity<TransferBlockNotification> receiveTransferBlockNotification(
       @RequestBody TransferBlockNotification transferBlockNotification,
       UriComponentsBuilder builder)
-      throws IOException, URISyntaxException, ParseException, NoSuchAlgorithmException,
-          JOSEException {
+      throws URISyntaxException {
     return transferBlockService
         .fetchTransferBlockByNotification(transferBlockNotification)
         .map(

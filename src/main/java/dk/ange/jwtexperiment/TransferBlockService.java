@@ -1,8 +1,7 @@
 package dk.ange.jwtexperiment;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jose.JOSEException;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,14 +12,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 public class TransferBlockService {
   @Autowired private TransferBlockRepository transferBlockRepository;
+  @Autowired private TransportDocumentRepository transportDocumentRepository;
   @Autowired private PartyRepository partyRepository;
   @Autowired private RestTemplate restTemplate;
   @Autowired private KeyPair platformKeyPair;
@@ -41,8 +38,10 @@ public class TransferBlockService {
 
     if (previousTDThash != null) {
       Optional<TransferBlock> previousTDT = transferBlockRepository.findById(previousTDThash);
-      if(previousTDT.isPresent()) { //TODO: if there is no previous TDT, getting here should only be possible as a result of a
-        //cross-platform import and the signature of the previous platform should then be verified
+      if (previousTDT
+          .isPresent()) { // TODO: if there is no previous TDT, getting here should only be possible
+        // as a result of a
+        // cross-platform import and the signature of the previous platform should then be verified
         previousTDT.get().setTransferStatus("transferred");
         transferBlockRepository.save(previousTDT.get());
       }
@@ -60,23 +59,89 @@ public class TransferBlockService {
     transferBlockRepository.delete(transferBlock);
   }
 
-  public Optional<String> fetchTransferBlockByNotification(final TransferBlockNotification transferBlockNotification) throws URISyntaxException, ParseException, IOException, NoSuchAlgorithmException, JOSEException {
-    final URI transferBlockUrl = new URI(transferBlockNotification.getTransferBlockURL());
+  public Optional<String> fetchTransferBlockByNotification(
+      final TransferBlockNotification transferBlockNotification) throws URISyntaxException {
+    URI transferBlockUrl = new URI(transferBlockNotification.getTransferBlockURL());
 
-    String transferBlockHash = null;
-    if(!isValidTransferBlockHost(transferBlockUrl.getHost())) {
+    if (!isValidTransferBlockHost(transferBlockUrl.getHost())) {
       return Optional.empty();
     }
-    ResponseEntity<TransferBlock> transferBlockResponseEntity = restTemplate.getForEntity(transferBlockUrl, TransferBlock.class);
-    if(transferBlockResponseEntity.getStatusCode().is2xxSuccessful()) {
-      TransferBlock transferBlock = transferBlockResponseEntity.getBody();
-      TransferBlockRequest transferBlockRequest = mapper.readValue(transferBlock.getTransferBlock(), TransferBlockRequest.class);
-      transferBlockHash = save(transferBlockRequest);
+
+    ResponseEntity<TransferBlock> transferBlockResponseEntity =
+        restTemplate.getForEntity(transferBlockUrl, TransferBlock.class);
+
+    if (transferBlockResponseEntity.getStatusCode().isError()) {
+      return Optional.empty();
     }
-    return Optional.ofNullable(transferBlockHash);
+
+    String exportTitleTransferBlockHash =
+        Optional.ofNullable(transferBlockResponseEntity.getBody())
+            .map(TransferBlock::getTitleTransferBlockHash)
+            .orElseThrow(() -> new IllegalStateException("Exportblock could not be retrieved."));
+
+    getAndSaveTitleTransferBlock(transferBlockUrl, exportTitleTransferBlockHash);
+
+    return Optional.ofNullable(transferBlockResponseEntity.getBody())
+        .map(transferBlock -> generateAndSaveImportTransferBlock(transferBlockUrl, transferBlock));
+  }
+
+  private void getAndSaveTitleTransferBlock(URI transferBlockUrl, String titleTransferBlockHash) {
+    String titleTransferBlockUrl =
+        transferBlockUrl.getScheme()
+            + "://"
+            + transferBlockUrl.getHost()
+            + ":"
+            + transferBlockUrl.getPort()
+            + "/api/v1/transferblocks/"
+            + titleTransferBlockHash;
+    ResponseEntity<TransferBlock> transferBlockResponseEntity =
+        restTemplate.getForEntity(titleTransferBlockUrl, TransferBlock.class);
+
+    if (transferBlockResponseEntity.getStatusCode().isError()) {
+      throw new IllegalStateException("TitletransferBlock transfer failed");
+    }
+
+    Optional.ofNullable(transferBlockResponseEntity.getBody())
+        .map(transferBlockRepository::save)
+        .map(TransferBlock::getDocumentHash)
+        .ifPresentOrElse(
+            documentHash -> getAndSaveTransportDocument(transferBlockUrl, documentHash),
+            () -> {
+              throw new IllegalStateException("TitletransferBlock could not be retrieved");
+            });
+  }
+
+  private void getAndSaveTransportDocument(URI transferBlockUrl, String documentHash) {
+    String transportDocumentUrl =
+        transferBlockUrl.getScheme()
+            + "://"
+            + transferBlockUrl.getHost()
+            + ":"
+            + transferBlockUrl.getPort()
+            + "/api/v1/transport-documents/"
+            + documentHash;
+
+    ResponseEntity<TransportDocument> transferBlockResponseEntity =
+        restTemplate.getForEntity(transportDocumentUrl, TransportDocument.class);
+
+    if (transferBlockResponseEntity.getStatusCode().isError()) {
+      throw new IllegalStateException("TransportDocument transfer failed");
+    }
+    TransportDocument transportDocument = transferBlockResponseEntity.getBody();
+    transportDocumentRepository.save(transportDocument);
   }
 
   private boolean isValidTransferBlockHost(String host) {
     return partyRepository.findByEblPlatformContains(host).isPresent();
+  }
+
+  @SneakyThrows
+  private String generateAndSaveImportTransferBlock(
+      URI transferBlockUrl, TransferBlock exportTransferBlock) {
+    String previousRegistryUrl = transferBlockUrl.toString();
+    exportTransferBlock.transformToImportTransportBlock(previousRegistryUrl, platformKeyPair);
+    TransferBlock importTransferBlock = TransferBlock.of(exportTransferBlock.getTransferBlock());
+    transferBlockRepository.save(importTransferBlock);
+    return importTransferBlock.getTransferBlockHash();
   }
 }

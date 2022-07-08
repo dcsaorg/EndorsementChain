@@ -3,7 +3,7 @@ spring:
     name: TDT-registry
     api-path: /api/v1
   datasource:
-    url: jdbc:postgresql://${DATABASE_HOSTNAME}:5432/tdt_registry
+    url: jdbc:postgresql://${DATABASE_HOSTNAME}:${DATABASE_PORT:5432}/tdt_registry
     username: tdt_db_owner
     password: ${DATABASE_PASSWORD}
   jpa:
@@ -19,10 +19,10 @@ server:
     key-store-password: your_key-store_password
     key-store-type: pkcs12
     key-alias: springboot-https
-    trust-store: classpath:certificates/newkeystore.jks
-    trust-store-password: your_key-store_password
+#    trust-store: classpath:certificates/newkeystore.jks
+#    trust-store-password: your_key-store_password
     #trust-store-type: pkcs12
-  port: 8443
+  port: ${PORT:8443}
   error:
     include-message: always
 
