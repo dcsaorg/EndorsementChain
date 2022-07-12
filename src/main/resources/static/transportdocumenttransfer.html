@@ -259,7 +259,7 @@
                         await fetch('/api/v1/transferblocks', {
                             method: 'post',
                             headers: {'Content-Type': 'application/json'},
-                            body:  JSON.stringify(newPossessionBlock.JWS)
+                            body:  JSON.stringify(platformExportTransferBlock.JWS)
                         });
                         location.href = "blexported.html?id=" + await platformExportTransferBlock.blockHash();
                     } else {
