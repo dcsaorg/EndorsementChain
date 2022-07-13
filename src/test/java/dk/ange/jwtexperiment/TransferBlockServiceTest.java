@@ -73,7 +73,6 @@ class TransferBlockServiceTest {
 
   @Test
   void testValidTransferBlockNotification() throws Exception {
-    when(partyRepository.findByEblPlatformContains(any())).thenReturn(Optional.of(List.of(new Party())));
     TransferBlock exportTransferBlock = TransferBlock.of(exportTransferblock);
     TransferBlock importedTitleTransferBlock = TransferBlock.of(titleTransferBlock);
     TransportDocument transportDocument = new TransportDocument();
@@ -102,23 +101,7 @@ class TransferBlockServiceTest {
   }
 
   @Test
-  void testUnknownUrlInTransferBlockNotification() throws Exception {
-    when(partyRepository.findByEblPlatformContains(any())).thenReturn(Optional.empty());
-    TransferBlockNotification notificationRequest =
-        TransferBlockNotification.builder()
-            .transferBlockURL("https://localhost:8443/12345")
-            .build();
-
-    Optional<String> transferBlockHashOptional =
-        transferBlockService.fetchTransferBlockByNotification(notificationRequest);
-
-    assertTrue(transferBlockHashOptional.isEmpty());
-  }
-
-  @Test
   void testTransferBlockNotFound() throws Exception {
-    when(partyRepository.findByEblPlatformContains(any())).thenReturn(Optional.of(List.of(new Party())));
-
     when(restTemplate.getForEntity(any(), eq(TransferBlock.class)))
         .thenReturn(ResponseEntity.notFound().build());
 
