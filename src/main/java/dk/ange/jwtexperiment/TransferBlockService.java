@@ -63,10 +63,6 @@ public class TransferBlockService {
       final TransferBlockNotification transferBlockNotification) throws URISyntaxException {
     URI transferBlockUrl = new URI(transferBlockNotification.getTransferBlockURL());
 
-    if (!isValidTransferBlockHost(transferBlockUrl.getHost())) {
-      return Optional.empty();
-    }
-
     ResponseEntity<TransferBlock> transferBlockResponseEntity =
         restTemplate.getForEntity(transferBlockUrl, TransferBlock.class);
 
@@ -129,10 +125,6 @@ public class TransferBlockService {
     }
     TransportDocument transportDocument = transferBlockResponseEntity.getBody();
     transportDocumentRepository.save(transportDocument);
-  }
-
-  private boolean isValidTransferBlockHost(String host) {
-    return partyRepository.findByEblPlatformContains(host).isPresent();
   }
 
   @SneakyThrows
