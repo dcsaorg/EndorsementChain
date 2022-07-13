@@ -7,7 +7,7 @@ NLbNJCR3ezTN2LEcwUfjYc6ohgIe8KiBbUO/J3TAr0XoftkCfVO0wufFr59BYF0Q
 iw2y2Zx8FdjrUX0ygqRwkS8SV9IvfUJbLj5oOK21kyVfxhShI2SQgid8rX/K9k3d
 MNuka4CMArOGM1YtpuM9q5f1Vp3lwSbpD7Eo+i4Lf2knCqJQzgGZGZy2cCRUq1/6
 wQIDAQAB
------END PUBLIC KEY-----', 'localhost:8444');
+-----END PUBLIC KEY-----', '');
 
 
 INSERT INTO party(id, party_reference, thumbprint, name, public_key, ebl_platform) VALUES('93c91df8-cc6b-46c3-b4fc-d269aa3b4d2a', '77082e42-8e82-47e9-b023-b8546cff3bb8','6c0a3fce271760042dbb', 'ExxonMobil',
@@ -19,7 +19,7 @@ kOksvIIEu8++ecXocq7xRcGIHYa6qQJUEwKA2giSdGMW769fYVHM05fpiSKqr4tx
 uIX/P74BGRg0SIe/i2tFP0cM0EyaqCqgBTGPa6x7gqs6miiGkIExO4vUbtofBPpm
 +usxXGeoD2Ll0FOTzWz1MYQwwIvNhYuFaLcv+mmygnAJiuUDJtdwxez5++G1ZSfC
 yQIDAQAB
------END PUBLIC KEY-----', 'localhost:8433');
+-----END PUBLIC KEY-----', '');
 
 INSERT INTO party(id, party_reference, thumbprint,name, public_key, ebl_platform) VALUES('594f374a-4675-432e-a16b-0bd0c10ffb42', '6575dca8-daa9-4616-824a-daafd7245f30','a162bc5f6402209fa797', 'The Oil Company',
 '-----BEGIN PUBLIC KEY-----
@@ -41,7 +41,7 @@ BfSQnS9bQoJEuIUM9UyFqS6FfWMg54u60nrsE6D2QAD48dHClR5gL1Jzxm7+9TJn
 eZHsVxeMHhkaCY4BZMF/hZ0yGbDNMBMXpVagznoQe6PRzQp50iNJQ+uZBSz9yc4H
 bRJfkgfO6KjxTqMj6gPwFlbDPefnjmDl8mG24X///eLhNpwXUDaWF2gqZ3/DaoAw
 VQIDAQAB
------END PUBLIC KEY-----', 'grus.ange.dk:8443');
+-----END PUBLIC KEY-----', '');
 
 
 
@@ -54,7 +54,7 @@ PinMg/ythffECZGpcBgcQ9KqBzuEFVW2J/+anI46GY+Dacg2xnn9w3Vz5YCYNffJ
 4UmijBzL8fCiCSf+zeZzXO9Z+1ls3T/3LuzaqF43KnnP3If5lcgr+0tflI3VdsKI
 wnKNOHINJadpSCncbpPTa3ITZ8qDW6aZSAKHdTITiW+v4Y0/qX3NgvECMLmraz7H
 HwIDAQAB
------END PUBLIC KEY-----', 'localhost:8444');
+-----END PUBLIC KEY-----', '');
 
 INSERT INTO party(id, party_reference, thumbprint, name, public_key, ebl_platform) VALUES('4c849b24-c3a0-4027-954a-12a99df6519a', '4dee5a52-05fe-4134-95cd-04e9195e0284', 'fecd835ade692dee6bd4', 'HSBD',
 '-----BEGIN PUBLIC KEY-----
