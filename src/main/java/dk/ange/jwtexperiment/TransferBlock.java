@@ -140,6 +140,7 @@ public class TransferBlock {
       String previousRegistryUrl, KeyPair hostPlatformKeyPair) throws JOSEException {
 
     Map<String, Object> tmpTransferBlockPayload = extractPayloadFromTransferBlock();
+    tmpTransferBlockPayload.replace("previousBlockHash", previousRegistryUrl.substring(previousRegistryUrl.lastIndexOf("/")+1));
     Map<String, String> transferee = correctTransfereeFieldOrder(tmpTransferBlockPayload);
 
     Map<String, String> tmpTransferBlockInnerPayload =
