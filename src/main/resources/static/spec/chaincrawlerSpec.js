@@ -17,5 +17,19 @@ describe("Chaincrawler", function() {
     const chains = await chainCrawler.crawlPossessionChain(chainStart);
     expect(chains.possessionChain.length).toEqual(3);
     expect(chains.statuses[0]).toEqual("SURR");
+    expect(chains.statuses[1]).toEqual("POSS");
+    expect(chains.statuses[2]).toEqual("ISSU");
   });
+
+  it("should properly trace back a testchain with a change of title (to order)", async function() {
+    const chainStart = "https://localhost:8443/spec/testchains/002/48bd7b8113bdeb51657673fda62f4142a645961a5ef5f5d2fc84a56ea3f6d270"
+    let chainCrawler = new ChainCrawler();
+    const chains = await chainCrawler.crawlPossessionChain(chainStart);
+    expect(chains.possessionChain.length).toEqual(5);
+    expect(chains.statuses[0]).toEqual("SURR");
+    expect(chains.statuses[1]).toEqual("POSS");
+    expect(chains.statuses[3]).toEqual("ENOR");
+    expect(chains.statuses[chains.statuses.length-1]).toEqual("ISSU");
+  });
+
 });
