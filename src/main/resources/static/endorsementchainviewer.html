@@ -3,7 +3,7 @@
 <script src="jsrsasign-latest-all-min.js"></script>
 <script src="testplatforms.js"></script>
 <table id="endorsementChainTable" border="1">
-<tr><th>Possessor</th><th>Platform</th><th>Title Holder</th><th>Timestamp</th></tr>
+<tr><th>Possessor</th><th>Platform</th><th>Title Holder</th><th>Status</th><th>Timestamp</th></tr>
 </table>
 <script>
     window.onload = async function() {
@@ -27,6 +27,7 @@
                 "<td>" + possessorChain[i] + "<br>" + possessorName + "</td>" +
                 "<td>" + possessorPlatform.name + "</td>" +
                 "<td>" + titleHolderChain[i]+ "<br>" + titleHolderName + "</td>" +
+                "<td>" + chains.statuses[i] + "</td>" +
                 "<td>" + new Date(timestampChain[i]) + "</td>" +
                 "</tr>";
         }
