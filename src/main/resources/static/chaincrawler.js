@@ -30,6 +30,7 @@ class ChainCrawler {
             titleHolderChain.push(currentTitleTransferBlock);
             titleHolderPlatformChain.push(currentTitleTransferBlock.titleHolderPlatform());
         } while (possessionBlock.previousBlockHash() != null);
+
         const nbBlocks = platformChain.length;
         let currentTitleHolder = titleHolderChain[nbBlocks-1]; //first title holder and platform (last items of their resp. arrays)
         let currentTitlePlatform = platformChain[nbBlocks-1];
@@ -49,9 +50,27 @@ class ChainCrawler {
             }
             possessorPlatformChain.splice(0, 0, currentPossessorPlatform);
         }
+
+        let statuses = new Array(possessionChain.length);
+        statuses[statuses.length-1] = "ISSU";
+        for (let i = 1; i < statuses.length-1; ++i) {
+          if(possessionChain[i].titleTransferBlockHash() != possessionChain[i-1].titleTransferBlockHash()) {
+            statuses[i] = "ENOR";
+          } else {
+            statuses[i] = "POSS";
+          }
+        }
+        let latestTransfereeJWK = possessionChain[0].transferee();
+        if(possessionChain[statuses.length-1].verifyNth(0, KEYUTIL.getKey(latestTransfereeJWK), {alg: ['RS256']})) {
+          statuses[0] = "SURR";
+        } else {
+          statuses[0] = "POSS";
+        }
+
         return {"possessionChain": possessionChain, "platformChain": platformChain,
                 "titleHolderChain": titleHolderChain, "titlePlatformChain": titlePlatformChain,
-                "possessorPlatformChain": possessorPlatformChain, "titleHolderPlatformChain": titleHolderPlatformChain};
+                "possessorPlatformChain": possessorPlatformChain, "titleHolderPlatformChain": titleHolderPlatformChain,
+                "statuses": statuses}
     }
 
     async chainToThumbprints(promiseChain) {

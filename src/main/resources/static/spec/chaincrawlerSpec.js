@@ -12,9 +12,10 @@ describe("Chaincrawler", function() {
     });
 
     it("should properly trace back the testchain", async function() {
-        const chainStart = "https://localhost:8443/spec/testchain/10098707e7a92f3fb7b09baeb9adb7eb3d5693447aea59581f4a835ecccb4580"
+        const chainStart = "https://localhost:8443/spec/testchains/001/10098707e7a92f3fb7b09baeb9adb7eb3d5693447aea59581f4a835ecccb4580"
         let chainCrawler = new ChainCrawler();
         const chains = await chainCrawler.crawlPossessionChain(chainStart);
         expect(chains.possessionChain.length).toEqual(3);
+        expect(chains.statuses[0]).toEqual("SURR");
     });
 });
