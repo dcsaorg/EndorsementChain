@@ -9,12 +9,15 @@ class ChainCrawler {
     let titleHolderChain = [];
     let possessorPlatformChain = [];
     let titleHolderPlatformChain = [];
+    let possessionBlockUrls = [];
+    let titleBlockUrls = [];
     const url = new URL(initPossessionTdtUrl);
     let serverName = url.host;
     const apiPath = (url.pathname).match(/.*\//)[0];
     let currentPossessionUrl = initPossessionTdtUrl;
     let possessionBlock;
     do {
+      possessionBlockUrls.push(currentPossessionUrl);
       const currentTdt= await (await fetch(currentPossessionUrl)).json();
       platformChain.push(serverName);
       possessionBlock = (new PossessionTransferBlock(currentTdt.transferBlock));
@@ -25,12 +28,13 @@ class ChainCrawler {
       }
       currentPossessionUrl = "https://" + serverName + apiPath + possessionBlock.previousBlockHash();
       let currentTitleUrl = "https://" + serverName + apiPath + possessionBlock.titleTransferBlockHash();
+      titleBlockUrls.push(currentTitleUrl);
       let currentTitleTdt= await (await fetch(currentTitleUrl)).json();
       const currentTitleTransferBlock = new TitleTransferBlock(currentTitleTdt.transferBlock);
       titleHolderChain.push(currentTitleTransferBlock);
       titleHolderPlatformChain.push(currentTitleTransferBlock.titleHolderPlatform());
     } while (possessionBlock.previousBlockHash() != null);
-
+    titleBlockUrls = new Set(titleBlockUrls); //remove duplicates
     const nbBlocks = platformChain.length;
     let currentTitleHolder = titleHolderChain[nbBlocks-1]; //first title holder and platform (last items of their resp. arrays)
     let currentTitlePlatform = platformChain[nbBlocks-1];
@@ -54,7 +58,7 @@ class ChainCrawler {
     let statuses = new Array(possessionChain.length);
     statuses[statuses.length-1] = "ISSU";
     for (let i = 1; i < statuses.length-1; ++i) {
-      if(possessionChain[i].titleTransferBlockHash() != possessionChain[i-1].titleTransferBlockHash()) {
+      if(possessionChain[i].titleTransferBlockHash() != possessionChain[i+1].titleTransferBlockHash()) {
         statuses[i] = "ENOR";
       } else {
         statuses[i] = "POSS";
@@ -70,7 +74,7 @@ class ChainCrawler {
     return {"possessionChain": possessionChain, "platformChain": platformChain,
             "titleHolderChain": titleHolderChain, "titlePlatformChain": titlePlatformChain,
             "possessorPlatformChain": possessorPlatformChain, "titleHolderPlatformChain": titleHolderPlatformChain,
-            "statuses": statuses}
+            "statuses": statuses, "possessionBlockUrls": possessionBlockUrls, "titleBlockUrls": titleBlockUrls}
   }
 
   async chainToThumbprints(promiseChain) {
