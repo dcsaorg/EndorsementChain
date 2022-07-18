@@ -1,0 +1,23 @@
+<!-- a small script to get the URLs of the transfer blocks in chain -->
+
+<script src="chaincrawler.js"></script>
+<script src="transferblock.js"></script>
+<script src="jsrsasign-latest-all-min.js"></script>
+<div id="block-urls">
+<script>
+  window.onload = async function() {
+    const url = new URL(location.href);
+    const chainStart = url.searchParams.get("chainstart").replace(/"/g,"") ;
+    let chainCrawler = new ChainCrawler();
+    const chains = await chainCrawler.crawlPossessionChain(chainStart);
+    let chainTable = document.getElementById("block-urls");
+    chainTable.innerHTML = "Possession URLs<br>";
+    chains.possessionBlockUrls.forEach(function(url) {
+      chainTable.innerHTML += "<a href=\"" + url + "\">" + url + "</a><br>"
+    });
+    chainTable.innerHTML += "<br>Title URLs<br>";
+    chains.titleBlockUrls.forEach(function(url) {
+      chainTable.innerHTML += "<a href=\"" + url + "\">" + url + "</a><br>"
+    });
+  }
+</script>
