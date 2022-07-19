@@ -32,4 +32,13 @@ describe("Chaincrawler", function() {
     expect(chains.statuses[chains.statuses.length-1]).toEqual("ISSU");
   });
 
+
+  it("should assign the status ISSU for the block in a 1-block chain", async function() {
+    const chainStart = "https://localhost:8443/spec/testchains/003/7eeed198815e315bb819313e997a0339d0470cee645cdf272f8f8b27c09350a6"
+    let chainCrawler = new ChainCrawler();
+    const chains = await chainCrawler.crawlPossessionChain(chainStart);
+    expect(chains.possessionChain.length).toEqual(1);
+    expect(chains.statuses[chains.statuses.length-1]).toEqual("ISSU");
+  });
+
 });
